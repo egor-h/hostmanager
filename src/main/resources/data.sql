@@ -1,0 +1,5 @@
+INSERT INTO hosts (name, address, is_dir, parent_id) VALUES ("asd", "123", true, null)
+INSERT INTO hosts (name, address, is_dir, parent_id) VALUES ("first", "123", false, 1)
+INSERT INTO hosts (name, address, is_dir, parent_id) VALUES ("second", "123", false, 1)
+INSERT INTO hosts (name, address, is_dir, parent_id) VALUES ("third is dir", "123", true, 1)
+INSERT INTO hosts (name, address, is_dir, parent_id) VALUES ("one more ", "123", true, 4)
