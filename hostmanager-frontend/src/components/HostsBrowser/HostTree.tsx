@@ -18,13 +18,8 @@ export default function ControlledTreeView() {
   const [expanded, setExpanded] = React.useState<string[]>([]);
   const [selected, setSelected] = React.useState<string[]>([]);
 
-  const handleToggle = (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
-    setExpanded(nodeIds);
-  };
-
-  const handleSelect = (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
-    setSelected(nodeIds);
-  };
+  const handleToggle = (event: React.ChangeEvent<{}>, nodeIds: string[]) => setExpanded(nodeIds);
+  const handleSelect = (event: React.ChangeEvent<{}>, nodeIds: string[]) => setSelected(nodeIds);
 
   return (
     <TreeView

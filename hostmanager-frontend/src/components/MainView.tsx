@@ -2,6 +2,8 @@ import React from 'react'
 import { Grid, Paper } from '@material-ui/core';
 import MenuColumn from './MenuColumn';
 import HostsBrowser from './HostsBrowser';
+import MainPage from './MainPage';
+import { BrowserRouter as Router, Route, Link, Switch, } from 'react-router-dom';
 
 export default class MainView extends React.Component {
     render() {
@@ -10,7 +12,22 @@ export default class MainView extends React.Component {
                 <MenuColumn></MenuColumn>
             </Grid>
             <Grid xs={11}>
-                <HostsBrowser></HostsBrowser>
+            
+                <Switch>                    
+                    <Route path="/objects">
+                        <HostsBrowser></HostsBrowser>
+                    </Route>
+                    <Route path="/map">
+                        <div>Object graph</div>
+                    </Route>
+                    <Route path="/settings">
+                        <div>Settings there</div>
+                    </Route>
+                    <Route path="/">
+                        <MainPage></MainPage>
+                    </Route>
+                </Switch>
+            
             </Grid>
         </Grid>)
     }
