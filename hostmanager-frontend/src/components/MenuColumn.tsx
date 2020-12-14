@@ -6,7 +6,6 @@ import ComputerIcon from '@material-ui/icons/Computer'
 import ExploreIcon from '@material-ui/icons/Explore'
 import NoteIcon from '@material-ui/icons/Note'
 import SettingsIcon from '@material-ui/icons/Settings'
-// import DeleteIcon from '@material-ui/icons/Delete';
 import { Link } from 'react-router-dom'
 
 export default class MenuColumn extends React.Component {

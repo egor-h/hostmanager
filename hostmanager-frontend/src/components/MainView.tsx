@@ -1,10 +1,10 @@
-import React from 'react'
-import { Grid, Paper } from '@material-ui/core';
-import MenuColumn from './MenuColumn';
+import { Grid } from '@material-ui/core';
+import { Titlebar } from 'custom-electron-titlebar';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import HostsBrowser from './HostsBrowser';
 import MainPage from './MainPage';
-import { BrowserRouter as Router, Route, Link, Switch, } from 'react-router-dom';
-import { Titlebar, Color } from 'custom-electron-titlebar';
+import MenuColumn from './MenuColumn';
 
 type PropsType = {
     titlebar: Titlebar;

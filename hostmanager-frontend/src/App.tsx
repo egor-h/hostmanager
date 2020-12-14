@@ -1,18 +1,12 @@
+import { Color, Titlebar } from 'custom-electron-titlebar';
 import React from 'react';
 import { render } from 'react-dom';
-import { GlobalStyle } from './styles/GlobalStyle';
-
-import Greetings from './components/Greetings';
-import MenuColumn from './components/MenuColumn';
-import MainView from './components/MainView';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
-
+import { BrowserRouter as Router } from 'react-router-dom';
+import { combineReducers, createStore } from 'redux';
+import MainView from './components/MainView';
 import * as reducersRaw from './state/reducers';
-import { local } from './state/actions'
 
-import { Titlebar, Color } from 'custom-electron-titlebar';
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
