@@ -10,7 +10,10 @@ function createWindow() {
     width: 1100,
     height: 700,
     // backgroundColor: '#191622',
+    titleBarStyle: "hidden",
+    frame: false,
     webPreferences: {
+      // preload: path.join(__dirname, "renderer/preload.ts"),
       nodeIntegration: true
     }
   })

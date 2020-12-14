@@ -4,8 +4,17 @@ import MenuColumn from './MenuColumn';
 import HostsBrowser from './HostsBrowser';
 import MainPage from './MainPage';
 import { BrowserRouter as Router, Route, Link, Switch, } from 'react-router-dom';
+import { Titlebar, Color } from 'custom-electron-titlebar';
+
+type PropsType = {
+    titlebar: Titlebar;
+}
 
 export default class MainView extends React.Component {
+    constructor(props: PropsType) {
+        super(props);
+    }
+
     render() {
         return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
             <Grid xs={1} >
