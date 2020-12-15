@@ -19,6 +19,8 @@ const styles = {
 type PropsType = {
   expanded: string[];
   setExpanded: any;
+  selected: string;
+  setSelected: any;
 }
 
 class ControlledTreeView extends React.Component<PropsType, {}> {
@@ -33,8 +35,8 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
     this.props.setExpanded(nodeIds);
   }
 
-  setSelected(event: React.ChangeEvent<{}>, nodeIds: string[]) {
-    console.log(nodeIds);
+  setSelected(event: React.ChangeEvent<{}>, nodeIds: string) {
+    this.props.setSelected(nodeIds);
   }
 
   render() {
@@ -43,7 +45,7 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
         expanded={this.props.expanded}
-        selected={[]}
+        selected={this.props.selected}
         onNodeToggle={this.setExpanded}
         onNodeSelect={this.setSelected}
       >
@@ -66,11 +68,13 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
 }
 
 const mapStateToProps = (state: any) => ({
-  expanded: state.local.expanded
+  expanded: state.local.expanded,
+  selected: state.local.selected
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setExpanded: bindActionCreators(local.setExpanded, dispatch)
+  setExpanded: bindActionCreators(local.setExpanded, dispatch),
+  setSelected: bindActionCreators(local.setSelected, dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ControlledTreeView));

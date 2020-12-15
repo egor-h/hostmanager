@@ -14,16 +14,16 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
+function createData(name: string, address: string, protocols: string) {
+  return { name, address, protocols };
 }
 
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+  createData('Main gate', "192.168.0.1", "some protos"),
+  createData('Something', "192.168.0.2", "some protos"),
+  createData('PC1', "192.168.0.3", "some protos"),
+  createData('PC2', "192.168.0.4", "some protos"),
+  createData('PC3', "192.168.0.5", "some protos"),
 ];
 
 export default function HostTable() {
@@ -35,22 +35,16 @@ export default function HostTable() {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell align="right">IP</TableCell>
+            <TableCell align="right">Address</TableCell>
             <TableCell align="right">Protocols</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell component="th" scope="row">{row.name}</TableCell>
+              <TableCell align="right">{row.address}</TableCell>
+              <TableCell align="right">{row.protocols}</TableCell>
             </TableRow>
           ))}
         </TableBody>
