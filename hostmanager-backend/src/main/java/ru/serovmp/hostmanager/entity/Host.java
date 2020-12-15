@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,9 @@ public class Host {
     @JsonIgnore
     @Getter @Setter
     private Host parent;
+
+    @Getter @Setter
+    private Date createdAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

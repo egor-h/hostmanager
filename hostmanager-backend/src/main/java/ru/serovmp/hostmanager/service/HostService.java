@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.serovmp.hostmanager.controller.form.HostForm;
 import ru.serovmp.hostmanager.dto.HostDto;
+import ru.serovmp.hostmanager.dto.HostStatsDto;
+import ru.serovmp.hostmanager.dto.RecentHostDto;
 import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.repository.HostRepository;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,5 +84,13 @@ public class HostService {
         }
 
         return dto;
+    }
+
+    public List<RecentHostDto> recent(int limit) {
+        return hostRepository.recent(limit).stream().map(RecentHostDto::new).collect(Collectors.toList());
+    }
+
+    public HostStatsDto stats() {
+        return new HostStatsDto(hostRepository.hostsCount());
     }
 }

@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/hosts
+    url: jdbc:mysql://localhost:3306/hostshub_job
     username: user
     password: user
-    initialization-mode: ALWAYS
-  jpa:
-    hibernate:
-      ddl-auto: create
+#    initialization-mode: ALWAYS
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
