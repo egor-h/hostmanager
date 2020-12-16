@@ -1,11 +1,52 @@
 import React from 'react'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as home  from '../../api/home';
+import { RecentHost } from '../../models/host';
 
-class MainPage extends React.Component {
+type Recents = {
+    loading: boolean,
+    data: RecentHost[],
+    error: boolean
+}
+
+type HomePageProps = {
+    recents: Recents;
+    getRecentHosts: any;
+}
+
+class MainPage extends React.Component<HomePageProps> {
+    constructor(props: any) {
+        super(props);
+    }
+
+    componentDidMount() {
+        console.log("MainPage did mount");
+        this.props.getRecentHosts();
+    }
+
     render() {
+        if (this.props.recents.loading) {
+            return (<div>Loading..</div>);
+        }
+        if (this.props.recents.error) {
+            return (<div>An error occured check console</div>);
+        }
         return (<div>
-            <p>Main page there. Hello, username! Recent actions: ...</p>
+            {this.props.recents.data.map((recent) => <li key={recent.id+''}>{recent.name}</li>)}
         </div>);
     }
 }
 
-export default MainPage;
+const mapStateToProps = (state: any) => {
+    console.log("Home state");
+    console.log(state.home.recents);
+    return ({
+    recents: state.home.recents
+})}
+
+const mapDispatchToProps = (dispatch: any) => ({
+    getRecentHosts: bindActionCreators(home.fetchRecents, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainPage);

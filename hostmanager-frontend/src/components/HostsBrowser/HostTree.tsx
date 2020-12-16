@@ -7,13 +7,16 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { local } from '../../state/actions';
+import { Host } from '../../models/host';
+import { TreeState } from '../../state/reducers/hostsBrowser';
+import { scrollbar } from './styles';
 
 const styles = {
   root: {
     height: 216,
     flexGrow: 1,
-    maxWidth: 400,
-  },
+    maxWidth: 400
+  }  
 };
 
 type PropsType = {
@@ -21,6 +24,18 @@ type PropsType = {
   setExpanded: any;
   selected: string;
   setSelected: any;
+  tree: TreeState;
+}
+
+const buildTreeRecurse = (root: Host) => {
+  if (! root.dir || root.chld === null) {
+      return (<TreeItem nodeId={root.id+''} label={root.name} />);
+  }
+  return (<TreeItem nodeId={root.id+''} label={root.name}>
+      {root.chld.filter(innerHost => innerHost.dir)
+        .sort((a: Host, b: Host) => a.name.localeCompare(b.name))
+        .map(innerHost => buildTreeRecurse(innerHost))}
+    </TreeItem>);
 }
 
 class ControlledTreeView extends React.Component<PropsType, {}> {
@@ -39,8 +54,23 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
     this.props.setSelected(nodeIds);
   }
 
+  componentDidMount() {
+
+  }
+
   render() {
+    const returnTree = (treeState: TreeState):any=> {
+      if (treeState.loading) {
+        return <TreeItem nodeId="1" label="Loading.." />
+      } else if (treeState.error) {
+        return <TreeItem nodeId="1" label="Error, check console" />
+      } else {
+        return buildTreeRecurse(treeState.tree);
+      }
+    }
+
     return (
+      <div style={{overflowY: "auto", height: "95vh"}}>
       <TreeView
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
@@ -49,27 +79,17 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
         onNodeToggle={this.setExpanded}
         onNodeSelect={this.setSelected}
       >
-        <TreeItem nodeId="1" label="Applications">
-          <TreeItem nodeId="2" label="Calendar" />
-          <TreeItem nodeId="3" label="Chrome" />
-          <TreeItem nodeId="4" label="Webstorm" />
-        </TreeItem>
-        <TreeItem nodeId="5" label="Documents">
-          <TreeItem nodeId="6" label="Material-UI">
-            <TreeItem nodeId="7" label="src">
-              <TreeItem nodeId="8" label="index.js" />
-              <TreeItem nodeId="9" label="tree-view.js" />
-            </TreeItem>
-          </TreeItem>
-        </TreeItem>
+        {returnTree(this.props.tree)}
       </TreeView>
+      </div>
     );
   }
 }
 
 const mapStateToProps = (state: any) => ({
   expanded: state.local.expanded,
-  selected: state.local.selected
+  selected: state.local.selected,
+  tree: state.hostsBrowser.tree
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -78,4 +98,3 @@ const mapDispatchToProps = (dispatch: any) => ({
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ControlledTreeView));
-

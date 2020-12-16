@@ -4,10 +4,14 @@ import TreeView from '@material-ui/lab/TreeView/TreeView'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
-import React from 'react'
-
-import HostTree from './HostTree'
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import HostTree from './HostTree';
 import HostTable from './HostTable';
+import { fetchTree } from '../../api/tree'
+import { Host } from '../../models/host';
+
 
 const styles = {
     root: {
@@ -20,7 +24,24 @@ const styles = {
     }
   }
 
-class HostsBrowser extends React.Component {
+type HostsBrowserProps = {
+    tree: {
+        loading: boolean,
+        tree: Host,
+        error: boolean
+    };
+    getTree: any;
+}
+
+class HostsBrowser extends React.Component<HostsBrowserProps> {
+    constructor(props: any) {
+        super(props);
+    }
+
+    componentDidMount() {
+        this.props.getTree();
+    }
+
     render() {
         return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
             <Grid xs={4} >
@@ -33,4 +54,12 @@ class HostsBrowser extends React.Component {
     }
 }
 
-export default withStyles(styles)(HostsBrowser)
+const mapStateToProps = (state: any) => ({
+    tree: state.hostsBrowser.tree
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+    getTree: bindActionCreators(fetchTree, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(HostsBrowser))

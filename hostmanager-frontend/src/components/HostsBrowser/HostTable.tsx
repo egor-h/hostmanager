@@ -26,12 +26,13 @@ const rows = [
   createData('PC3', "192.168.0.5", "some protos"),
 ];
 
-export default function HostTable() {
+export default function HostTable(props: any) {
   const classes = useStyles();
+  let {itemsList, onRowClick} = props;
 
   return (
     <TableContainer>
-      <Table className={classes.table} size="small" aria-label="a dense table">
+      <Table className={classes.table} size="small" aria-label="Hosts table">
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -41,7 +42,7 @@ export default function HostTable() {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name}>
+            <TableRow onClick={(e) => {console.log(e);}} key={row.name}>
               <TableCell component="th" scope="row">{row.name}</TableCell>
               <TableCell align="right">{row.address}</TableCell>
               <TableCell align="right">{row.protocols}</TableCell>
