@@ -13,6 +13,16 @@ import { fetchTree } from '../../api/tree'
 import { Host } from '../../models/host';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { LocalState } from '../../state/reducers/localState';
+import { local } from '../../state/actions';
+
+import {
+    HashRouter as Router,
+    Switch,
+    Route,
+    Link,
+    withRouter,
+    useParams
+  } from "react-router-dom";
 
 
 const styles = {
@@ -30,6 +40,11 @@ type HostsBrowserProps = {
     tree: TreeState;
     local: LocalState;
     getTree: any;
+    setSelected: any;
+
+    match: any;
+    location: any;
+    history: any;
 }
 
 class HostsBrowser extends React.Component<HostsBrowserProps> {
@@ -42,6 +57,7 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
     }
 
     render() {
+        console.log(`cur: ${this.props.match.url}`);
         let hosts = findHostById(this.props.tree.tree, +this.props.local.selected);
         console.log("found:");
         console.log(hosts);
@@ -50,48 +66,58 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
                 <HostTree></HostTree>
             </Grid>
             <Grid xs={8} >
-                <HostTable data={(hosts && hosts.dir) ? hosts.chld : []} ></HostTable>
+                <Switch>
+                <Route exact to={`${this.props.match.url}`}>
+                        <HostTable 
+                        handleDoubleClick={(row: any) => {
+                            if (row.dir) {
+                                this.props.setSelected(row.id+'');
+                            } else {
+                                console.log(`${this.props.match.url}/new`);
+                                this.props.history.push({
+                                    pathname: `${this.props.match.url}/new`
+                                });
+                            }
+                        }} 
+                        data={(hosts && hosts.dir) ? hosts.chld : []} />
+                    </Route >
+                    <Route exact to={`${this.props.match.url}/new`}>
+                        <div>new host</div>
+                    </Route>
+                </Switch>
+
+                
             </Grid>
         </Grid>)
     }
 }
 
 const findHostById = (root: Host, id: number): Host | null => {
-    let queue: number[] = [];
-    const getElem = () => {
-        let e = queue[0];
-        queue = queue.slice(1);
-        return e;
-    }
-    const pushElem = (newElem: number) => {
-        queue.push(newElem);
-    }
-
-    let foundItem = null;
-    if (root.id === id) {
-        foundItem = root;
-    }
-
-    for (const e of root.chld) {
-        if (foundItem) {
-            return foundItem;
-        }
-        if (root.dir) {
-            
+    let found: Host[] = [];
+    const findHostRecurse = (root: Host, id: number, found: Host[]) => {
+        if (root.id === id) {
+            found.push(root);
+            return
+        } else if (root.dir) {
+            for (const e of root.chld) {
+                if (!e.dir) continue;
+                findHostRecurse(e, id, found);
+            }
         }
     }
-    return null;
+    findHostRecurse(root, id, found);
+    return (found.length > 0) ? found[0] : null
 }
 
-const mapStateToProps = (state: any) => {
-    console.log(state);
-    return ({
+const mapStateToProps = (state: any) => ({
     tree: state.hostsBrowser.tree,
     local: state.local
-})};
-
-const mapDispatchToProps = (dispatch: any) => ({
-    getTree: bindActionCreators(fetchTree, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(HostsBrowser))
+const mapDispatchToProps = (dispatch: any) => ({
+    getTree: bindActionCreators(fetchTree, dispatch),
+    setSelected: bindActionCreators(local.setSelected, dispatch)
+});
+
+let HostsBrowserRouted = withRouter(HostsBrowser);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(HostsBrowserRouted));

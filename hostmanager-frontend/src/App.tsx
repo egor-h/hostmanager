@@ -2,7 +2,7 @@ import { Color, Titlebar } from 'custom-electron-titlebar'
 import React from 'react'
 import { render } from 'react-dom'
 import { connect, Provider } from 'react-redux'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 import { combineReducers, createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import MainView from './components/MainView'
@@ -24,13 +24,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const App = () => {
   return (
-    <>
       <Provider store={store}>
         <Router>
           <MainView></MainView>
         </Router>
       </Provider>
-    </>
   )
 }
 

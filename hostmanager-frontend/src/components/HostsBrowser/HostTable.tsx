@@ -1,63 +1,54 @@
-import React from 'react';
-import clsx from 'clsx';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Checkbox from '@material-ui/core/Checkbox';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
 import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import EditIcon from '@material-ui/icons/Edit';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import clsx from 'clsx';
+import React from 'react';
 import { Host } from '../../models/host';
 
-
-interface Data {
+type HostTableEntity = {
+  id: number;
   name: string;
   address: string;
-  protocols: string;
+  dir: boolean;
 }
 
-function createData(
-  name: string,
-  address: string,
-  protocols: string
-): Data {
-  return { name, address, protocols };
+function nameComparator(a: HostTableEntity, b: HostTableEntity) {
+  if ((a.name.startsWith('_') && b.name.startsWith('_')) 
+  || (!a.name.startsWith('_') && !b.name.startsWith('_'))) {
+    return a.name.localeCompare(b.name);
+  }
+  if (a.name.startsWith('_') && !b.name.startsWith('_')) {
+    return -1;
+  } else {
+    return 1;
+  }
 }
 
-const rows = [
-  createData('Cupcake', "192.168.0.1", "rms"),
-  createData('Donut', "192.168.0.1", "rms"),
-  createData('Eclair', "192.168.0.1", "rms"),
-  createData('Frozen yoghurt', "192.168.0.1", "rms"),
-  createData('Gingerbread', "192.168.0.1", "rms"),
-  createData('Honeycomb', "192.168.0.1", "rms"),
-  createData('Ice cream sandwich', "192.168.0.1", "rms"),
-  createData('Jelly Bean', "192.168.0.1", "rms"),
-  createData('Jelly Bean1', "192.168.0.1", "rms"),
-  createData('Jelly Bean2', "192.168.0.1", "rms"),
-  createData('Jelly Bean3', "192.168.0.1", "rms"),
-  createData('Jelly Bean4', "192.168.0.1", "rms"),
-  createData('Jelly Bean5', "192.168.0.1", "rms"),
-  createData('Jelly Bean6', "192.168.0.1", "rms"),
-  createData('Jelly Bean7', "192.168.0.1", "rms"),
-  createData('Jelly Bean8', "192.168.0.1", "rms"),
-  createData('Jelly Bean9', "192.168.0.1", "rms"),
-  createData('Jelly Bean10', "192.168.0.1", "rms")
-];
+function addressComparator(a: HostTableEntity, b: HostTableEntity) {
+
+}
+
+function protocolsComparator(a: HostTableEntity, b: HostTableEntity) {
+
+}
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -71,10 +62,10 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 
 type Order = 'asc' | 'desc';
 
-function getComparator<Key extends keyof any>(
+function getComparator<Key extends keyof HostTableEntity>(
   order: Order,
   orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+): (a: { [key in Key]: number | string | boolean }, b: { [key in Key]: number | string | boolean }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -93,7 +84,7 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
 
 interface HeadCell {
   disablePadding: boolean;
-  id: keyof Host;
+  id: keyof HostTableEntity;
   label: string;
   numeric: boolean;
 }
@@ -101,13 +92,13 @@ interface HeadCell {
 const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'address', numeric: true, disablePadding: false, label: 'Address' },
-  // { id: 'protocols', numeric: true, disablePadding: false, label: 'Protocols' }
+  { id: 'protocols', numeric: true, disablePadding: false, label: 'Protocols' }
 ];
 
 interface EnhancedTableProps {
   classes: ReturnType<typeof useStyles>;
   numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Host) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof HostTableEntity) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
@@ -116,7 +107,7 @@ interface EnhancedTableProps {
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-  const createSortHandler = (property: keyof Host) => (event: React.MouseEvent<unknown>) => {
+  const createSortHandler = (property: keyof HostTableEntity) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
 
@@ -167,13 +158,13 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
     highlight:
       theme.palette.type === 'light'
         ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
+          color: theme.palette.secondary.main,
+          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+        }
         : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.secondary.dark,
+        },
     title: {
       flex: '1 1 100%',
     },
@@ -199,17 +190,17 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Hosts
-        </Typography>
-      )}
+          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+            Hosts
+          </Typography>
+        )}
       {numSelected > 0 ? (
         <ButtonGroup variant="text" color="primary" aria-label="outlined primary button group">
           <Tooltip title="Edit">
             <IconButton aria-label="delete">
               <EditIcon />
             </IconButton>
-          </Tooltip> 
+          </Tooltip>
           <Tooltip title="Delete">
             <IconButton aria-label="delete">
               <DeleteIcon />
@@ -217,12 +208,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </Tooltip>
         </ButtonGroup>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+          <Tooltip title="Filter list">
+            <IconButton aria-label="filter list">
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+        )}
     </Toolbar>
   );
 };
@@ -231,14 +222,20 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
+      height: '95vh',
     },
     paper: {
       width: '100%',
       height: '100%',
-      marginBottom: theme.spacing(2),
+      overflowY: 'auto',
+      // marginBottom: theme.spacing(2),
     },
     table: {
       minWidth: 500,
+    },
+    tableRow: {
+      height: 100
+
     },
     visuallyHidden: {
       border: 0,
@@ -254,18 +251,40 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function EnhancedTable(props: {data: Host[]}) {
+const initialState = {
+  mouseX: null,
+  mouseY: null,
+};
+
+export default function EnhancedTable(props: { data: Host[], handleDoubleClick: any }) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Host>('name');
+  const [order, setOrder] = React.useState<Order>('desc');
+  const [orderBy, setOrderBy] = React.useState<keyof HostTableEntity>('name');
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  let {data} = props;
+  let { data, handleDoubleClick } = props;
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Host) => {
+  const [state, setState] = React.useState<{
+    mouseX: null | number;
+    mouseY: null | number;
+  }>(initialState);
+
+  const handleClickMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setState({
+      mouseX: event.clientX - 2,
+      mouseY: event.clientY - 4,
+    });
+  };
+
+  const handleClose = () => {
+    setState(initialState);
+  };
+
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof HostTableEntity) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -273,7 +292,7 @@ export default function EnhancedTable(props: {data: Host[]}) {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = props.data.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -302,14 +321,15 @@ export default function EnhancedTable(props: {data: Host[]}) {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.data.length - page * rowsPerPage);
 
   return (
-    <div style={{overflowY: "auto", height: "95vh"}} className={classes.root}>
+    <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
+            stickyHeader
             className={classes.table}
             aria-labelledby="tableTitle"
             size="small"
@@ -322,45 +342,63 @@ export default function EnhancedTable(props: {data: Host[]}) {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={props.data.length}
             />
-            <TableBody>
-              {stableSort(data, getComparator(order, orderBy))
+            <TableBody >
+              {stableSort(data as HostTableEntity[], getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow
+                    <TableRow style={{ width: "10%", height: "20px", padding: "0px" }}
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onContextMenu={handleClickMenu}
+                      onDoubleClick={(e, element=row) => handleDoubleClick(element)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id + ''}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox 
+                      <TableCell
+                        padding="checkbox">
+                        <Checkbox
+                          onClick={(event) => handleClick(event, row.name)}
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </TableCell>
-                      <TableCell style={{width: '50%'}} component="th" id={labelId} scope="row" padding="none">
+                      <TableCell style={{ height: "20px", width: '50%' }} component="th" id={labelId} scope="row" padding="none">
                         {row.name}
                       </TableCell>
-                      <TableCell style={{width: '20%'}} align="right">{row.address}</TableCell>
-                      {/* <TableCell style={{width: '10%'}} align="right">{row.protocols}</TableCell> */}
+                      <TableCell style={{ height: "20px", width: '20%' }} align="left">{row.address ? row.address : " "}</TableCell>
+                      <TableCell style={{ height: "20px", width: '10%' }} align="right">{row.dir ? " " : "rms"}</TableCell>
                     </TableRow>
                   );
                 })}
-              {(<TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>)}
+
             </TableBody>
           </Table>
         </TableContainer>
+        <Menu
+          keepMounted
+          open={state.mouseY !== null}
+          onClose={handleClose}
+          anchorReference="anchorPosition"
+          anchorPosition={
+            state.mouseY !== null && state.mouseX !== null
+              ? { top: state.mouseY, left: state.mouseX }
+              : undefined
+          }
+        >
+          <MenuItem onClick={handleClose}>Edit</MenuItem>
+          <MenuItem onClick={handleClose}>New item</MenuItem>
+          <MenuItem onClick={handleClose}>Delete</MenuItem>
+          <Divider />
+          <MenuItem onClick={handleClose}>Email</MenuItem>
+        </Menu>
       </Paper>
     </div>
   );
