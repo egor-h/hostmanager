@@ -11,6 +11,8 @@ import HostTree from './HostTree';
 import HostTable from './HostTable';
 import { fetchTree } from '../../api/tree'
 import { Host } from '../../models/host';
+import { TreeState } from '../../state/reducers/hostsBrowser';
+import { LocalState } from '../../state/reducers/localState';
 
 
 const styles = {
@@ -25,11 +27,8 @@ const styles = {
   }
 
 type HostsBrowserProps = {
-    tree: {
-        loading: boolean,
-        tree: Host,
-        error: boolean
-    };
+    tree: TreeState;
+    local: LocalState;
     getTree: any;
 }
 
@@ -43,20 +42,53 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
     }
 
     render() {
+        let hosts = findHostById(this.props.tree.tree, +this.props.local.selected);
+        console.log("found:");
+        console.log(hosts);
         return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
             <Grid xs={4} >
                 <HostTree></HostTree>
             </Grid>
             <Grid xs={8} >
-                <HostTable></HostTable>
+                <HostTable data={(hosts && hosts.dir) ? hosts.chld : []} ></HostTable>
             </Grid>
         </Grid>)
     }
 }
 
-const mapStateToProps = (state: any) => ({
-    tree: state.hostsBrowser.tree
-});
+const findHostById = (root: Host, id: number): Host | null => {
+    let queue: number[] = [];
+    const getElem = () => {
+        let e = queue[0];
+        queue = queue.slice(1);
+        return e;
+    }
+    const pushElem = (newElem: number) => {
+        queue.push(newElem);
+    }
+
+    let foundItem = null;
+    if (root.id === id) {
+        foundItem = root;
+    }
+
+    for (const e of root.chld) {
+        if (foundItem) {
+            return foundItem;
+        }
+        if (root.dir) {
+            
+        }
+    }
+    return null;
+}
+
+const mapStateToProps = (state: any) => {
+    console.log(state);
+    return ({
+    tree: state.hostsBrowser.tree,
+    local: state.local
+})};
 
 const mapDispatchToProps = (dispatch: any) => ({
     getTree: bindActionCreators(fetchTree, dispatch)

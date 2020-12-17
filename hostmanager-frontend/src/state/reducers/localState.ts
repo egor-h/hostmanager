@@ -1,5 +1,11 @@
 import { SET_TITLEBAR, SET_EXPANDED, SET_SELECTED } from "../constants"
 
+export type LocalState = {
+    titlebar: undefined;
+    expanded: string[];
+    selected: string;
+}
+
 const initialState = {
     titlebar: undefined,
     expanded: [],
@@ -7,7 +13,6 @@ const initialState = {
 }
 
 export const local = (state = initialState, action: any) => {
-    console.log(state);
     switch (action.type) {
         case SET_TITLEBAR:
             return {
