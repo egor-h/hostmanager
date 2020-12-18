@@ -32,9 +32,8 @@ class MainPage extends React.Component<HomePageProps> {
         if (this.props.recents.error) {
             return (<div>An error occured check console</div>);
         }
-        return (<div>
-            {this.props.recents.data.map((recent) => <li key={recent.id+''}>{recent.name}</li>)}
-        </div>);
+        let r = this.props.recents.data.map((recent):any => (<li key={recent.id+''}>{recent.name}</li>))
+        return (<div>{r}</div>)
     }
 }
 

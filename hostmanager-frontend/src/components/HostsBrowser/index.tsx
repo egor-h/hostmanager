@@ -59,34 +59,40 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
     render() {
         console.log(`cur: ${this.props.match.url}`);
         let hosts = findHostById(this.props.tree.tree, +this.props.local.selected);
-        console.log("found:");
         console.log(hosts);
+        console.log(this.props.local.selected);
         return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
             <Grid xs={4} >
                 <HostTree></HostTree>
             </Grid>
-            <Grid xs={8} >
+            <Grid xs={8} >      
+                <Link to={`${this.props.match.url}`}>root</Link>
+                <Link to={`${this.props.match.url}/edit/33`}>edit</Link>
+                <button onClick={() => {this.props.history.push(`${this.props.match.url}`)}}>
+                    root
+                </button>
                 <Switch>
-                <Route exact to={`${this.props.match.url}`}>
+                    <Route exact path={`${this.props.match.url}/new/:parentId`}>
+                        <div>new host</div>
+                    </Route>
+                    <Route exact path={`${this.props.match.url}/edit/:hostId`}>
+                        <div>editHost</div>
+                    </Route>
+                    <Route exact path={`${this.props.match.url}/`}>
                         <HostTable 
                         handleDoubleClick={(row: any) => {
                             if (row.dir) {
+                                console.log("row is dir")
+                                this.props.history.push(`${this.props.match.url}`)
                                 this.props.setSelected(row.id+'');
                             } else {
-                                console.log(`${this.props.match.url}/new`);
-                                this.props.history.push({
-                                    pathname: `${this.props.match.url}/new`
-                                });
+                                console.log("row is NOT dir")
+                                this.props.history.push(`${this.props.match.url}/edit/${row.id}`);
                             }
                         }} 
                         data={(hosts && hosts.dir) ? hosts.chld : []} />
                     </Route >
-                    <Route exact to={`${this.props.match.url}/new`}>
-                        <div>new host</div>
-                    </Route>
-                </Switch>
-
-                
+                </Switch>            
             </Grid>
         </Grid>)
     }

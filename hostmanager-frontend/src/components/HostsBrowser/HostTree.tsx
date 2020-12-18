@@ -29,9 +29,9 @@ type PropsType = {
 
 const buildTreeRecurse = (root: Host) => {
   if (! root.dir || root.chld === null) {
-      return (<TreeItem nodeId={root.id+''} label={root.name} />);
+      return (<TreeItem key={root.id+''} nodeId={root.id+''} label={root.name} />);
   }
-  return (<TreeItem nodeId={root.id+''} label={root.name}>
+  return (<TreeItem key={root.id+''} nodeId={root.id+''} label={root.name}>
       {root.chld.filter(innerHost => innerHost.dir)
         .sort((a: Host, b: Host) => a.name.localeCompare(b.name))
         .map(innerHost => buildTreeRecurse(innerHost))}
@@ -61,9 +61,9 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
   render() {
     const returnTree = (treeState: TreeState):any=> {
       if (treeState.loading) {
-        return <TreeItem nodeId="1" label="Loading.." />
+        return <TreeItem key="1" nodeId="1" label="Loading.." />
       } else if (treeState.error) {
-        return <TreeItem nodeId="1" label="Error, check console" />
+        return <TreeItem key="1" nodeId="1" label="Error, check console" />
       } else {
         return buildTreeRecurse(treeState.tree);
       }

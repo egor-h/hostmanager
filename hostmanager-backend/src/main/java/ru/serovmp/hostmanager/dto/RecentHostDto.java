@@ -13,12 +13,14 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class RecentHostDto {
+    private long id;
     private String name;
     private String address;
 //    private String createdBy;
     private Date createdAt;
 
     public RecentHostDto(Host host) {
+        this.id = host.getId();
         this.name = host.getName();
         this.address = host.getAddress();
 //        this.createdBy = host.createdBy();
