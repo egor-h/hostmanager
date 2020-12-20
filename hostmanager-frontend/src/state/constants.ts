@@ -2,6 +2,8 @@
 export const SET_TITLEBAR = "SET_TITLEBAR";
 export const SET_EXPANDED = "SET_EXPANDED";
 export const SET_SELECTED = "SET_SELECTED";
+export const SET_BROWSER_MODE = "SET_BROWSER_MODE";
+
 
 // Recent actions get
 export const RECENTS = "RECENTS";

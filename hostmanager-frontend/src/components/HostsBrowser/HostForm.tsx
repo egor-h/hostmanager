@@ -1,7 +1,7 @@
 import React from 'react';
 
-// const HostForm = (): React.FC => {
-//     return ()
-// }
+const HostForm = (props: any) => {
+    return (<div>this is hostform and id is {props.id}</div>);
+}
 
-// export default HostForm;
+export default HostForm;

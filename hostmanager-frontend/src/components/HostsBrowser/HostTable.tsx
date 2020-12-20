@@ -21,6 +21,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import clsx from 'clsx';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Host } from '../../models/host';
 
 type HostTableEntity = {
@@ -222,16 +223,18 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
-      height: '95vh',
+      height: '500px',
     },
     paper: {
       width: '100%',
       height: '100%',
-      overflowY: 'auto',
+      
+      overflowY: 'hidden',
       // marginBottom: theme.spacing(2),
     },
     table: {
       minWidth: 500,
+      display: 'block'
     },
     tableRow: {
       height: 100
@@ -256,7 +259,7 @@ const initialState = {
   mouseY: null,
 };
 
-export default function EnhancedTable(props: { data: Host[], handleDoubleClick: any }) {
+export default function EnhancedTable(props: { data: Host[], onRowClicked: any }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof HostTableEntity>('name');
@@ -265,7 +268,7 @@ export default function EnhancedTable(props: { data: Host[], handleDoubleClick: 
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  let { data, handleDoubleClick } = props;
+  let { data, onRowClicked } = props;
 
   const [state, setState] = React.useState<{
     mouseX: null | number;
@@ -324,13 +327,17 @@ export default function EnhancedTable(props: { data: Host[], handleDoubleClick: 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.data.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
+    <div 
+      className={classes.root}
+    >
+      <Paper 
+        // className={classes.paper}
+        >
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
             stickyHeader
-            className={classes.table}
+            // className={classes.table}
             aria-labelledby="tableTitle"
             size="small"
             aria-label="enhanced table"
@@ -344,38 +351,40 @@ export default function EnhancedTable(props: { data: Host[], handleDoubleClick: 
               onRequestSort={handleRequestSort}
               rowCount={props.data.length}
             />
-            <TableBody >
+            <TableBody style={{overflowY: "hidden"}}>
               {stableSort(data as HostTableEntity[], getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
+
+                  let onClick = (e: any) => {onRowClicked(row)}
                   return (
-                    <TableRow style={{ width: "10%", height: "20px", padding: "0px" }}
-                      hover
-                      onContextMenu={handleClickMenu}
-                      onDoubleClick={(e, element=row) => handleDoubleClick(element)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id + ''}
-                      selected={isItemSelected}
-                    >
-                      <TableCell
-                        padding="checkbox">
-                        <Checkbox
-                          onClick={(event) => handleClick(event, row.name)}
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
-                      <TableCell style={{ height: "20px", width: '50%' }} component="th" id={labelId} scope="row" padding="none">
-                        {row.name}
-                      </TableCell>
-                      <TableCell style={{ height: "20px", width: '20%' }} align="left">{row.address ? row.address : " "}</TableCell>
-                      <TableCell style={{ height: "20px", width: '10%' }} align="right">{row.dir ? " " : "rms"}</TableCell>
-                    </TableRow>
+                      <TableRow
+                        style={{ width: "10%", height: "20px", padding: "0px" }}
+                        hover
+                        onContextMenu={handleClickMenu}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id + ''}
+                        selected={isItemSelected}
+                      >
+                        <TableCell
+                          padding="checkbox">
+                          <Checkbox
+                            onClick={(event) => handleClick(event, row.name)}
+                            checked={isItemSelected}
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
+                        <TableCell onClick={onClick} style={{ height: "20px", width: '50%' }} component="th" id={labelId} scope="row" padding="none">
+                          {row.name}
+                        </TableCell>
+                        <TableCell onClick={onClick} style={{ height: "20px", width: '20%' }} align="left">{row.address ? row.address : " "}</TableCell>
+                        <TableCell onClick={onClick} style={{ height: "20px", width: '10%' }} align="right">{row.dir ? " " : "rms"}</TableCell>
+                      </TableRow>
                   );
                 })}
 

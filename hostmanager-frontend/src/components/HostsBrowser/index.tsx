@@ -21,8 +21,13 @@ import {
     Route,
     Link,
     withRouter,
-    useParams
+    useParams,
+    Redirect
   } from "react-router-dom";
+import HostForm from './HostForm';
+import EditHostWrapper from './EditHostWrapper';
+import NewHostWrapper from './NewHostWrapper';
+import TableWrapper from './TableWrapper';
 
 
 const styles = {
@@ -47,6 +52,7 @@ type HostsBrowserProps = {
     history: any;
 }
 
+
 class HostsBrowser extends React.Component<HostsBrowserProps> {
     constructor(props: any) {
         super(props);
@@ -58,62 +64,50 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
 
     render() {
         console.log(`cur: ${this.props.match.url}`);
-        let hosts = findHostById(this.props.tree.tree, +this.props.local.selected);
-        console.log(hosts);
-        console.log(this.props.local.selected);
+        const selectView = () => {
+            switch (this.props.local.browserMode) {
+                case "table":
+                    return (<TableWrapper selectedDir={this.props.local.selected} wholeTree={this.props.tree.tree} />);
+                case "edit":
+                    return(<EditHostWrapper hostId={"123"}></EditHostWrapper>);
+                case "new":
+                    return (<NewHostWrapper></NewHostWrapper>);
+                default:
+                    return (<div>default</div>)
+            }
+
+        }
         return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
             <Grid xs={4} >
                 <HostTree></HostTree>
             </Grid>
             <Grid xs={8} >      
-                <Link to={`${this.props.match.url}`}>root</Link>
+                {/* <Link to={`${this.props.match.url}`}>root</Link>
                 <Link to={`${this.props.match.url}/edit/33`}>edit</Link>
+                <Link to={`${this.props.match.url}/table/33`}>edit</Link>
                 <button onClick={() => {this.props.history.push(`${this.props.match.url}`)}}>
                     root
                 </button>
                 <Switch>
                     <Route exact path={`${this.props.match.url}/new/:parentId`}>
-                        <div>new host</div>
+                        <NewHostWrapper></NewHostWrapper>
                     </Route>
                     <Route exact path={`${this.props.match.url}/edit/:hostId`}>
-                        <div>editHost</div>
+                        <EditHostWrapper></EditHostWrapper>
+                    </Route>
+                    <Route exact path={`${this.props.match.url}/table/:parentId`}>
+                        <TableWrapper wholeTree={this.props.tree.tree} />
                     </Route>
                     <Route exact path={`${this.props.match.url}/`}>
-                        <HostTable 
-                        handleDoubleClick={(row: any) => {
-                            if (row.dir) {
-                                console.log("row is dir")
-                                this.props.history.push(`${this.props.match.url}`)
-                                this.props.setSelected(row.id+'');
-                            } else {
-                                console.log("row is NOT dir")
-                                this.props.history.push(`${this.props.match.url}/edit/${row.id}`);
-                            }
-                        }} 
-                        data={(hosts && hosts.dir) ? hosts.chld : []} />
-                    </Route >
-                </Switch>            
+                        <Redirect to={`/objects/table/33`} ></Redirect>
+                    </Route>
+                </Switch>             */}
+                {selectView()}
             </Grid>
         </Grid>)
     }
 }
 
-const findHostById = (root: Host, id: number): Host | null => {
-    let found: Host[] = [];
-    const findHostRecurse = (root: Host, id: number, found: Host[]) => {
-        if (root.id === id) {
-            found.push(root);
-            return
-        } else if (root.dir) {
-            for (const e of root.chld) {
-                if (!e.dir) continue;
-                findHostRecurse(e, id, found);
-            }
-        }
-    }
-    findHostRecurse(root, id, found);
-    return (found.length > 0) ? found[0] : null
-}
 
 const mapStateToProps = (state: any) => ({
     tree: state.hostsBrowser.tree,

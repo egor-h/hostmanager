@@ -10,6 +10,7 @@ import { local } from '../../state/actions';
 import { Host } from '../../models/host';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { scrollbar } from './styles';
+import { Link } from 'react-router-dom';
 
 const styles = {
   root: {
@@ -25,6 +26,7 @@ type PropsType = {
   selected: string;
   setSelected: any;
   tree: TreeState;
+  setTableEdit: any;
 }
 
 const buildTreeRecurse = (root: Host) => {
@@ -52,6 +54,7 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
 
   setSelected(event: React.ChangeEvent<{}>, nodeIds: string) {
     this.props.setSelected(nodeIds);
+    this.props.setTableEdit();
   }
 
   componentDidMount() {
@@ -94,6 +97,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   setExpanded: bindActionCreators(local.setExpanded, dispatch),
+  setTableEdit: bindActionCreators(local.setBrowserTable, dispatch),
   setSelected: bindActionCreators(local.setSelected, dispatch)
 })
 
