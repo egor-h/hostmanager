@@ -1,8 +1,10 @@
+import { Paper } from '@material-ui/core';
 import React from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as home  from '../../api/home';
 import { RecentHost } from '../../models/host';
+import RecentHostCard from './RecentHostCard';
 
 type Recents = {
     loading: boolean,
@@ -32,8 +34,11 @@ class MainPage extends React.Component<HomePageProps> {
         if (this.props.recents.error) {
             return (<div>An error occured check console</div>);
         }
-        let r = this.props.recents.data.map((recent):any => (<li key={recent.id+''}>{recent.name}</li>))
-        return (<div>{r}</div>)
+        let r = this.props.recents.data.map((recent):any => (<RecentHostCard key={recent.id+''} host={recent}></RecentHostCard>))
+
+        return (<Paper elevation={0}>
+            {r}
+        </Paper>)
     }
 }
 
