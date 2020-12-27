@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as home  from '../../api/home';
 import { RecentHost } from '../../models/host';
 import RecentHostCard from './RecentHostCard';
+import RecentHostList from './RecentHostList';
 
 type Recents = {
     loading: boolean,
@@ -34,10 +35,9 @@ class MainPage extends React.Component<HomePageProps> {
         if (this.props.recents.error) {
             return (<div>An error occured check console</div>);
         }
-        let r = this.props.recents.data.map((recent):any => (<RecentHostCard key={recent.id+''} host={recent}></RecentHostCard>))
-
         return (<Paper elevation={0}>
-            {r}
+
+            <RecentHostList items={this.props.recents.data}></RecentHostList>
         </Paper>)
     }
 }

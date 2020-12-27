@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@material-ui/core'
+import { Breadcrumbs, Grid, Paper, Typography } from '@material-ui/core'
 import { TreeItem } from '@material-ui/lab'
 import TreeView from '@material-ui/lab/TreeView/TreeView'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -28,13 +28,16 @@ import HostForm from './HostForm';
 import EditHostWrapper from './EditHostWrapper';
 import NewHostWrapper from './NewHostWrapper';
 import TableWrapper from './TableWrapper';
+import TestTable from './TestTable';
+import Container from '@material-ui/core/Container';
+import MaterialLink from '@material-ui/core/Link';
 
 
 const styles = {
     root: {
-      height: 216,
-      flexGrow: 1,
-      maxWidth: 400,
+    //   height: 216,
+    //   flexGrow: 1,
+    //   maxWidth: 400,
     },
     paper: {
       
@@ -52,6 +55,38 @@ type HostsBrowserProps = {
     history: any;
 }
 
+const DATA = [
+    {id: 1, name: '123', address: '123', dir: false, chld: []},
+    {id: 2, name: '123', address: '123', dir: false, chld: []},
+    {id: 3, name: '123', address: '123', dir: false, chld: []},
+    {id: 4, name: '123', address: '123', dir: false, chld: []},
+    {id: 5, name: '123', address: '123', dir: false, chld: []},
+    {id: 6, name: '123', address: '123', dir: false, chld: []},
+    {id: 7, name: '123', address: '123', dir: false, chld: []},
+    {id: 8, name: '123', address: '123', dir: false, chld: []},
+    {id: 9, name: '123', address: '123', dir: false, chld: []},
+    {id: 10, name: '123', address: '123', dir: false, chld: []},
+    {id: 11, name: '123', address: '123', dir: false, chld: []},
+    {id: 12, name: '123', address: '123', dir: false, chld: []},
+    {id: 13, name: '123', address: '123', dir: false, chld: []},
+    {id: 14, name: '123', address: '123', dir: false, chld: []},
+    {id: 15, name: '123', address: '123', dir: false, chld: []},
+    {id: 16, name: '123', address: '123', dir: false, chld: []},
+    {id: 17, name: '123', address: '123', dir: false, chld: []},
+]
+
+
+const HostBreadCrumb = () => {
+    return (<Breadcrumbs aria-label="breadcrumb">
+    <MaterialLink color="inherit"  onClick={() => {}}>
+      Material-UI
+    </MaterialLink>
+    <MaterialLink color="inherit"  onClick={() => {}}>
+      Core
+    </MaterialLink>
+    <Typography color="textPrimary">Breadcrumb</Typography>
+  </Breadcrumbs>)
+}
 
 class HostsBrowser extends React.Component<HostsBrowserProps> {
     constructor(props: any) {
@@ -68,7 +103,9 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
             switch (this.props.local.browserMode) {
                 case "table":
                     return (<TableWrapper selectedDir={this.props.local.selected} wholeTree={this.props.tree.tree} />);
+                    // return (<TestTable />);
                 case "edit":
+                    return (<NewHostWrapper></NewHostWrapper>);
                     return(<EditHostWrapper hostId={"123"}></EditHostWrapper>);
                 case "new":
                     return (<NewHostWrapper></NewHostWrapper>);
@@ -77,34 +114,31 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
             }
 
         }
-        return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
-            <Grid xs={4} >
-                <HostTree></HostTree>
-            </Grid>
-            <Grid xs={8} >      
-                {/* <Link to={`${this.props.match.url}`}>root</Link>
-                <Link to={`${this.props.match.url}/edit/33`}>edit</Link>
-                <Link to={`${this.props.match.url}/table/33`}>edit</Link>
-                <button onClick={() => {this.props.history.push(`${this.props.match.url}`)}}>
-                    root
-                </button>
+
+
+        return (<div style={{flexDirection: 'row', display: 'flex', height: 'calc(100% - 24px)'}}>
+            <div style={{flex: 2, display: 'flex', flexFlow: 'column nowrap'}}>
+                <HostTree ></HostTree>
+            </div>
+            <div style={{flex: 3, display: 'flex', flexFlow: 'column nowrap'}}>
+                <div style={{flex: 0, flexFlow: 'row nowrap'}}><HostBreadCrumb /></div>
+
                 <Switch>
-                    <Route exact path={`${this.props.match.url}/new/:parentId`}>
+                    <Route exact path="/objects/table/:parentId">
+                        <TableWrapper selectedDir={this.props.local.selected} wholeTree={this.props.tree.tree} />
+                    </Route>
+                    <Route exact path="/objects/new/:parentId">
                         <NewHostWrapper></NewHostWrapper>
                     </Route>
-                    <Route exact path={`${this.props.match.url}/edit/:hostId`}>
+                    <Route exact path="/objects/edit/:hostId">
                         <EditHostWrapper></EditHostWrapper>
                     </Route>
-                    <Route exact path={`${this.props.match.url}/table/:parentId`}>
-                        <TableWrapper wholeTree={this.props.tree.tree} />
+                    <Route exact path="">
+                        <Redirect to="/objects/table/33"></Redirect>
                     </Route>
-                    <Route exact path={`${this.props.match.url}/`}>
-                        <Redirect to={`/objects/table/33`} ></Redirect>
-                    </Route>
-                </Switch>             */}
-                {selectView()}
-            </Grid>
-        </Grid>)
+                </Switch>                
+            </div>
+        </div>);
     }
 }
 

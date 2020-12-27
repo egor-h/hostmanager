@@ -10,19 +10,32 @@ type PropsType = {
     titlebar: Titlebar;
 }
 
+
+const sideNavStyle = {
+    flex: 1,
+    height: '95vh',
+    color: 'white',
+    overflow: 'auto',
+  }
+  
+  const content = {
+    flex: 10,
+    height: '95vh',
+    overflow: 'auto',
+  }
+
 export default class MainView extends React.Component {
     constructor(props: PropsType) {
         super(props);
     }
 
     render() {
-        return (<Grid container direction="row" justify="flex-start" alignItems="stretch">
-            <Grid xs={1} >
+        return (<div style={{display: 'flex'}}>
+            <div style={sideNavStyle}>
                 <MenuColumn></MenuColumn>
-            </Grid>
-            <Grid xs={11}>
-            
-                <Switch>                    
+            </div>
+            <div style={content}>
+                <Switch>
                     <Route path="/objects">
                         <HostsBrowser></HostsBrowser>
                     </Route>
@@ -36,8 +49,7 @@ export default class MainView extends React.Component {
                         <MainPage></MainPage>
                     </Route>
                 </Switch>
-            
-            </Grid>
-        </Grid>)
+            </div>
+        </div>);
     }
 }
