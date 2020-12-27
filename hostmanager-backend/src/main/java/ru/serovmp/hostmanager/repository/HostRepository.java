@@ -17,5 +17,5 @@ public interface HostRepository extends JpaRepository<Host, Long> {
     List<Host> recent(@Param("recentLimit") int recentLimit);
 
     @Query(value = "SELECT COUNT(*) FROM hosts WHERE NOT is_dir", nativeQuery = true)
-    public int hostsCount();
+    public long hostsCount();
 }
