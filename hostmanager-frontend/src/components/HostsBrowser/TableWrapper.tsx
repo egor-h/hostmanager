@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useRouteMatch } from 'react-router-dom';
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { Host } from '../../models/host';
 import HostForm from './HostForm';
 import HostTable from './HostTable';
-import { setSelected, setBrowserEdit } from '../../state/actions/local'
+import { setSelected, setBrowserEdit } from '../../state/actions/local';
+import TestTable from './TestTable';
 
 type ParamTypes = {
     parentId: string;
@@ -34,22 +35,24 @@ const findHostById = (root: Host, id: number): Host | null => {
 
 export default (props: PropType): any => {
     let match = useRouteMatch();
+    let history = useHistory();
     let { parentId } = useParams<ParamTypes>();
     let dispatch = useDispatch();
     const onRowClicked = (row: Host): void => {
         if (row.dir) {
             dispatch(setSelected(row.id+''));
+            history.push(`/objects/table/${row.id}`);
         } else {
-            dispatch(setBrowserEdit());
+            history.push(`/objects/edit/${row.id}`);
         }
         
     }
-    let hosts = findHostById(props.wholeTree, +props.selectedDir);
+    let hosts = findHostById(props.wholeTree, +parentId);
 
     console.log(hosts);
 
     return (
-    <div style={{overflowY: "auto", height: "95vh"}}><HostTable  
+    <HostTable  
         onRowClicked={onRowClicked}
-        data={(hosts && hosts.dir) ? hosts.chld : []} /></div>);
+        data={(hosts && hosts.dir) ? hosts.chld : []} />);
 }

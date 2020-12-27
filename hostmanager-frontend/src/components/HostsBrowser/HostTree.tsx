@@ -10,7 +10,7 @@ import { local } from '../../state/actions';
 import { Host } from '../../models/host';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { scrollbar } from './styles';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 
 const styles = {
   root: {
@@ -26,8 +26,7 @@ type PropsType = {
   selected: string;
   setSelected: any;
   tree: TreeState;
-  setTableEdit: any;
-}
+} & RouteComponentProps<{}>;
 
 const buildTreeRecurse = (root: Host) => {
   if (! root.dir || root.chld === null) {
@@ -54,7 +53,7 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
 
   setSelected(event: React.ChangeEvent<{}>, nodeIds: string) {
     this.props.setSelected(nodeIds);
-    this.props.setTableEdit();
+    this.props.history.push(`/objects/table/${nodeIds}`)
   }
 
   componentDidMount() {
@@ -97,8 +96,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
   setExpanded: bindActionCreators(local.setExpanded, dispatch),
-  setTableEdit: bindActionCreators(local.setBrowserTable, dispatch),
   setSelected: bindActionCreators(local.setSelected, dispatch)
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ControlledTreeView));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(withRouter(ControlledTreeView)));
