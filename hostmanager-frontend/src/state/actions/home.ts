@@ -1,20 +1,21 @@
 import { RecentHost } from '../../models/host';
+import { HomePageModel } from '../../models/mainPage';
 
 import {
-    RECENTS,
-    RECENTS_FAILED,
-    RECENTS_SUCCEEDED
+    HOMEPAGE,
+    HOMEPAGE_FAILED,
+    HOMEPAGE_SUCCEEDED
 } from '../constants';
 
-export const recentHosts = () => ({
-    type: RECENTS
+export const homepage = () => ({
+    type: HOMEPAGE
 });
 
-export const recentHostsFailed = () => ({
-    type: RECENTS_FAILED
+export const homepageFailed = () => ({
+    type: HOMEPAGE_FAILED
 });
 
-export const recentHostsSucceeded = (recents: RecentHost[]) => ({
-    type: RECENTS_SUCCEEDED,
+export const homepageSucceeded = (recents: HomePageModel) => ({
+    type: HOMEPAGE_SUCCEEDED,
     recents: recents
 });

@@ -1,4 +1,4 @@
-import { SET_TITLEBAR, SET_EXPANDED, SET_SELECTED, SET_BROWSER_MODE } from "../constants"
+import { SET_EXPANDED, SET_SELECTED, SET_BROWSER_MODE } from "../constants"
 
 export type LocalState = {
     titlebar: undefined;
@@ -16,12 +16,6 @@ const initialState = {
 
 export const local = (state = initialState, action: any) => {
     switch (action.type) {
-        case SET_TITLEBAR:
-            return {
-                ...state,
-                titlebar: action.titlebar
-            }
-
         case SET_EXPANDED:
             return {
                 ...state,

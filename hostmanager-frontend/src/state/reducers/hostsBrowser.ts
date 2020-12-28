@@ -58,27 +58,6 @@ export const hostsBrowser = (state = initialState, action: any) => {
                     error: true
                 }
             }
-        case HOST_TABLE:
-            return {
-                ...state,
-                loading: true,
-                table: [],
-                error: false
-            }
-        case HOST_TABLE_SUCCEDED:
-            return {
-                ...state,
-                loading: true,
-                table: action.hosts,
-                error: false
-            }
-        case HOST_TABLE_FAILED:
-            return {
-                ...state,
-                loading: true,
-                table: [],
-                error: false
-            }
         default:
             return state;
     }
