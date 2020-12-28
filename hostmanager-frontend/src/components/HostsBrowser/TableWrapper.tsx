@@ -5,7 +5,7 @@ import { Host } from '../../models/host';
 import HostForm from './HostForm';
 import HostTable from './HostTable';
 import { setSelected, setBrowserEdit } from '../../state/actions/local';
-import TestTable from './TestTable';
+import { findHostById } from '../../util/tree';
 
 type ParamTypes = {
     parentId: string;
@@ -16,22 +16,7 @@ type PropType = {
     selectedDir: string;
 }
 
-const findHostById = (root: Host, id: number): Host | null => {
-    let found: Host[] = [];
-    const findHostRecurse = (root: Host, id: number, found: Host[]) => {
-        if (root.id === id) {
-            found.push(root);
-            return
-        } else if (root.dir) {
-            for (const e of root.chld) {
-                if (!e.dir) continue;
-                findHostRecurse(e, id, found);
-            }
-        }
-    }
-    findHostRecurse(root, id, found);
-    return (found.length > 0) ? found[0] : null
-}
+
 
 export default (props: PropType): any => {
     let match = useRouteMatch();

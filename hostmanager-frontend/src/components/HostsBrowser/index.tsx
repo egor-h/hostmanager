@@ -28,7 +28,6 @@ import HostForm from './HostForm';
 import EditHostWrapper from './EditHostWrapper';
 import NewHostWrapper from './NewHostWrapper';
 import TableWrapper from './TableWrapper';
-import TestTable from './TestTable';
 import Container from '@material-ui/core/Container';
 import MaterialLink from '@material-ui/core/Link';
 
@@ -76,15 +75,20 @@ const DATA = [
 ]
 
 
-const HostBreadCrumb = () => {
+type BreadCrumbProps = {
+    links: {title: string, url: string}[]
+}
+
+const HostBreadCrumb = (props: BreadCrumbProps) => {
     return (<Breadcrumbs aria-label="breadcrumb">
-    <MaterialLink color="inherit"  onClick={() => {}}>
+        {props.links.map(link => (<MaterialLink key={link.title} color="inherit" onClick={() => {}}>{link.title}</MaterialLink>))}
+    {/* <MaterialLink color="inherit"  onClick={() => {}}>
       Material-UI
     </MaterialLink>
     <MaterialLink color="inherit"  onClick={() => {}}>
       Core
     </MaterialLink>
-    <Typography color="textPrimary">Breadcrumb</Typography>
+    <Typography color="textPrimary">Breadcrumb</Typography> */}
   </Breadcrumbs>)
 }
 
@@ -121,7 +125,7 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
                 <HostTree ></HostTree>
             </div>
             <div style={{flex: 3, display: 'flex', flexFlow: 'column nowrap'}}>
-                <div style={{flex: 0, flexFlow: 'row nowrap'}}><HostBreadCrumb /></div>
+                <div style={{flex: 0, flexFlow: 'row nowrap'}}><HostBreadCrumb links={[{title: 'smporg', url:'/objects/table/33'}, {title: 'smporg', url:'/objects/table/33'}]}/></div>
 
                 <Switch>
                     <Route exact path="/objects/table/:parentId">
