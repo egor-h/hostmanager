@@ -1,40 +1,58 @@
 import React from 'react'
-import { Container } from '@material-ui/core'
+import { Container, Tooltip } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import HomeIcon from '@material-ui/icons/Home'
 import ComputerIcon from '@material-ui/icons/Computer'
 import ExploreIcon from '@material-ui/icons/Explore'
 import NoteIcon from '@material-ui/icons/Note'
+import ReceiptIcon from '@material-ui/icons/Receipt';
 import SettingsIcon from '@material-ui/icons/Settings'
 import { Link } from 'react-router-dom'
 
 export default class MenuColumn extends React.Component {
-  render () {
+  render() {
     return (<Container>
       <Link to="/">
-        <IconButton aria-label="delete">
-          <HomeIcon />
-        </IconButton>
+        <Tooltip title="Home page" placement="right">
+          <IconButton aria-label="home">
+            <HomeIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
       <Link to="/objects">
-        <IconButton aria-label="delete">
-          <ComputerIcon />
-        </IconButton>
+        <Tooltip title="Objects" placement="right">
+          <IconButton aria-label="objects">
+            <ComputerIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
       <Link to="/map">
-        <IconButton aria-label="delete">
-          <ExploreIcon />
-        </IconButton>
+        <Tooltip title="Map" placement="right">
+          <IconButton aria-label="map">
+            <ExploreIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
       <Link to="/notes">
-        <IconButton aria-label="delete">
-          <NoteIcon />
-        </IconButton>
+        <Tooltip title="Notes" placement="right">
+          <IconButton aria-label="notes">
+            <NoteIcon />
+          </IconButton>
+        </Tooltip>
+      </Link>
+      <Link to="/protocols">
+        <Tooltip title="Protocols" placement="right">
+          <IconButton aria-label="protocol">
+            <ReceiptIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
       <Link to="/settings">
-        <IconButton aria-label="delete">
-          <SettingsIcon />
-        </IconButton>
+        <Tooltip title="Settings" placement="right">
+          <IconButton aria-label="settings">
+            <SettingsIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
     </Container>)
   }
