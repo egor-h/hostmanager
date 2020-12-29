@@ -1,20 +1,17 @@
-import { Paper } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import React from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as home  from '../../api/home';
 import { RecentHost } from '../../models/host';
+import { HomeState } from '../../state/reducers/home';
+import ClircleLoading from '../CircleLoading';
 import RecentHostCard from './RecentHostCard';
 import RecentHostList from './RecentHostList';
 
-type Recents = {
-    loading: boolean,
-    data: RecentHost[],
-    error: boolean
-}
 
 type HomePageProps = {
-    recents: Recents;
+    recents: HomeState;
     getRecentHosts: any;
 }
 
@@ -30,24 +27,21 @@ class MainPage extends React.Component<HomePageProps> {
 
     render() {
         if (this.props.recents.loading) {
-            return (<div>Loading..</div>);
+            return (<ClircleLoading></ClircleLoading>);
         }
         if (this.props.recents.error) {
             return (<div>An error occured check console</div>);
         }
         return (<Paper elevation={0}>
-
-            <RecentHostList items={this.props.recents.data}></RecentHostList>
+            <Typography variant="h4" component="h4" style={{flexBasis: '100%'}} >Hello! {this.props.recents.data.hostsTotal} hosts in total!</Typography>
+            <RecentHostList items={this.props.recents.data.recents}></RecentHostList>
         </Paper>)
     }
 }
 
-const mapStateToProps = (state: any) => {
-    console.log("Home state");
-    console.log(state.home.recents);
-    return ({
-    recents: state.home.recents
-})}
+const mapStateToProps = (state: any) => ({
+    recents: state.home
+})
 
 const mapDispatchToProps = (dispatch: any) => ({
     getRecentHosts: bindActionCreators(home.fetchRecents, dispatch)
