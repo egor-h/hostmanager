@@ -3,7 +3,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { connect, Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
-import { combineReducers, createStore, applyMiddleware } from 'redux'
+import { combineReducers, createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import MainView from './components/MainView'
 import * as reducersRaw from './state/reducers'
@@ -13,7 +13,7 @@ mainElement.setAttribute('id', 'root')
 document.body.appendChild(mainElement)
 
 const reducers = combineReducers(reducersRaw)
-const store = createStore(reducers, applyMiddleware(thunk))
+const store = createStore(reducers, compose(applyMiddleware(thunk), window.devToolsExtension ? window.devToolsExtension() : f => f))
 
 // window.addEventListener('DOMContentLoaded', () => {
 //   const titlebar = new Titlebar({
