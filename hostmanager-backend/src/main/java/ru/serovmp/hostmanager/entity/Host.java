@@ -40,14 +40,22 @@ public class Host {
 
     @Getter @Setter
     private Date createdAt;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Setter
+
     private Set<Host> children = new HashSet<>();
 
     @Getter @Setter
     boolean isDir;
+
+    @Getter @Setter
+    @ManyToMany(targetEntity = Tag.class)
+    private Set<Tag> tags;
+
+    @Getter @Setter
+    @ManyToMany(targetEntity = Protocol.class)
+    private Set<Protocol> protocols;
 
     @JsonIgnore
     public Set<Host> getChildren() {

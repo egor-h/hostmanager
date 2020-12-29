@@ -4,6 +4,7 @@ package ru.serovmp.hostmanager.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Getter
@@ -28,5 +29,8 @@ public class Protocol {
     private String name;
     private String executionLine;
     private LaunchType launchType;
+
+    @ManyToMany(targetEntity = Host.class)
+    private List<Host> hosts;
 }
 
