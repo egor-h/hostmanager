@@ -102,24 +102,6 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
     }
 
     render() {
-        console.log(`cur: ${this.props.match.url}`);
-        const selectView = () => {
-            switch (this.props.local.browserMode) {
-                case "table":
-                    return (<TableWrapper selectedDir={this.props.local.selected} wholeTree={this.props.tree.tree} />);
-                    // return (<TestTable />);
-                case "edit":
-                    return (<NewHostWrapper></NewHostWrapper>);
-                    return(<EditHostWrapper hostId={"123"}></EditHostWrapper>);
-                case "new":
-                    return (<NewHostWrapper></NewHostWrapper>);
-                default:
-                    return (<div>default</div>)
-            }
-
-        }
-
-
         return (<div style={{flexDirection: 'row', display: 'flex', height: 'calc(100% - 24px)'}}>
             <div style={{flex: 2, display: 'flex', flexFlow: 'column nowrap'}}>
                 <HostTree ></HostTree>
@@ -136,6 +118,9 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
                     </Route>
                     <Route exact path="/objects/edit/:hostId">
                         <EditHostWrapper></EditHostWrapper>
+                    </Route>
+                    <Route exact path="/objects/info/:hostId">
+                        
                     </Route>
                     <Route exact path="">
                         <Redirect to="/objects/table/33"></Redirect>
