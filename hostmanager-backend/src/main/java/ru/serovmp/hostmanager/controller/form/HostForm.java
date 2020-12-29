@@ -3,6 +3,9 @@ package ru.serovmp.hostmanager.controller.form;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.serovmp.hostmanager.entity.Protocol;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -11,4 +14,6 @@ public class HostForm {
     private String name;
     private String address;
     private boolean dir;
+    private List<String> tags;
+    private List<Long> protocols;
 }
