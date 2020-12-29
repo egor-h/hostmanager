@@ -7,11 +7,14 @@ import ru.serovmp.hostmanager.dto.HostDto;
 import ru.serovmp.hostmanager.dto.HomePageDto;
 import ru.serovmp.hostmanager.dto.RecentHostDto;
 import ru.serovmp.hostmanager.entity.Host;
+import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.repository.HostRepository;
+import ru.serovmp.hostmanager.repository.TagRepository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,10 +22,12 @@ public class HostService {
     private static final long TREE_ROOT_ID = 1;
 
     private HostRepository hostRepository;
+    private TagRepository tagRepository;
 
     @Autowired
-    public HostService(HostRepository hostRepository) {
+    public HostService(HostRepository hostRepository, TagRepository tagRepository) {
         this.hostRepository = hostRepository;
+        this.tagRepository = tagRepository;
     }
 
     public HostDto getTreeFromRoot() {
@@ -54,7 +59,8 @@ public class HostService {
     }
 
     public HostDto update(long id, HostForm changedHost) {
-        return null;
+        var updated = hostRepository.save(formToHost(changedHost));
+        return hostToDto(updated);
     }
 
     public void delete(long id) {
@@ -62,10 +68,16 @@ public class HostService {
     }
 
     Host formToHost(HostForm hostForm) {
+        var tags = hostForm.getTags().stream()
+                .map(tagRepository::findByName)
+                .map(optTag -> optTag.orElseThrow(() -> new RuntimeException("tag not found")))
+                .collect(Collectors.toSet());
         return Host.builder()
                 .name(hostForm.getName())
                 .address(hostForm.getAddress())
                 .isDir(hostForm.isDir())
+                .tags(tags)
+                .protocols(Set.of())
                 .build();
     }
 
@@ -75,6 +87,8 @@ public class HostService {
                 .name(root.getName())
                 .address(root.getAddress())
                 .isDir(root.isDir())
+                .tags(root.getTags())
+                .protocols(root.getProtocols().stream().map(Protocol::getId).collect(Collectors.toSet()))
                 .build();
 
         if (root.getChildren() != null && root.getChildren().size() > 0) {
