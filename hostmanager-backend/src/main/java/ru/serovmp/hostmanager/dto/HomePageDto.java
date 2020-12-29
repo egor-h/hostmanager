@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder    
 public class HomePageDto {
     private long hostsTotal;
     private List<RecentHostDto> recents;
