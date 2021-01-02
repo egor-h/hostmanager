@@ -6,6 +6,7 @@ import ru.serovmp.hostmanager.controller.form.HostForm;
 import ru.serovmp.hostmanager.dto.HostDto;
 import ru.serovmp.hostmanager.dto.HomePageDto;
 import ru.serovmp.hostmanager.dto.RecentHostDto;
+import ru.serovmp.hostmanager.dto.TagDto;
 import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
@@ -14,6 +15,7 @@ import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.TagRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,11 +56,22 @@ public class HostService {
         return hostRepository.findById(parentId).map(this::hostToDto).get();
     }
 
+
     public void move() {
 
     }
-
     public HostDto update(long id, HostForm changedHost) {
+        var foundHost = hostRepository.findById(id).orElseThrow(() -> new HostNotFoundException(String.format("Root element not found (id = %d)", id)));
+        var tags = changedHost.getTags().stream()
+                .map(tagRepository::findByName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+
+        foundHost.setName(changedHost.getName());
+        foundHost.setAddress(changedHost.getAddress());
+        foundHost.setEnabled(foundHost.isEnabled());
+        foundHost.setTags(tags);
         var updated = hostRepository.save(formToHost(changedHost));
         return hostToDto(updated);
     }
@@ -75,6 +88,7 @@ public class HostService {
         return Host.builder()
                 .name(hostForm.getName())
                 .address(hostForm.getAddress())
+                .enabled(hostForm.isEnabled())
                 .isDir(hostForm.isDir())
                 .tags(tags)
                 .protocols(Set.of())
@@ -86,8 +100,10 @@ public class HostService {
                 .id(root.getId())
                 .name(root.getName())
                 .address(root.getAddress())
+                .enabled(root.isEnabled())
+                .createdAt(root.getCreatedAt())
                 .isDir(root.isDir())
-                .tags(root.getTags())
+                .tags(root.getTags().stream().map(tag -> new TagDto(tag.getId(), tag.getName())).collect(Collectors.toSet()))
                 .protocols(root.getProtocols().stream().map(Protocol::getId).collect(Collectors.toSet()))
                 .build();
 
