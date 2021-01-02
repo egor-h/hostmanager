@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.serovmp.hostmanager.entity.Host;
-import ru.serovmp.hostmanager.entity.Protocol;
-import ru.serovmp.hostmanager.entity.Tag;
 
 import java.util.Date;
 import java.util.Set;

@@ -2,7 +2,6 @@ package ru.serovmp.hostmanager.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import ru.serovmp.hostmanager.entity.Protocol;
 
 @AllArgsConstructor
 @NoArgsConstructor
