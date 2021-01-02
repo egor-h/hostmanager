@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Host {
+public class Host implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
     @EqualsAndHashCode.Include
@@ -40,22 +41,41 @@ public class Host {
 
     @Getter @Setter
     private Date createdAt;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Setter
-
     private Set<Host> children = new HashSet<>();
 
     @Getter @Setter
+    @Column(name = "dir")
     boolean isDir;
 
-    @Getter @Setter
-    @ManyToMany(targetEntity = Tag.class)
-    private Set<Tag> tags;
+    @Getter @Setter @Column(name = "enabled")
+    boolean enabled;
 
     @Getter @Setter
-    @ManyToMany(targetEntity = Protocol.class)
-    private Set<Protocol> protocols;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "hosts_tags",
+            joinColumns = { @JoinColumn(name = "host_id") },
+            inverseJoinColumns = { @JoinColumn(name = "tags_id") })
+    private Set<Tag> tags = new HashSet<>();
+
+    @Getter @Setter
+    @ManyToMany(targetEntity = Protocol.class, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "hosts_protocols",
+            joinColumns = { @JoinColumn(name = "host_id") },
+            inverseJoinColumns = { @JoinColumn(name = "protocols_id") })
+    private Set<Protocol> protocols = new HashSet<>();
+
+    @Getter @Setter
+    @ManyToMany(targetEntity = Note.class, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "hosts_notes",
+            joinColumns = { @JoinColumn(name = "host_id") },
+            inverseJoinColumns = { @JoinColumn(name = "note_id") })
+    private Set<Note> notes = new HashSet<>();
 
     @JsonIgnore
     public Set<Host> getChildren() {

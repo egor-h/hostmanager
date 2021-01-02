@@ -4,7 +4,10 @@ package ru.serovmp.hostmanager.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -13,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "protocols")
-public class Protocol {
+public class Protocol implements Serializable {
     public static enum LaunchType {
         JUST_RUN, // Run executable
         VALIDATE_EXITCODE, // check if exitcode equals expected value
@@ -30,7 +33,7 @@ public class Protocol {
     private String executionLine;
     private LaunchType launchType;
 
-    @ManyToMany(targetEntity = Host.class)
-    private List<Host> hosts;
+    @ManyToMany(mappedBy = "protocols", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Host> hosts = new HashSet<>();
 }
 

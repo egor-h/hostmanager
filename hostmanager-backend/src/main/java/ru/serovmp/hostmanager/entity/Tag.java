@@ -4,7 +4,10 @@ import lombok.*;
 import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -13,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "tags")
-public class Tag {
+public class Tag implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
@@ -23,6 +26,6 @@ public class Tag {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(targetEntity = Host.class)
-    private List<Host> hosts;
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Host> hosts = new HashSet<>();
 }
