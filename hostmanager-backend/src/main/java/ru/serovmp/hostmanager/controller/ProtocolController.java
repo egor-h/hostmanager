@@ -8,7 +8,7 @@ import ru.serovmp.hostmanager.dto.ProtocolDto;
 import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.repository.ProtocolRepository;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,16 +38,18 @@ public class ProtocolController {
     public ResponseEntity save(@RequestBody ProtocolForm protocol) {
         var launchType = Protocol.LaunchType.valueOf(protocol.getLaunchType());
         var saved = protocolRepository.save(new Protocol(0, protocol.getName(),
-                protocol.getExecutionLine(), launchType, new LinkedList<>()));
+                protocol.getExecutionLine(), launchType, new HashSet<>()));
         return ResponseEntity.ok(protocolToDto(saved));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") long id, @RequestBody ProtocolForm protocol) {
+        var found = protocolRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Protocol with id %d not found", id)));
         var launchType = Protocol.LaunchType.valueOf(protocol.getLaunchType());
-        var saved = protocolRepository.save(new Protocol(0, protocol.getName(),
-                protocol.getExecutionLine(), launchType, new LinkedList<>()));
-        return ResponseEntity.ok(protocolToDto(saved));
+        found.setName(protocol.getName());
+        found.setExecutionLine(protocol.getExecutionLine());
+        found.setLaunchType(launchType);
+        return ResponseEntity.ok(protocolToDto(protocolRepository.save(found)));
     }
 
     @DeleteMapping("/{id}")

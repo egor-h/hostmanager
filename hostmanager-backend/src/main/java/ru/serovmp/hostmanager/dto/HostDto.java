@@ -9,6 +9,7 @@ import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.entity.Tag;
 
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -19,10 +20,12 @@ public class HostDto {
     private long id;
     private String name;
     private String address;
+    private Date createdAt;
     @JsonProperty("dir")
     private boolean isDir;
+    private boolean enabled;
     @JsonProperty("chld")
     private Set<HostDto> children;
-    private Set<Tag> tags;
+    private Set<TagDto> tags;
     private Set<Long> protocols;
 }

@@ -8,7 +8,7 @@ import ru.serovmp.hostmanager.dto.TagDto;
 import ru.serovmp.hostmanager.entity.Tag;
 import ru.serovmp.hostmanager.repository.TagRepository;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 
 @RequestMapping("/api/v1/tags")
 @RestController
@@ -26,9 +26,16 @@ public class TagController {
         return ResponseEntity.ok(tagRepository.findAll().stream().map(tag -> new TagDto(tag.getId(), tag.getName())));
     }
 
+    @GetMapping("/{id}/hosts")
+    public ResponseEntity hostsWithTag(@PathVariable("id") long id) {
+        return ResponseEntity.ok(tagRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("tag " + id + "not found"))
+                .getHosts());
+    }
+
     @PostMapping
     public ResponseEntity save(@RequestBody TagForm tag) {
-        var saved = tagRepository.save(new Tag(0, tag.getName(), new LinkedList<>()));
+        var saved = tagRepository.save(new Tag(0, tag.getName(), new HashSet<>()));
         return ResponseEntity.ok(saved);
     }
 
