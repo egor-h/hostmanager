@@ -1,3 +1,5 @@
+export const BASE_URL = "http://localhost:8080"
+
 export type GetReqeust = {
     url: string,
     actionBeforeFetch: () => object,
