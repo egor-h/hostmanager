@@ -3,6 +3,8 @@ import { Container, Tooltip } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import HomeIcon from '@material-ui/icons/Home'
 import ComputerIcon from '@material-ui/icons/Computer'
+import SearchIcon from '@material-ui/icons/Search';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import ExploreIcon from '@material-ui/icons/Explore'
 import NoteIcon from '@material-ui/icons/Note'
 import ReceiptIcon from '@material-ui/icons/Receipt';
@@ -26,6 +28,13 @@ export default class MenuColumn extends React.Component {
           </IconButton>
         </Tooltip>
       </Link>
+      <Link to="/search">
+        <Tooltip title="Search" placement="right">
+          <IconButton aria-label="search">
+            <SearchIcon />
+          </IconButton>
+        </Tooltip>
+      </Link>
       <Link to="/map">
         <Tooltip title="Map" placement="right">
           <IconButton aria-label="map">
@@ -44,6 +53,13 @@ export default class MenuColumn extends React.Component {
         <Tooltip title="Protocols" placement="right">
           <IconButton aria-label="protocol">
             <ReceiptIcon />
+          </IconButton>
+        </Tooltip>
+      </Link>
+      <Link to="/tags">
+        <Tooltip title="Tags" placement="right">
+          <IconButton aria-label="tags">
+            <LocalOfferIcon />
           </IconButton>
         </Tooltip>
       </Link>

@@ -5,6 +5,8 @@ import { Route, Switch } from 'react-router-dom';
 import HostsBrowser from './HostsBrowser';
 import MainPage from './MainPage';
 import MenuColumn from './MenuColumn';
+import ProtocolPage from './ProtocolPage';
+import TagPage from './TagPage';
 
 type PropsType = {
     titlebar: Titlebar;
@@ -35,12 +37,24 @@ export default class MainView extends React.Component {
                 <MenuColumn></MenuColumn>
             </div>
             <div style={content}>
-                <Switch>
+            <Switch>
                     <Route path="/objects">
                         <HostsBrowser></HostsBrowser>
                     </Route>
+                    <Route path="/search">
+                        <div>Search</div>
+                    </Route>
                     <Route path="/map">
                         <div>Object graph</div>
+                    </Route>
+                    <Route path="/notes">
+                        <div>Notes</div>
+                    </Route>
+                    <Route path="/protocols">
+                        <ProtocolPage />
+                    </Route>
+                    <Route path="/tags">
+                        <TagPage />
                     </Route>
                     <Route path="/settings">
                         <div>Settings there</div>
