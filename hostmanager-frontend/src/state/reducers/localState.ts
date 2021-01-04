@@ -1,17 +1,23 @@
-import { SET_EXPANDED, SET_SELECTED, SET_BROWSER_MODE } from "../constants"
+import { Host } from "../../models/host"
+import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT } from "../constants"
+
+export type ProtocolResult = {
+    host: Host;
+    stdout: string;
+    stderr: string;
+    exitCode: number;
+}
 
 export type LocalState = {
-    titlebar: undefined;
     expanded: string[];
     selected: string;
-    browserMode: string;
+    protocolResult: null | ProtocolResult;
 }
 
 const initialState = {
-    titlebar: undefined,
     expanded: [],
     selected: "0",
-    browserMode: "table"
+    protocolResult: null
 }
 
 export const local = (state = initialState, action: any) => {
@@ -26,10 +32,10 @@ export const local = (state = initialState, action: any) => {
                 ...state,
                 selected: action.selected
             }
-        case SET_BROWSER_MODE:
+        case SET_PROTOCOL_RESULT:
             return {
                 ...state,
-                browserMode: action.mode
+                protocolResult: action.protocolResult
             }
         default:
             return state;

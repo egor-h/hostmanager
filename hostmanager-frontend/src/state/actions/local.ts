@@ -1,8 +1,9 @@
 import { Titlebar } from 'custom-electron-titlebar';
 import {
     SET_EXPANDED,
-    SET_SELECTED, SET_BROWSER_MODE
+    SET_SELECTED, SET_PROTOCOL_RESULT
 } from '../constants';
+import { ProtocolResult } from '../reducers/localState';
 
 
 export const setExpanded = (expanded: string[]) => ({
@@ -15,12 +16,7 @@ export const setSelected = (selected: string) => ({
     selected: selected
 });
 
-type BrowserModes = "table" | "edit" | "new";
-export const setBrowserMode = (mode: BrowserModes) => ({
-    type: SET_BROWSER_MODE,
-    mode: mode
+export const setProtocolResult = (protocolResult: null | ProtocolResult) => ({
+    type: SET_PROTOCOL_RESULT,
+    protocolResult: protocolResult
 })
-
-export const setBrowserTable = () => setBrowserMode("table")
-export const setBrowserEdit = () => setBrowserMode("edit")
-export const setBrowserNew = () => setBrowserMode("new")

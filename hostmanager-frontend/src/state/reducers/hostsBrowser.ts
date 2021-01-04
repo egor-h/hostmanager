@@ -14,7 +14,7 @@ export type TableState = {
     error: boolean;
 }
 
-const defaultHost: Host = { id: 0, name: '', address: '', dir: false, chld: [] }
+const defaultHost: Host = { id: 0, name: '', address: '', enabled: true, tags: [], protocols:  [], dir: false, chld: [] }
 
 const initialState = {
     tree: {
