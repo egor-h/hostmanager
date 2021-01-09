@@ -1,9 +1,9 @@
 // import { Color, Titlebar } from 'custom-electron-titlebar'
 import React from 'react'
 import { render } from 'react-dom'
-import { connect, Provider } from 'react-redux'
+import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
-import { combineReducers, createStore, applyMiddleware, compose } from 'redux'
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux'
 import thunk from 'redux-thunk'
 import MainView from './components/MainView'
 import * as reducersRaw from './state/reducers'
@@ -32,9 +32,8 @@ const App = () => {
   )
 }
 
-connect((state) => {
-  console.log(state);
-  return state
-})(App);
+// connect((state: AppState) => ({
+//   auth: state.auth
+// }))(App);
 
 render(<App />, mainElement)

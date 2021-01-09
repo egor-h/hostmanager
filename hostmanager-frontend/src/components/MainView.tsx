@@ -15,9 +15,13 @@ import { cleanOldResultsThunk } from '../util/launcher';
 import { connect } from 'react-redux';
 import { setIntervalId } from '../state/actions/local';
 import StatisticPage from './StatisticPage';
+import { AppState } from '../state/reducers';
+import { AuthState } from '../state/reducers/auth';
+import AuthForm from './AuthForm';
 
 type PropsType = {
     local: LocalState;
+    auth: AuthState;
     doCleanupResults: () => void;
     setIntervalId: (id: number) => void
 }
@@ -53,6 +57,9 @@ class MainView extends React.Component<PropsType> {
     }
 
     render() {
+        if (this.props.auth.data === null) {
+            return (<AuthForm></AuthForm>);
+        }
         return (<div style={{display: 'flex'}}>
             <div style={sideNavStyle}>
                 <MenuColumn></MenuColumn>
@@ -92,8 +99,9 @@ class MainView extends React.Component<PropsType> {
     }
 }
 
-const mapStateToProps = (state: {local: LocalState}) => ({
-    local: state.local
+const mapStateToProps = (state: AppState) => ({
+    local: state.local,
+    auth: state.auth
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

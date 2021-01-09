@@ -6,6 +6,7 @@ import { protocols, ProtocolState } from './protocols';
 import { notes, NoteState } from './notes';
 import { search, SearchState } from './search';
 import { stat, StatState } from './stat';
+import { auth, AuthState } from './auth';
 
 export type AppState = {
     local: LocalState;
@@ -16,6 +17,7 @@ export type AppState = {
     hostsBrowser: HostsBrowserState;
     search: SearchState;
     stat: StatState;
+    auth: AuthState;
 }
 
 export {
@@ -26,5 +28,6 @@ export {
     notes,
     search,
     stat,
+    auth,
     hostsBrowser
 }

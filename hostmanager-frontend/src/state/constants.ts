@@ -39,3 +39,9 @@ export const SEARCH_FAILED = "SEARCH_FAILED";
 export const STAT = "STAT";
 export const STAT_SUCCEDED = "STAT_SUCCEDED";
 export const STAT_FAILED = "STAT_FAILED";
+
+// auth
+export const AUTH = "AUTH";
+export const AUTH_SUCCEDED = "AUTH_SUCCEDED";
+export const AUTH_FAILED = "AUTH_FAILED";
+export const AUTH_NULL = "AUTH_NULL";

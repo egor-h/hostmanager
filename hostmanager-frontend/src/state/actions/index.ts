@@ -6,6 +6,7 @@ import * as protocols from './protocols';
 import * as notes from './notes';
 import * as search from './search';
 import * as stat from './stat';
+import * as auth from './auth';
 
 export {
     local,
@@ -15,5 +16,6 @@ export {
     notes,
     search,
     stat,
+    auth,
     hostsBrowser
 }

@@ -1,12 +1,13 @@
 import { BASE_URL, getRequest } from './common';
 import { search } from '../state/actions'
-const API_TAGS = `${BASE_URL}/api/v1/search`;
+import { get } from './basicCrud';
+import { BriefSearchResult } from '../models/search';
 
-export const briefSearch = (query: string) => {
-    return getRequest({
-        url: `${API_TAGS}/brief/${query}`,
-        actionBeforeFetch: search.search,
-        actionOnSuccess: search.searchSucceeded,
-        actionOnError: search.searchFailed
-    });
-}
+const API_TAGS = '/api/v1/search/brief';
+
+export const briefSearch = (query: string) => get<BriefSearchResult>({
+    url: `${API_TAGS}/${query}`,
+    actionBeforeFetch: search.search,
+    actionOnSuccess: search.searchSucceeded,
+    actionOnError: search.searchFailed
+})

@@ -1,52 +1,32 @@
 import { Protocol } from '../models/host';
 import { protocols } from '../state/actions';
-import { BASE_URL, getRequest } from './common';
+import { doDelete, get, post, put } from './basicCrud';
 
-const API_PROTOS = `${BASE_URL}/api/v1/protocols`;
+const API_PROTOS = '/api/v1/protocols';
 
-export const fetchProtos = () => {
-    return getRequest({
-        url: API_PROTOS,
-        actionBeforeFetch: protocols.protocols,
-        actionOnSuccess: protocols.protocolsSucceded,
-        actionOnError: protocols.protocolsFailed
-    });
-}
+export const fetchProtos = () => get<Protocol[]>({
+    url: API_PROTOS,
+    actionBeforeFetch: protocols.protocols,
+    actionOnSuccess: protocols.protocolsSucceded,
+    actionOnError: protocols.protocolsFailed
+});
 
-export const createProto = (protocol: Omit<Protocol, "id">) => {
-    return (dispatch: any) => {
-        fetch(API_PROTOS, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(protocol)
-        }).then(res => {
-            console.log(res);
-            dispatch(fetchProtos());
-        }).catch(error => console.error(error));
-    }
-}
+export const createProto = (protocol: Omit<Protocol, "id">) => post<Omit<Protocol, "id">>({
+    url: API_PROTOS,
+    data: protocol,
+    onSuccess: (dispatch) => dispatch(fetchProtos()),
+    onError: (dispatch) => {}
+});
 
-export const saveProto = (protoId: number, protocol: Omit<Protocol, "id">) => {
-    return (dispatch: any) => {
-        fetch(`${API_PROTOS}/${protoId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(protocol)
-        }).then(res => {
-            console.log(res);
-            dispatch(fetchProtos());
-        }).catch(error => console.error(error));
-    }
-}
+export const saveProto = (protoId: number, protocol: Omit<Protocol, "id">) => put<Omit<Protocol, "id">>({
+    url: `${API_PROTOS}/${protoId}`,
+    data: protocol,
+    onSuccess: (dispatch) => dispatch(fetchProtos()),
+    onError: (dispatch) => {}
+});
 
-export const deleteProto = (protocolId: number) => {
-    return (dispatch: any) => {
-        fetch(`${API_PROTOS}/${protocolId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        }).then(res => {
-            console.log(res);
-            dispatch(fetchProtos());
-        }).catch(error => console.error(error));
-    }
-}
+export const deleteProto = (protocolId: number) => doDelete({
+    url: `${API_PROTOS}/${protocolId}`,
+    onSuccess: (dispatch) => dispatch(fetchProtos()),
+    onError: (dispatch) => {}
+});
