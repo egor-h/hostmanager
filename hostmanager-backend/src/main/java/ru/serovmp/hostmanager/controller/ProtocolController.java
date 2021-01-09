@@ -23,7 +23,7 @@ public class ProtocolController {
     }
 
     public static ProtocolDto protocolToDto(Protocol protocol) {
-        return new ProtocolDto(protocol.getId(), protocol.getName(), protocol.getExecutionLine(), protocol.getLaunchType().name());
+        return new ProtocolDto(protocol.getId(), protocol.getName(), protocol.getExecutionLine(), protocol.getLaunchType().name(), protocol.getValidationRegex(), protocol.getExpectedExitCode());
     }
 
     @GetMapping
@@ -38,7 +38,7 @@ public class ProtocolController {
     public ResponseEntity save(@RequestBody ProtocolForm protocol) {
         var launchType = Protocol.LaunchType.valueOf(protocol.getLaunchType());
         var saved = protocolRepository.save(new Protocol(0, protocol.getName(),
-                protocol.getExecutionLine(), launchType, new HashSet<>()));
+                protocol.getExecutionLine(), launchType, protocol.getValidationRegex(), protocol.getExpectedExitCode(), new HashSet<>()));
         return ResponseEntity.ok(protocolToDto(saved));
     }
 
@@ -49,11 +49,19 @@ public class ProtocolController {
         found.setName(protocol.getName());
         found.setExecutionLine(protocol.getExecutionLine());
         found.setLaunchType(launchType);
+        found.setValidationRegex(protocol.getValidationRegex());
+        found.setExpectedExitCode(protocol.getExpectedExitCode());
         return ResponseEntity.ok(protocolToDto(protocolRepository.save(found)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
+        var found = protocolRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Protocol %d not found", id)));
+        found.getHosts().stream().forEach(host -> {
+            if (host.getProtocols().contains(found)) {
+                host.getProtocols().remove(found);
+            }
+        });
         protocolRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

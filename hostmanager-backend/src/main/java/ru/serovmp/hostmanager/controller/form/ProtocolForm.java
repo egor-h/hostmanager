@@ -12,4 +12,6 @@ public class ProtocolForm {
     private String name;
     private String executionLine;
     private String launchType;
+    private String validationRegex;
+    private long expectedExitCode;
 }

@@ -32,7 +32,8 @@ public class Protocol implements Serializable {
     private String name;
     private String executionLine;
     private LaunchType launchType;
-
+    private String validationRegex;
+    private long expectedExitCode;
     @ManyToMany(mappedBy = "protocols", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Host> hosts = new HashSet<>();
 }
