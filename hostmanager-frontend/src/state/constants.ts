@@ -2,6 +2,8 @@
 export const SET_EXPANDED = "SET_EXPANDED";
 export const SET_SELECTED = "SET_SELECTED";
 export const SET_PROTOCOL_RESULT = "SET_PROTOCOL_RESULT";
+export const SET_INTERVAL_ID = "SET_INTERVAL_ID";
+export const SET_BREADCRUMB = "SET_BREADCRUMB";
 
 // Recent actions get
 export const HOMEPAGE = "HOMEPAGE";
@@ -22,3 +24,18 @@ export const TAGS_FAILED = "TAGS_FAILED";
 export const PROTOCOLS = "PROTOCOLS";
 export const PROTOCOLS_SUCCEDED = "PROTOCOLS_SUCCEDED";
 export const PROTOCOLS_FAILED = "PROTOCOLS_FAILED;"
+
+// notes
+export const NOTES = "NOTES";
+export const NOTES_SUCCEDED = "NOTES_SUCCEDED";
+export const NOTES_FAILED = "NOTES_FAILED";
+
+// search
+export const SEARCH = "SEARCH";
+export const SEARCH_SUCCEDED = "SEARCH_SUCCEDED";
+export const SEARCH_FAILED = "SEARCH_FAILED";
+
+// stat
+export const STAT = "STAT";
+export const STAT_SUCCEDED = "STAT_SUCCEDED";
+export const STAT_FAILED = "STAT_FAILED";

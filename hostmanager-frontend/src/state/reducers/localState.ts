@@ -1,8 +1,10 @@
-import { Host } from "../../models/host"
-import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT } from "../constants"
+import { Host, Protocol } from "../../models/host"
+import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB } from "../constants"
 
 export type ProtocolResult = {
-    host: Host;
+    hostId: number;
+    createdAt: number; // unix timestamp
+    protocol: Protocol;
     stdout: string;
     stderr: string;
     exitCode: number;
@@ -11,13 +13,17 @@ export type ProtocolResult = {
 export type LocalState = {
     expanded: string[];
     selected: string;
-    protocolResult: null | ProtocolResult;
+    intervalId: number;
+    protocolResults: ProtocolResult[];
+    breadcrumb: {id: number, view: "info" | "edit" | "table"}
 }
 
 const initialState = {
     expanded: [],
     selected: "0",
-    protocolResult: null
+    intervalId: 0,
+    protocolResults: [],
+    breadcrumb: {id: 0, view: "table"}
 }
 
 export const local = (state = initialState, action: any) => {
@@ -35,7 +41,17 @@ export const local = (state = initialState, action: any) => {
         case SET_PROTOCOL_RESULT:
             return {
                 ...state,
-                protocolResult: action.protocolResult
+                protocolResults: action.protocolResults
+            }
+        case SET_INTERVAL_ID:
+            return {
+                ...state,
+                intervalId: action.intervalId
+            }
+        case SET_BREADCRUMB:
+            return {
+                ...state,
+                breadcrumb: action.breadcrumb
             }
         default:
             return state;
