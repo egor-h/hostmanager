@@ -32,7 +32,7 @@ export default () => {
     }
 
     return (<ProtocolForm 
-        title={`Edit host: ${foundProto[0].name}`} 
+        title={`Edit protocol: ${foundProto[0].name}`} 
         showDeleteButton={true} 
         protocol={foundProto[0]} 
         onSubmit={onSubmitTag}

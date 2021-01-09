@@ -164,7 +164,7 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
                     style={{ width: 300 }}
                     value={this.state.launchType}
                     onInputChange={this.handleLaunchTypeChange}
-                    renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+                    renderInput={(params) => <TextField {...params} label="Protocol launch type" variant="outlined" />}
                 />
                 <Button style={{ margin: '10px' }} type="submit" variant="contained">Save</Button>
                 {this.props.showDeleteButton ? <Button style={{ margin: '10px' }} color="secondary" variant="contained" onClick={this.handleDeleteButton}>Delete</Button> : ''}
