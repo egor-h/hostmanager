@@ -81,23 +81,4 @@ export default class MenuColumn extends React.Component {
     </Container>)
   }
 
-  // render() {
-  //     return (<Grid>
-  //         <Grid xs={1} >
-  //             <IconButton aria-label="delete">
-  //                 <DeleteIcon />
-  //             </IconButton>
-  //         </Grid>
-  //         <Grid xs={1} >
-  //             <IconButton aria-label="delete">
-  //                 <DeleteIcon />
-  //             </IconButton>
-  //         </Grid>
-  //         <Grid xs={1} >
-  //             <IconButton aria-label="delete">
-  //                 <DeleteIcon />
-  //             </IconButton>
-  //         </Grid>
-  //     </Grid>)
-  // }
 }
