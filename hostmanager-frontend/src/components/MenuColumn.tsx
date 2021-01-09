@@ -8,6 +8,7 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import ExploreIcon from '@material-ui/icons/Explore'
 import NoteIcon from '@material-ui/icons/Note'
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import BarChartIcon from '@material-ui/icons/BarChart';
 import SettingsIcon from '@material-ui/icons/Settings'
 import { Link } from 'react-router-dom'
 
@@ -60,6 +61,13 @@ export default class MenuColumn extends React.Component {
         <Tooltip title="Tags" placement="right">
           <IconButton aria-label="tags">
             <LocalOfferIcon />
+          </IconButton>
+        </Tooltip>
+      </Link>
+      <Link to="/stats">
+        <Tooltip title="Statistics" placement="right">
+          <IconButton aria-label="stats">
+            <BarChartIcon />
           </IconButton>
         </Tooltip>
       </Link>
