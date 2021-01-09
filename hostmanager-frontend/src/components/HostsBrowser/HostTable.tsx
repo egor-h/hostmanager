@@ -1,3 +1,4 @@
+import { TextField } from '@material-ui/core';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 import Divider from '@material-ui/core/Divider';
@@ -17,16 +18,23 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SearchIcon from '@material-ui/icons/Search';
+import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import clsx from 'clsx';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { Host } from '../../models/host';
+import PopupDialog from '../PopupDialog';
+import PopupField from '../PopupField';
 
 type HostTableEntity = {
   id: number;
   name: string;
   address: string;
+  enabled: boolean;
   dir: boolean;
 }
 
@@ -92,7 +100,7 @@ interface HeadCell {
 const headCells: HeadCell[] = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'address', numeric: true, disablePadding: false, label: 'Address' },
-  { id: 'protocols', numeric: true, disablePadding: false, label: 'Protocols' }
+  // { id: 'protocols', numeric: true, disablePadding: false, label: 'Protocols' }
 ];
 
 interface EnhancedTableProps {
@@ -173,11 +181,30 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  tableTitle: string
+  onSearchClicked: () => void;
+  showResetSearchButton: boolean;
+  onResetSearchButton: () => void;
+  onAddClicked: () => void;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
+
+  const SearchButton = () => {
+    return (props.showResetSearchButton) ? 
+      (<Tooltip title="Find in list">
+        <IconButton onClick={() => props.onSearchClicked()} aria-label="find in list">
+          <ClearIcon />
+        </IconButton>
+      </Tooltip>)
+    : (<Tooltip title="Reset search">
+          <IconButton onClick={() => props.onResetSearchButton()} aria-label="reset search">
+            <SearchIcon />
+          </IconButton>
+        </Tooltip>)
+  }
 
   return (
     <Toolbar
@@ -191,7 +218,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Typography>
       ) : (
           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-            Hosts
+            {props.tableTitle}
           </Typography>
         )}
       {numSelected > 0 ? (
@@ -208,11 +235,31 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </Tooltip>
         </ButtonGroup>
       ) : (
+        <ButtonGroup>
           <Tooltip title="Filter list">
             <IconButton aria-label="filter list">
               <FilterListIcon />
             </IconButton>
           </Tooltip>
+          <Tooltip title="Add new object here">
+            <IconButton onClick={() => props.onAddClicked()} aria-label="filter list">
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+          {
+            (props.showResetSearchButton) ? 
+            (<Tooltip title="Reset search">
+              <IconButton onClick={() => {props.onResetSearchButton()}} aria-label="find in list">
+                <ClearIcon />
+              </IconButton>
+            </Tooltip>)
+          : (<Tooltip title="Find in list">
+                <IconButton onClick={() => {props.onSearchClicked()}} aria-label="reset search">
+                  <SearchIcon />
+                </IconButton>
+              </Tooltip>)
+          }
+        </ButtonGroup>
         )}
     </Toolbar>
   );
@@ -254,9 +301,16 @@ const useStyles = makeStyles((theme: Theme) =>
 const initialState = {
   mouseX: null,
   mouseY: null,
+  selectedItem: null
 };
 
-export default function EnhancedTable(props: { data: Host[], onRowClicked: any }) {
+export default function EnhancedTable(props: { 
+  data: Host[], 
+  onRowClicked: any, 
+  tableTitle: string, 
+  parentId: number, 
+  onEntryDelete: (row: HostTableEntity) => void
+}) {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof HostTableEntity>('name');
@@ -265,18 +319,29 @@ export default function EnhancedTable(props: { data: Host[], onRowClicked: any }
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
+  const [searchPopupState, setSearchPopupState] = React.useState<boolean>(false);
+
+  let history = useHistory();
+
   let { data, onRowClicked } = props;
 
   const [state, setState] = React.useState<{
     mouseX: null | number;
     mouseY: null | number;
+    selectedItem: null | HostTableEntity;
   }>(initialState);
 
-  const handleClickMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+  const [deletePopupState, setDeletePopupState] = React.useState<
+    {showDelete: boolean, target: HostTableEntity | null}>({showDelete: false, target: null});
+
+  const handleClickMenu = (event: React.MouseEvent<HTMLDivElement>, row: HostTableEntity) => {
     event.preventDefault();
+    console.log(row);
     setState({
       mouseX: event.clientX - 2,
       mouseY: event.clientY - 4,
+      selectedItem: row
     });
   };
 
@@ -326,8 +391,14 @@ export default function EnhancedTable(props: { data: Host[], onRowClicked: any }
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar 
+          onSearchClicked={() => {setSearchPopupState(true)}}
+          onAddClicked={() => {history.push(`/objects/new/${props.parentId}`)}}
+          onResetSearchButton={() => {setSearchQuery('')}}
+          showResetSearchButton={searchQuery !== ''}
+          tableTitle={searchQuery !== '' ? ('Search: ' + searchQuery) : 'Hosts'} 
+          numSelected={selected.length} 
+        />  
         <TableContainer >
           <Table
             // stickyHeader
@@ -348,16 +419,18 @@ export default function EnhancedTable(props: { data: Host[], onRowClicked: any }
             <TableBody >
               {stableSort(data as HostTableEntity[], getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .filter(h => (searchQuery === '' || h.name.toLowerCase().includes(searchQuery.toLowerCase())))
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   const clickHandler = (e: any) => {onRowClicked(row)};
 
+                  const color = row.enabled ? {} : {color: '#C0C0BC'} 
                   return (
                     <TableRow 
                       style={{ width: "10%", height: "20px", padding: "0px" }}
                       hover
-                      onContextMenu={handleClickMenu}
+                      onContextMenu={(e) => handleClickMenu(e, row)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -373,16 +446,16 @@ export default function EnhancedTable(props: { data: Host[], onRowClicked: any }
                         />
                       </TableCell>
                       <TableCell onClick={clickHandler} 
-                        style={{ height: "20px", width: '50%' }}
+                        style={{ height: "20px", width: '50%', ...color }}
                         component="th" id={labelId} scope="row" padding="none">
                         {row.name}
                       </TableCell>
                       <TableCell onClick={clickHandler} 
-                      style={{ height: "20px", width: '20%' }} 
+                      style={{ height: "20px", width: '20%', ...color  }} 
                       align="left">{row.address ? row.address : " "}</TableCell>
-                      <TableCell onClick={clickHandler} 
-                      style={{ height: "20px", width: '10%' }} 
-                      align="right">{row.dir ? " " : "rms"}</TableCell>
+                      {/* <TableCell onClick={clickHandler} 
+                      style={{ height: "20px", width: '10%', ...color  }} 
+                      align="right">{row.dir ? " " : "rms"}</TableCell> */}
                     </TableRow>
                   );
                 })}
@@ -401,12 +474,42 @@ export default function EnhancedTable(props: { data: Host[], onRowClicked: any }
               : undefined
           }
         >
-          <MenuItem onClick={handleClose}>Edit</MenuItem>
-          <MenuItem onClick={handleClose}>New item</MenuItem>
-          <MenuItem onClick={handleClose}>Delete</MenuItem>
+          <MenuItem onClick={() => {
+            handleClose();
+            history.push(`/objects/edit/${state.selectedItem?.id}`);
+          }}>Edit</MenuItem>
+          {state.selectedItem?.dir ? <MenuItem onClick={() => {
+            handleClose();
+            history.push(`/objects/new/${state.selectedItem?.id}`);
+          }}>New item</MenuItem> : <div></div>}
+          <MenuItem onClick={() => {
+            handleClose();
+            setDeletePopupState({showDelete: true, target: state.selectedItem})
+          }}>Delete</MenuItem>
           <Divider />
           <MenuItem onClick={handleClose}>?</MenuItem>
         </Menu>
+        <PopupDialog 
+          open={deletePopupState.showDelete}
+          title={`Delete item`}
+          body={`Delete ${deletePopupState.target?.name}`}
+          onYes={() => {
+            if (deletePopupState.target) {
+              props.onEntryDelete(deletePopupState.target)
+            }
+            setDeletePopupState({showDelete: false, target: null});
+          }}
+          onNo={() => {
+            setDeletePopupState({showDelete: false, target: null});
+          }}
+          />
+        <PopupField 
+          open={searchPopupState}
+          title={'Find'}
+          body={''}
+          onYes={(query: string) => {setSearchQuery(query), setSearchPopupState(false)}}
+          onNo={() => {setSearchPopupState(false)}}
+        />
       </Paper>
     </div>
   );
