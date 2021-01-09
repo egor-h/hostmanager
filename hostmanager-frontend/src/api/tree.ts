@@ -20,8 +20,10 @@ export const createObject = (parentId: number, hostData: HostFormData) => {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ ...hostData })
-        }).then(res => console.log(res))
-            .catch(error => console.error(error));
+        }).then(res => {
+            console.log(res);
+            dispatch(fetchTree())
+        }).catch(error => console.error(error));
     }
 }
 
@@ -31,8 +33,10 @@ export const saveObject = (objectId: number, hostData: HostFormData) => {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(hostData)
-        }).then(res => console.log(res))
-            .catch(error => console.error(error));
+        }).then(res => {
+            console.log(res);
+            dispatch(fetchTree())
+        }).catch(error => console.error(error));
     }
 }
 
@@ -40,7 +44,9 @@ export const deleteObject = (objectId: number) => {
     return (dispatch: any) => {
         fetch(`${API_TREE}/${objectId}`, {
             method: 'DELETE'
-        }).then(res => console.log(res))
-            .catch(error => console.error(error));
+        }).then(res => {
+            console.log(res);
+            dispatch(fetchTree())
+        }).catch(error => console.error(error));
     }
 }

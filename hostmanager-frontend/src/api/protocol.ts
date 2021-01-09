@@ -1,4 +1,4 @@
-import { Protocol, Tag } from '../models/host';
+import { Protocol } from '../models/host';
 import { protocols } from '../state/actions';
 import { BASE_URL, getRequest } from './common';
 

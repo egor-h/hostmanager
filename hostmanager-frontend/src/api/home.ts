@@ -1,7 +1,7 @@
 import { home } from '../state/actions';
-import { getRequest } from './common';
+import { BASE_URL, getRequest } from './common';
 
-const API_RECENTS = "http://localhost:8080/api/v1/welcome";
+const API_RECENTS = `${BASE_URL}/api/v1/welcome`;
 
 export const fetchRecents = () => {
     return getRequest({
