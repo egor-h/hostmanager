@@ -3,6 +3,13 @@ import React from "react";
 import { useParams } from 'react-router-dom';
 import HostDirForm from "./HostDirForm";
 import HostForm from './HostForm';
+import { TreeState } from '../../state/reducers/hostsBrowser';
+import { ProtocolState } from '../../state/reducers/protocols';
+import { TagState } from '../../state/reducers/tags';
+import { useDispatch, useSelector } from 'react-redux';
+import { findHostById } from "../../util/tree";
+import { Host } from "../../models/host";
+import { createObject } from "../../api/tree";
 
 type ParamTypes = {
     parentId: string;
@@ -11,29 +18,54 @@ type ParamTypes = {
 
 export default (): any => {
     let { parentId } = useParams<ParamTypes>();
-    return (<Box display="flex" flexWrap="wrap" style={{ padding: '20px' }}>
-        <FormControl component="fieldset">
-            <FormGroup aria-label="position" row>
-                <FormControlLabel
-                    value="top"
-                    control={<Switch color="primary" />}
-                    label="Directory"
-                    labelPlacement="start"
-                />
-            </FormGroup>
-        </FormControl>
+    let dispatch = useDispatch();
+    let tree = useSelector((state: {hostsBrowser: {tree: TreeState}}) => state.hostsBrowser.tree)
+    let tags = useSelector((state: {tags: TagState}) => state.tags);
+    let protocols = useSelector((state: {protocols: ProtocolState}) => state.protocols);
+
+    let [isDir, setDir] = React.useState<boolean>(false);
+
+    let parentObject = findHostById(tree.tree, +parentId)
+
+    const saveEntity = (parentId:number, host: Host) => {
+        dispatch(createObject(parentId, {
+            name: host.name, 
+            address: host.address,
+            enabled: host.enabled,
+            dir: host.dir,
+            tags: host.tags.map(t => t.name),
+            protocols: host.protocols
+        }))
+    }
+
+    return (<Box display="flex" alignItems="stretch" maxWidth="" flexWrap="wrap">
+        <div style={{display: 'flex'}}>
+            <FormControl component="fieldset">
+                <FormGroup aria-label="position" row>
+                    <FormControlLabel
+                        value="top"
+                        control={<Switch checked={isDir} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setDir(e.target.checked)}} color="primary" />}
+                        label="Directory"
+                        labelPlacement="start"
+                    />
+                </FormGroup>
+            </FormControl>
+        </div>
+        <div style={{display: 'flex'}}>
         {
-            true ? (<HostForm hostState={{
-                name: {
-                    value: '',
-                    onChange: ((e: any) => {})
-                },
-                address: {
-                    value: '',
-                    onChange: ((e: any) => {})
-                }
-            }} title={"NewHost"} id={parentId} />) 
-            : (<HostDirForm title={"NewDir"} id={parentId}></HostDirForm>)
+            isDir ? 
+            (<HostDirForm 
+                title={`Create new dir in ${parentObject?.name}`}
+                host={{id: -1, parentId: -2, address: '  ', chld: [], dir: true, enabled: true, name: '', protocols: [], tags: []}}
+                tags={tags.data}
+                onSubmit={(host: Host) => {saveEntity(+parentId, host)}} />)
+            : (<HostForm 
+                title={`Create new host in ${parentObject?.name}`} 
+                tags={tags.data} 
+                protocols={protocols.data} 
+                host={{id: -1, parentId: -2, address: '', chld: [], dir: false, enabled: true, name: '', protocols: [], tags: []}} 
+                onSubmit={(host: Host) => {saveEntity(+parentId, host)}} />) 
         }
+        </div>
     </Box>);
 }
