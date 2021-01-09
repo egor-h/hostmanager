@@ -12,8 +12,10 @@ import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.repository.HostRepository;
+import ru.serovmp.hostmanager.repository.ProtocolRepository;
 import ru.serovmp.hostmanager.repository.TagRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,11 +27,13 @@ public class HostService {
 
     private HostRepository hostRepository;
     private TagRepository tagRepository;
+    private ProtocolRepository protocolRepository;
 
     @Autowired
-    public HostService(HostRepository hostRepository, TagRepository tagRepository) {
+    public HostService(HostRepository hostRepository, TagRepository tagRepository, ProtocolRepository protocolRepository) {
         this.hostRepository = hostRepository;
         this.tagRepository = tagRepository;
+        this.protocolRepository = protocolRepository;
     }
 
     public HostDto getTreeFromRoot() {
@@ -68,15 +72,27 @@ public class HostService {
                 .map(Optional::get)
                 .collect(Collectors.toSet());
 
+        var protocols = changedHost.getProtocols().stream()
+                .map(protocolRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+
         foundHost.setName(changedHost.getName());
         foundHost.setAddress(changedHost.getAddress());
         foundHost.setEnabled(foundHost.isEnabled());
         foundHost.setTags(tags);
-        var updated = hostRepository.save(formToHost(changedHost));
+        foundHost.setProtocols(protocols);
+        var updated = hostRepository.save(foundHost);
         return hostToDto(updated);
     }
 
     public void delete(long id) {
+        var found = hostRepository.findById(id).orElseThrow(() -> new HostNotFoundException(String.format("Root element not found (id = %d)", id)));
+        found.getProtocols().remove(found);
+        found.getTags().remove(found);
+        found.getNotes().remove(found);
+        hostRepository.save(found);
         hostRepository.deleteById(id);
     }
 
@@ -85,19 +101,25 @@ public class HostService {
                 .map(tagRepository::findByName)
                 .map(optTag -> optTag.orElseThrow(() -> new RuntimeException("tag not found")))
                 .collect(Collectors.toSet());
+        var protocols = hostForm.getProtocols().stream()
+                .map(protocolRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
         return Host.builder()
                 .name(hostForm.getName())
                 .address(hostForm.getAddress())
                 .enabled(hostForm.isEnabled())
                 .isDir(hostForm.isDir())
                 .tags(tags)
-                .protocols(Set.of())
+                .protocols(protocols)
                 .build();
     }
 
     HostDto hostToDto(Host root) {
         var dto = HostDto.builder()
                 .id(root.getId())
+                .parentId(root.getParent().getId())
                 .name(root.getName())
                 .address(root.getAddress())
                 .enabled(root.isEnabled())
@@ -111,6 +133,8 @@ public class HostService {
             dto.setChildren(root.getChildren().stream()
                     .map(this::hostToDto)
                     .collect(Collectors.toSet()));
+        } else {
+            dto.setChildren(new HashSet<>());
         }
 
         return dto;

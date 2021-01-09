@@ -15,6 +15,7 @@ import java.util.Set;
 @Builder
 public class HostDto {
     private long id;
+    private long parentId;
     private String name;
     private String address;
     private Date createdAt;
