@@ -12,6 +12,7 @@ import { TreeState } from '../../state/reducers/hostsBrowser';
 import { scrollbar } from './styles';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import ClircleLoading from '../CircleLoading';
+import { difference2 } from '../../util/set';
 
 const styles = {
   root: {
@@ -49,7 +50,11 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
 
 
   setExpanded(event: React.ChangeEvent<{}>, nodeIds: string[]) {
-    this.props.setExpanded(nodeIds);
+    // workaround to make tree expand on double clicks (first click sets selected prop)
+    let dif = difference2(new Set(nodeIds), new Set(this.props.expanded));
+    if ([...dif].includes(this.props.selected)) {
+      this.props.setExpanded(nodeIds);
+    } 
   }
 
   setSelected(event: React.ChangeEvent<{}>, nodeIds: string) {
@@ -65,7 +70,6 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
     const returnTree = (treeState: TreeState):any=> {
       if (treeState.loading) {
         console.log('Loading..')
-        // return <TreeItem key="1" nodeId="1" label="Loading.." />
         return <ClircleLoading></ClircleLoading>
       } else if (treeState.error) {
         console.log('error')
