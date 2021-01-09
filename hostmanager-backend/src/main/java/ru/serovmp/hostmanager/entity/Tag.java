@@ -26,6 +26,6 @@ public class Tag implements Serializable {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private Set<Host> hosts = new HashSet<>();
 }

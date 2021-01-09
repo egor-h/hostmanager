@@ -36,18 +36,27 @@ public class TagController {
     @PostMapping
     public ResponseEntity save(@RequestBody TagForm tag) {
         var saved = tagRepository.save(new Tag(0, tag.getName(), new HashSet<>()));
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(new TagDto(saved.getId(), saved.getName()));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") long id, @RequestBody TagForm tag) {
         var found = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("tag not found"));
         var updated = tagRepository.save(new Tag(id, tag.getName(), found.getHosts()));
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
+        var found = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("tag not found"));
+        // remove just associations
+        found.getHosts().stream().forEach((host) -> {
+            if (host.getTags().contains(found)) {
+                host.getTags().remove(found);
+            }
+        });
+        tagRepository.save(found);
+        // then remove only tag entity
         tagRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
