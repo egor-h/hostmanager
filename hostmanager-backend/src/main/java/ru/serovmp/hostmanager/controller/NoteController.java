@@ -1,11 +1,16 @@
+
 package ru.serovmp.hostmanager.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.controller.form.NoteForm;
 import ru.serovmp.hostmanager.dto.BriefNoteDto;
+import ru.serovmp.hostmanager.dto.HostDto;
 import ru.serovmp.hostmanager.dto.WholeNoteDto;
+import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Note;
+import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.NoteRepository;
 
 import java.util.Date;
@@ -17,25 +22,30 @@ import java.util.stream.Collectors;
 public class NoteController {
 
     private NoteRepository noteRepository;
+    private HostRepository hostRepository;
 
-    public NoteController(NoteRepository noteRepository) {
+    @Autowired
+    public NoteController(NoteRepository noteRepository, HostRepository hostRepository) {
         this.noteRepository = noteRepository;
+        this.hostRepository = hostRepository;
     }
 
     public Note formToNote(NoteForm noteForm) {
         var doneAt = noteForm.isDone() ? new Date() : null;
+        var hosts = hostRepository.findAllById(noteForm.getHosts());
         return Note.builder()
                 .title(noteForm.getTitle())
                 .text(noteForm.getText())
                 .done(noteForm.isDone())
                 .createdAt(new Date())
                 .doneAt(doneAt)
-                .hosts(new HashSet<>())
+                .hosts(new HashSet<>(hosts))
                 .build();
     }
 
     public BriefNoteDto noteToBrief(Note note) {
         return new BriefNoteDto(note.getId(), note.getTitle(), note.getCreatedAt(), note.isDone());
+
     }
 
     public WholeNoteDto noteToWhole(Note note) {
@@ -46,12 +56,18 @@ public class NoteController {
                 .createdAt(note.getCreatedAt())
                 .done(note.isDone())
                 .doneAt(note.getDoneAt())
+                .hosts(note.getHosts().stream().map(Host::getId).collect(Collectors.toSet()))
                 .build();
     }
 
     @GetMapping
     public ResponseEntity notes() {
         return ResponseEntity.ok(noteRepository.findAll().stream().map(this::noteToBrief).collect(Collectors.toSet()));
+    }
+
+    @GetMapping("/hosts")
+    public ResponseEntity hostListForNote() {
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
@@ -78,7 +94,14 @@ public class NoteController {
     }
 
     @DeleteMapping("/{id}")
+
     public ResponseEntity delete(@PathVariable("id") long id) {
+        var found = noteRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Note %d not found", id)));
+        found.getHosts().stream().forEach(host -> {
+            if (host.getProtocols().contains(found)) {
+                host.getProtocols().remove(found);
+            }
+        });
         noteRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

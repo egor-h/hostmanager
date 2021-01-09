@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +20,5 @@ public class WholeNoteDto {
     private Date createdAt;
     //    private User createdBy;
     private Date doneAt;
+    private Set<Long> hosts;
 }
