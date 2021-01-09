@@ -46,13 +46,6 @@ type BreadCrumbProps = {
 const HostBreadCrumb = (props: BreadCrumbProps) => {
     return (<Breadcrumbs aria-label="breadcrumb">
         {props.links.map(link => (<MaterialLink key={link.title} component={Link} to={link.url} onClick={() => props.setSelected(link.id+'')} color="inherit" >{link.title}</MaterialLink>))}
-        {/* <MaterialLink color="inherit"  onClick={() => {}}>
-      Material-UI
-    </MaterialLink>
-    <MaterialLink color="inherit"  onClick={() => {}}>
-      Core
-    </MaterialLink>
-    <Typography color="textPrimary">Breadcrumb</Typography> */}
     </Breadcrumbs>)
 }
 
