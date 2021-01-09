@@ -1,5 +1,6 @@
 export interface Host {
     id: number,
+    parentId: number,
     name: string,
     address: string,
     enabled: boolean,
@@ -18,6 +19,12 @@ export interface HostFormData {
     protocols: number[],
 }
 
+export const JUST_RUN = "JUST_RUN";
+export const VALIDATE_EXITCODE = "VALIDATE_EXITCODE";
+export const VALIDATE_OUTPUT = "VALIDATE_OUTPUT";
+export const PRINT_OUTPUT = "PRINT_OUTPUT";
+export const INTERNAL = "INTERNAL"
+
 export interface Protocol {
     id: number,
     name: string,
@@ -30,6 +37,19 @@ export interface Protocol {
 export interface Tag {
     id: number,
     name: string
+}
+
+export interface Note {
+    id: number,
+    title: string
+}
+
+export interface FullNote {
+    id: number,
+    title: string,
+    text: string,
+    done: boolean,
+    hosts: Host[]
 }
 
 export interface RecentHost {
