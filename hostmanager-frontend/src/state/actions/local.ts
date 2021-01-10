@@ -1,9 +1,9 @@
 import { Titlebar } from 'custom-electron-titlebar';
 import {
     SET_EXPANDED,
-    SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB
+    SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR
 } from '../constants';
-import { ProtocolResult } from '../reducers/localState';
+import { ProtocolResult, SnackbarData } from '../reducers/localState';
 
 
 export const setExpanded = (expanded: string[]) => ({
@@ -29,4 +29,13 @@ export const setIntervalId = (intervalId: number) => ({
 export const setBreadcrumb = (breadcrumb: {id: number, view: string}) => ({
     type: SET_BREADCRUMB,
     breadcrumb: breadcrumb
+})
+
+export const setSnackbar = (data: SnackbarData) => ({
+    type: SET_SNACKBAR,
+    data: data
+})
+
+export const hideSnackbar = () => ({
+    type: HIDE_SNACKBAR
 })

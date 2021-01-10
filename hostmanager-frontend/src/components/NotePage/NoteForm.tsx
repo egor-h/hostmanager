@@ -100,7 +100,6 @@ class NoteForm extends React.Component<FormProps, FormState> {
 
     render() {
         let {classes} = this.props;
-        console.log(this.state);
         
         return (<Box display="flex" alignItems="stretch" flexShrink={0} flexWrap="wrap" style={{padding: '20px'}}>
             <Typography variant="h4" component="h4" style={{flexBasis: '100%'}}>{this.props.title}</Typography>

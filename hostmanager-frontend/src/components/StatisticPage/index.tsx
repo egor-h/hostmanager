@@ -62,7 +62,6 @@ class StatisticPage extends React.PureComponent<StatProps, StatStatae> {
       (
         <RadialChart 
           onValueMouseOver={(e) => {
-            console.log(e)
             this.setState({value: e, showHint: true});
           }}
           onValueMouseOut={(e) => {this.setState({showHint: false})}}

@@ -2,7 +2,7 @@ import { Grid } from '@material-ui/core';
 import { Titlebar } from 'custom-electron-titlebar';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { LocalState } from '../state/reducers/localState';
+import { LocalState, SnackbarData } from '../state/reducers/localState';
 import HostsBrowser from './HostsBrowser';
 import MainPage from './MainPage';
 import MenuColumn from './MenuColumn';
@@ -13,17 +13,23 @@ import SearchPage from './SearchPage';
 import { bindActionCreators } from 'redux';
 import { cleanOldResultsThunk } from '../util/launcher';
 import { connect } from 'react-redux';
-import { setIntervalId } from '../state/actions/local';
+import { hideSnackbar, setIntervalId, setSnackbar } from '../state/actions/local';
 import StatisticPage from './StatisticPage';
 import { AppState } from '../state/reducers';
 import { AuthState } from '../state/reducers/auth';
 import AuthForm from './AuthForm';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import AppSnackbar from './AppSnackbar';
+
 
 type PropsType = {
     local: LocalState;
     auth: AuthState;
     doCleanupResults: () => void;
-    setIntervalId: (id: number) => void
+    setIntervalId: (id: number) => void;
+    setSnackBar: (data: SnackbarData) => void;
+    hideSnackbar: () => void;
 }
 
 
@@ -95,6 +101,7 @@ class MainView extends React.Component<PropsType> {
                     </Route>
                 </Switch>
             </div>
+            <AppSnackbar />
         </div>);
     }
 }
@@ -106,7 +113,8 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     doCleanupResults: bindActionCreators(cleanOldResultsThunk, dispatch),
-    setIntervalId: bindActionCreators(setIntervalId, dispatch)
+    setIntervalId: bindActionCreators(setIntervalId, dispatch),
+    setSnackBar: bindActionCreators(setSnackbar, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainView);

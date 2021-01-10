@@ -1,5 +1,11 @@
 import { Host, Protocol } from "../../models/host"
-import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB } from "../constants"
+import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR } from "../constants"
+
+export type SnackbarSeverity = "error" | "warning" | "info" | "success";
+export type SnackbarData = {
+    severity: SnackbarSeverity;
+    message: string
+}
 
 export type ProtocolResult = {
     hostId: number;
@@ -16,6 +22,10 @@ export type LocalState = {
     intervalId: number;
     protocolResults: ProtocolResult[];
     breadcrumb: {id: number, view: "info" | "edit" | "table"}
+    snackbar: {
+        show: boolean,
+        data: SnackbarData
+    }
 }
 
 const initialState = {
@@ -23,7 +33,14 @@ const initialState = {
     selected: "0",
     intervalId: 0,
     protocolResults: [],
-    breadcrumb: {id: 0, view: "table"}
+    breadcrumb: {id: 0, view: "table"},
+    snackbar: {
+        show: false,
+        data: {
+            severity: "info",
+            message: ""
+        }
+    }
 }
 
 export const local = (state = initialState, action: any) => {
@@ -52,6 +69,22 @@ export const local = (state = initialState, action: any) => {
             return {
                 ...state,
                 breadcrumb: action.breadcrumb
+            }
+        case SET_SNACKBAR:
+            return {
+                ...state,
+                snackbar: {
+                    show: true,
+                    data: action.data
+                }
+            }
+        case HIDE_SNACKBAR:
+            return {
+                ...state,
+                snackbar: {
+                    show: false,
+                    data: state.snackbar.data
+                }
             }
         default:
             return state;
