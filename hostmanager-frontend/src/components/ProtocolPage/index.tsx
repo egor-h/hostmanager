@@ -53,7 +53,7 @@ const ProtocolPage = (props: any) => {
     return (<div>
         <List dense={true}>
             {protocols.data.map(proto => getListItem(proto))}
-            <ListItem key={'addicon'} onClick={addNewProtocol}>
+            <ListItem button key={'addicon'} onClick={addNewProtocol}>
                 <ListItemAvatar>
                     <Avatar>
                         <AddIcon />

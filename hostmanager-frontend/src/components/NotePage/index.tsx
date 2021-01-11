@@ -9,9 +9,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import NoteIcon from '@material-ui/icons/Note';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { fetchNotes } from '../../api/note';
 import { Note } from '../../models/host';
 import { NoteState } from '../../state/reducers/notes';
 import NewNoteWrapper from './NewNoteWrapper';
@@ -39,6 +40,7 @@ const getListItem = (note: Note) => {
 }
 
 const ProtocolPage = (props: any) => {
+    const dispatch = useDispatch();
     let history = useHistory();
     let notes = useSelector((state: { notes: NoteState }) => state.notes)
 
@@ -53,7 +55,7 @@ const ProtocolPage = (props: any) => {
     return (<div>
         <List dense={true}>
             {notes.data.map(note => getListItem(note))}
-            <ListItem key={'addicon'} onClick={addNewProtocol}>
+            <ListItem button key={'addicon'} onClick={addNewProtocol}>
                 <ListItemAvatar>
                     <Avatar>
                         <AddIcon />
