@@ -22,11 +22,14 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import AppSnackbar from './AppSnackbar';
 import SettingsPage from './SettingsPage';
+import MapPage from './MapPage';
+import { TreeState } from '../state/reducers/hostsBrowser';
 
 
 type PropsType = {
     local: LocalState;
     auth: AuthState;
+    tree: TreeState;
     doCleanupResults: () => void;
     setIntervalId: (id: number) => void;
     setSnackBar: (data: SnackbarData) => void;
@@ -79,7 +82,7 @@ class MainView extends React.Component<PropsType> {
                         <SearchPage />
                     </Route>
                     <Route path="/map">
-                        <div>Object graph</div>
+                        <MapPage tree={this.props.tree.tree}/>
                     </Route>
                     <Route path="/notes">
                         <NotePage />
@@ -108,7 +111,8 @@ class MainView extends React.Component<PropsType> {
 
 const mapStateToProps = (state: AppState) => ({
     local: state.local,
-    auth: state.auth
+    auth: state.auth,
+    tree: state.hostsBrowser.tree
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
