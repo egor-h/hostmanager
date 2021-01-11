@@ -1,14 +1,15 @@
 package ru.serovmp.hostmanager.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class AuthResultDto {
-    private String token;
-    private UserDto user;
-    private SettingsDto settings;
+@Builder
+public class SettingsDto {
+    public boolean expandTreeOnStartup;
+    public long rootNode;
 }

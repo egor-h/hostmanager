@@ -1,21 +1,19 @@
-package ru.serovmp.hostmanager.dto;
+package ru.serovmp.hostmanager.controller.form;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
-public class UserDto {
-    private long id;
+public class UserForm {
     private String login;
-    private String name;
     private String email;
-    private Set<String> roles;
+    private String name;
+    private String password;
+    private List<Long> roles;
 }
+

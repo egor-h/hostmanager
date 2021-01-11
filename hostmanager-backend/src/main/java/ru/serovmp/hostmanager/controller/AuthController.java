@@ -15,13 +15,16 @@ import ru.serovmp.hostmanager.controller.form.AuthForm;
 import ru.serovmp.hostmanager.controller.form.RegistrationForm;
 import ru.serovmp.hostmanager.dto.AuthResultDto;
 import ru.serovmp.hostmanager.dto.UserDto;
+import ru.serovmp.hostmanager.entity.Role;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.UserRepository;
 import ru.serovmp.hostmanager.security.JwtUtils;
+import ru.serovmp.hostmanager.service.SettingsService;
 import ru.serovmp.hostmanager.service.UserDetailsServiceImpl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,14 +34,16 @@ public class AuthController {
     private AuthenticationManager am;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private SettingsService settingsService;
 
     @Autowired
-    public AuthController(UserDetailsServiceImpl users, JwtUtils jwtUtils, AuthenticationManager am, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserDetailsServiceImpl users, JwtUtils jwtUtils, AuthenticationManager am, UserRepository userRepository, PasswordEncoder passwordEncoder, SettingsService settingsService) {
         this.users = users;
         this.jwtUtils = jwtUtils;
         this.am = am;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.settingsService = settingsService;
     }
 
     @PostMapping("/login")
@@ -53,8 +58,9 @@ public class AuthController {
                     .email(user.getEmail())
                     .login(user.getLogin())
                     .name(user.getName())
-                    .roles(List.of(user.getRole()))
-                    .build()));
+                    .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
+                    .build(),
+                    settingsService.getSettingsForUser(user.getId())));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException(signinForm.getUsername());
         }
