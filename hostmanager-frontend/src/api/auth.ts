@@ -1,7 +1,7 @@
 import { Auth } from '../models/auth';
 import { auth } from '../state/actions';
 import { authSucceeded } from '../state/actions/auth';
-import { setSnackbar } from '../state/actions/local';
+import { setSnackbar, settings } from '../state/actions/local';
 import api from './base';
 import { post } from './basicCrud';
 import { BASE_URL } from './common';
@@ -21,6 +21,7 @@ export const doAuth = (username: string, password: string) => {
             } else {
                 localStorage.setItem("token", res.data.token);
                 dispatch(authSucceeded({user: res.data.user}));
+                dispatch(settings(res.data.settings))
             }
         })
         .catch(error => {
