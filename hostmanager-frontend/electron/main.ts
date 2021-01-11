@@ -14,10 +14,12 @@ function createWindow () {
     // frame: false
     webPreferences: {
       // preload: path.join(__dirname, "renderer/preload.ts"),
-      nodeIntegration: true
+      nodeIntegration: true,
+      devTools: true
     }
   })
   // mainWindow.removeMenu();
+  mainWindow.setMenuBarVisibility(false);
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000')
