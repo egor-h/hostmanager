@@ -9,13 +9,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -33,13 +32,27 @@ public class User implements Serializable, UserDetails {
     @JsonIgnore
     private String password;
 
-    private String role;
+    private boolean enabled;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Setting> settings;
 
+    @Builder.Default
+//    @ElementCollection(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "role_id") })
+    private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+    private Set<Host> hosts;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of("ROLE_USER").stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return this.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
 
     @Override
@@ -71,4 +84,6 @@ public class User implements Serializable, UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
