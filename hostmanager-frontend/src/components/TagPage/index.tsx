@@ -53,7 +53,7 @@ const TagPage = () => {
     return (<div>
         <List dense={true}>
             {tags.data.map(tag => getListItem(tag))}
-            <ListItem key={'addicon'} onClick={addNewTag}>
+            <ListItem button key={'addicon'} onClick={addNewTag}>
                 <ListItemAvatar>
                     <Avatar>
                         <AddIcon />
