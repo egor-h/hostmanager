@@ -18,12 +18,11 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Host implements Serializable {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter
-    @EqualsAndHashCode.Include
-    private long id;
+public class Host extends AbstractAuditableEntity implements Serializable {
+//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Getter @Setter
+//    @EqualsAndHashCode.Include
+//    private long id;
     @Getter @Setter
     @NotNull @Length(min = 1)
     private String name;
@@ -81,5 +80,16 @@ public class Host implements Serializable {
     public Set<Host> getChildren() {
         return children;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
 }
 
