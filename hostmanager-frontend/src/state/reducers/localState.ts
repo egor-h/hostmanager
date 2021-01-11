@@ -1,5 +1,6 @@
 import { Host, Protocol } from "../../models/host"
-import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR } from "../constants"
+import { Settings } from "../../models/settings";
+import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS } from "../constants"
 
 export type SnackbarSeverity = "error" | "warning" | "info" | "success";
 export type SnackbarData = {
@@ -25,7 +26,8 @@ export type LocalState = {
     snackbar: {
         show: boolean,
         data: SnackbarData
-    }
+    },
+    settings: Settings
 }
 
 const initialState = {
@@ -40,6 +42,9 @@ const initialState = {
             severity: "info",
             message: ""
         }
+    },
+    settings: {
+        
     }
 }
 
@@ -85,6 +90,11 @@ export const local = (state = initialState, action: any) => {
                     show: false,
                     data: state.snackbar.data
                 }
+            }
+        case SETTINGS:
+            return {
+                ...state,
+                settings: action.settings
             }
         default:
             return state;

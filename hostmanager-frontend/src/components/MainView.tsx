@@ -21,6 +21,7 @@ import AuthForm from './AuthForm';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import AppSnackbar from './AppSnackbar';
+import SettingsPage from './SettingsPage';
 
 
 type PropsType = {
@@ -29,7 +30,6 @@ type PropsType = {
     doCleanupResults: () => void;
     setIntervalId: (id: number) => void;
     setSnackBar: (data: SnackbarData) => void;
-    hideSnackbar: () => void;
 }
 
 
@@ -91,7 +91,7 @@ class MainView extends React.Component<PropsType> {
                         <TagPage />
                     </Route>
                     <Route path="/settings">
-                        <p>settings</p>
+                        <SettingsPage />
                     </Route>
                     <Route path="/stats">
                         <StatisticPage />

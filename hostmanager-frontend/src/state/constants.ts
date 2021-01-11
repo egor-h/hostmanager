@@ -6,6 +6,8 @@ export const SET_INTERVAL_ID = "SET_INTERVAL_ID";
 export const SET_BREADCRUMB = "SET_BREADCRUMB";
 export const SET_SNACKBAR = "SET_SNACKBAR";
 export const HIDE_SNACKBAR = "HIDE_SNACKBAR";
+// settings
+export const SETTINGS = "SETTINGS";
 
 // Recent actions get
 export const HOMEPAGE = "HOMEPAGE";

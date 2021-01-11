@@ -1,7 +1,8 @@
 import { Titlebar } from 'custom-electron-titlebar';
+import { Settings } from '../../models/settings';
 import {
     SET_EXPANDED,
-    SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR
+    SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS
 } from '../constants';
 import { ProtocolResult, SnackbarData } from '../reducers/localState';
 
@@ -38,4 +39,9 @@ export const setSnackbar = (data: SnackbarData) => ({
 
 export const hideSnackbar = () => ({
     type: HIDE_SNACKBAR
+})
+
+export const settings = (settings: Settings) => ({
+    type: SETTINGS,
+    settings: settings
 })
