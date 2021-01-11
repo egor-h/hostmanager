@@ -2,6 +2,7 @@ import { Breadcrumbs } from '@material-ui/core';
 import MaterialLink from '@material-ui/core/Link';
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link, Redirect, Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import { bindActionCreators } from 'redux';
@@ -11,6 +12,8 @@ import { Host } from '../../models/host';
 import { local } from '../../state/actions';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { LocalState } from '../../state/reducers/localState';
+import { addKeyEventListener, KeyEventListenerType, KeysMap, removeKeyEventListener } from '../../util/events';
+import { KEY_N } from '../../util/keyboard_codes';
 import { findAllDirs, findHostById } from '../../util/tree';
 import EditHostWrapper from './EditHostWrapper';
 import HostInfoWrapper from './HostInfoWrapper';
@@ -68,8 +71,18 @@ const resolveBreadcrumbs = (selected: number, tree: Host) => {
 }
 
 class HostsBrowser extends React.Component<HostsBrowserProps> {
+    keysObj: KeysMap;
+    keyListener:  null | KeyEventListenerType;
+
     constructor(props: any) {
         super(props);
+
+        this.keysObj = {
+            NEW_HOST_KEY: {
+                keyCode: [KEY_N], withAlt: false, withCtrl: true, action: () => {console.log('N')},
+            }
+        }
+        this.keyListener = null;
     }
 
     componentDidMount() {
@@ -77,6 +90,13 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
             this.props.getTree(this.props.local.settings.rootNode);
             this.props.getTags();
         }
+
+        let thisNode = ReactDOM.findDOMNode(this);
+
+        if (thisNode !== null) {
+            this.keyListener = addKeyEventListener(window, thisNode, this.keysObj);
+        }
+
     }
 
     componentWillReceiveProps(nextProps: HostsBrowserProps) {
@@ -85,6 +105,13 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
                 console.log('set all expanded')
                 this.props.setExpanded(findAllDirs(this.props.tree.tree).map(h => h.id+''));
             }
+        }
+    }
+
+    componentWillUnmount() {
+        let thisNode = ReactDOM.findDOMNode(this);
+        if (thisNode !== null && this.keyListener !== null) {
+            removeKeyEventListener(thisNode, this.keyListener);
         }
     }
 

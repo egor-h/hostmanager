@@ -1,9 +1,15 @@
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { authNull } from '../state/actions/auth';
+
+const getBaseUrl = (): string => {
+    let server = process.env['HOSTMANAGER_SERVER'];
+    if (server) {
+        return server;
+    }
+    return 'http://localhost:8080';
+}
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: getBaseUrl(),
     timeout: 8000,
     headers: {
         'Content-Type': 'application/json',
@@ -14,19 +20,18 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-        console.log(`${config.method} to ${config.baseURL}${config.url}`);
-        const token = localStorage.getItem('token');
-        if (token !== null) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error));
+    console.log(`${config.method} to ${config.baseURL}${config.url}`);
+    const token = localStorage.getItem('token');
+    if (token !== null) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+}, (error) => Promise.reject(error));
 
 api.interceptors.response.use(response => {
-        
-        return response;
-    },
-    (error) => Promise.reject(error));
+
+    return response;
+}, (error) => Promise.reject(error));
 
 export default api;
