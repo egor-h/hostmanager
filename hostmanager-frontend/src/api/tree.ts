@@ -5,8 +5,8 @@ import { doDelete, get, post, put } from './basicCrud';
 
 const API_TREE = '/api/v1/hosts';
 
-export const fetchTree = () => get<Host>({
-    url: `${API_TREE}/${2}`,
+export const fetchTree = (rootNode: number) => get<Host>({
+    url: `${API_TREE}/${rootNode}`,
     actionBeforeFetch: hostsBrowser.hostsTree,
     actionOnSuccess: hostsBrowser.hostsTreeSucceeded,
     actionOnError: hostsBrowser.hostsTreeFailed
@@ -17,7 +17,6 @@ export const createObject = (parentId: number, hostData: HostFormData) => post({
     data: hostData,
     onSuccess: (dispatch) => {
         dispatch(setSnackbar({severity: 'success', message: `Created ${hostData.dir ? 'directory' : 'host'} ${hostData.name}`}));
-        dispatch(fetchTree());
     },
     onError: (dispatch) => {}
 })
@@ -27,7 +26,6 @@ export const saveObject = (parentId: number, hostData: HostFormData) => put({
     data: hostData,
     onSuccess: (dispatch) => {
         dispatch(setSnackbar({severity: 'success', message: `Saved ${hostData.dir ? 'directory' : 'host'} ${hostData.name}`}));
-        dispatch(fetchTree());
     },
     onError: (dispatch) => {}
 })
@@ -36,7 +34,6 @@ export const deleteObject = (objectId: number) => doDelete({
     url: `${API_TREE}/${objectId}`,
     onSuccess: (dispatch) => {
         dispatch(setSnackbar({severity: 'success', message: 'Deleted host'}));
-        dispatch(fetchTree());
     },
     onError: (dispatch) => {}
 })

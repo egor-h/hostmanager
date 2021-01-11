@@ -9,7 +9,8 @@ import { TagState } from '../../state/reducers/tags';
 import { useDispatch, useSelector } from 'react-redux';
 import { findHostById } from "../../util/tree";
 import { Host } from "../../models/host";
-import { createObject } from "../../api/tree";
+import { createObject, fetchTree } from "../../api/tree";
+import { AppState } from "../../state/reducers";
 
 type ParamTypes = {
     parentId: string;
@@ -22,6 +23,7 @@ export default (): any => {
     let tree = useSelector((state: {hostsBrowser: {tree: TreeState}}) => state.hostsBrowser.tree)
     let tags = useSelector((state: {tags: TagState}) => state.tags);
     let protocols = useSelector((state: {protocols: ProtocolState}) => state.protocols);
+    let settings = useSelector((state: AppState) => state.local.settings);  
 
     let [isDir, setDir] = React.useState<boolean>(false);
 
@@ -35,7 +37,8 @@ export default (): any => {
             dir: host.dir,
             tags: host.tags.map(t => t.name),
             protocols: host.protocols
-        }))
+        }));
+        dispatch(fetchTree(settings.rootNode));
     }
 
     return (<Box display="flex" alignItems="stretch" maxWidth="" flexWrap="wrap">

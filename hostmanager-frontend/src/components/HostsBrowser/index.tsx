@@ -11,7 +11,7 @@ import { Host } from '../../models/host';
 import { local } from '../../state/actions';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { LocalState } from '../../state/reducers/localState';
-import { findHostById } from '../../util/tree';
+import { findAllDirs, findHostById } from '../../util/tree';
 import EditHostWrapper from './EditHostWrapper';
 import HostInfoWrapper from './HostInfoWrapper';
 import HostTree from './HostTree';
@@ -33,9 +33,10 @@ const styles = {
 type HostsBrowserProps = {
     tree: TreeState;
     local: LocalState;
-    getTree: any;
-    getTags: any;
-    setSelected: any;
+    getTree: (id: number) => void;
+    getTags: () => void;
+    setSelected: (nodeId: string) => void;
+    setExpanded: (nodeIds: string[]) => void
 } & RouteComponentProps;
 
 type BreadCrumbProps = {
@@ -73,8 +74,17 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
 
     componentDidMount() {
         if (!this.props.tree.tree.dir) {
-            this.props.getTree();
+            this.props.getTree(this.props.local.settings.rootNode);
             this.props.getTags();
+        }
+    }
+
+    componentWillReceiveProps(nextProps: HostsBrowserProps) {
+        if (nextProps.local.settings.expandTreeOnStartup) {
+            if (nextProps.local.expanded.length === 0 && nextProps.tree.tree.dir) {
+                console.log('set all expanded')
+                this.props.setExpanded(findAllDirs(this.props.tree.tree).map(h => h.id+''));
+            }
         }
     }
 
@@ -125,7 +135,8 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     getTree: bindActionCreators(fetchTree, dispatch),
     getTags: bindActionCreators(fetchTags, dispatch),
-    setSelected: bindActionCreators(local.setSelected, dispatch)
+    setSelected: bindActionCreators(local.setSelected, dispatch),
+    setExpanded: bindActionCreators(local.setExpanded, dispatch)
 });
 
 let HostsBrowserRouted = withRouter(HostsBrowser);

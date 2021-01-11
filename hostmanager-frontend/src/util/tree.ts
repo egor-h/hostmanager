@@ -16,6 +16,10 @@ const findInTreeByPredicate = (root: Host, predicate: (element: Host) => boolean
     return found;
 }
 
+export const findAllDirs = (root: Host): Host[] => {
+    return findInTreeByPredicate(root, (h) => h.dir);
+}
+
 export const findByTag = (root: Host, tagId: number): Host[] => {
     return findInTreeByPredicate(root, (h) => h.tags.map(t => t.id).includes(tagId));
 }
