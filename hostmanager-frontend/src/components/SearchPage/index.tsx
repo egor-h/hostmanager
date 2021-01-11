@@ -38,7 +38,7 @@ const getIcon = (iconType: IconType) => {
 }
 
 const resultItem = (primaryText: string, secondaryText: string, iconType: IconType, onClick: () => void) => {
-    return (<ListItem key={primaryText} button onClick={() => onClick()}>
+    return (<ListItem key={primaryText+iconType} button onClick={() => onClick()}>
         <ListItemAvatar>
             <Avatar>
                 {getIcon(iconType)}
@@ -71,23 +71,23 @@ export default () => {
 
     let renderList: any[] = [];
     if (searchResults.data.hosts.length !== 0) {
-        renderList.push(<ListSubheader>Hosts</ListSubheader>);
+        renderList.push(<ListSubheader key="hosts">Hosts</ListSubheader>);
         renderList.push(searchResults.data.hosts.map(h => resultItem(h.name, h.address, "host", () => history.push(`/objects/info/${h.id}`))));
     }
     if (searchResults.data.tags.length !== 0) {
-        renderList.push(<ListSubheader>Tags</ListSubheader>);
+        renderList.push(<ListSubheader key="tags">Tags</ListSubheader>);
         renderList.push(searchResults.data.tags.map(t => resultItem(t.name, '', "tag", () => history.push(`/tags/edit/${t.id}`))));
     }
     if (searchResults.data.protocols.length !== 0) {
-        renderList.push(<ListSubheader>Protocols</ListSubheader>);
+        renderList.push(<ListSubheader key="protocols">Protocols</ListSubheader>);
         renderList.push(searchResults.data.protocols.map(p => resultItem(p.name, p.launchType, "protocol", () => history.push(`/protocols/edit/${p.id}`))));
     }
     if (searchResults.data.notes.length !== 0) {
-        renderList.push(<ListSubheader>Notes</ListSubheader>);
+        renderList.push(<ListSubheader key="notes">Notes</ListSubheader>);
         renderList.push(searchResults.data.notes.map(n => resultItem(n.title, '', "note", () => history.push(`/notes/edit/${n.id}`))));
     }
     if (false) {
-        renderList.push(<ListSubheader>Settings</ListSubheader>);
+        renderList.push(<ListSubheader key="settings">Settings</ListSubheader>);
     }
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
