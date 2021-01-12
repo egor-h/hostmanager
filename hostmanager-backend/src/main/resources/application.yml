@@ -18,4 +18,4 @@ logging:
 security:
   jwt:
     secret: ioyur239874
-    ttl: 999999
+    ttl: 259200000 # three days in ms
