@@ -1,5 +1,6 @@
 package ru.serovmp.hostmanager.controller;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +22,11 @@ public class SettingsController {
     @GetMapping
     public ResponseEntity allSettings(@AuthenticationPrincipal User principal) {
         return ResponseEntity.ok(settingsService.getSettingsForUser(principal.getId()));
+    }
+
+    @GetMapping("/default")
+    public ResponseEntity getDefaultSettings() {
+        return ResponseEntity.ok(settingsService.defaultSettings());
     }
 
     @PutMapping
