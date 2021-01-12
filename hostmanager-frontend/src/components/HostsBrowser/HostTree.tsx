@@ -13,6 +13,7 @@ import { scrollbar } from './styles';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import ClircleLoading from '../CircleLoading';
 import { difference2 } from '../../util/set';
+import LoadingTreeSkeleton from './LoadingTreeSkeleton';
 
 const styles = {
   root: {
@@ -69,8 +70,7 @@ class ControlledTreeView extends React.Component<PropsType, {}> {
   render() {
     const returnTree = (treeState: TreeState):any=> {
       if (treeState.loading) {
-        console.log('Loading..')
-        return <ClircleLoading></ClircleLoading>
+        return <LoadingTreeSkeleton />
       } else if (treeState.error) {
         console.log('error')
         return <TreeItem key="1" nodeId="1" label="Error, check console" />
