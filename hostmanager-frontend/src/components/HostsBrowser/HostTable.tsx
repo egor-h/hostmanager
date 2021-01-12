@@ -270,15 +270,18 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       width: '100%',
       height: '100%',
+      display: 'flex'
     },
     paper: {
       width: '100%',
       height: '100%',
-      overflowY: 'auto',
+      display: 'flex',
+      flexDirection: 'column'
       // marginBottom: theme.spacing(2),
     },
     table: {
       minWidth: 500,
+      // overflowY: 'auto',
     },
     tableRow: {
       height: 100
@@ -315,9 +318,9 @@ export default function EnhancedTable(props: {
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof HostTableEntity>('name');
   const [selected, setSelected] = React.useState<string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(true);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [dense, setDense] = React.useState(true);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const [searchQuery, setSearchQuery] = React.useState<string>('');
   const [searchPopupState, setSearchPopupState] = React.useState<boolean>(false);
@@ -386,10 +389,10 @@ export default function EnhancedTable(props: {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.data.length - page * rowsPerPage);
+  // const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.data.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
+    // <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar 
           onSearchClicked={() => {setSearchPopupState(true)}}
@@ -446,7 +449,7 @@ export default function EnhancedTable(props: {
                         />
                       </TableCell>
                       <TableCell onClick={clickHandler} 
-                        style={{ height: "20px", width: '50%', ...color }}
+                        style={{ height: "20px", width: '70%', ...color }}
                         component="th" id={labelId} scope="row" padding="none">
                         {row.name}
                       </TableCell>
@@ -511,6 +514,6 @@ export default function EnhancedTable(props: {
           onNo={() => {setSearchPopupState(false)}}
         />
       </Paper>
-    </div>
+    // </div>
   );
 }
