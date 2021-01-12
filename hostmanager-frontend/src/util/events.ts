@@ -13,9 +13,9 @@ export type EventsByKey = {
     [key: number]: KeyInfo & {eventName: string}
 }
 
-export type KeyEventListenerType = (e: KeyboardEvent) => void;
+export type KeyEventListenerType = (e: Event) => void;
 
-export const addKeyEventListener = (window: Window, thisNode: Element | Text, keys: KeysMap): KeyEventListenerType => {
+export const addKeyEventListener = (window: Window, thisNode: Element | Text, keys: KeysMap): () => void => {
     let eventsObj: EventsByKey = {};
     Object.entries(keys).map(([key, value]) => {
         value.keyCode.map(keyCode => {
@@ -24,19 +24,19 @@ export const addKeyEventListener = (window: Window, thisNode: Element | Text, ke
         // eventsObj[value.keyCode] = { ...value, eventName: key };
     })
 
-    let listener = (event: KeyboardEvent) => {
-        let key = event.keyCode;
+    let listener = (event: Event) => {
+        const kbdEvent = event as KeyboardEvent;
+        const key = kbdEvent.keyCode;
         
-        let evt = eventsObj[key];
+        const evt = eventsObj[key];
         if (evt === undefined) {
             return;
         }
 
-        let ctrl = evt.withCtrl ? event.ctrlKey : true;
-        let alt = evt.withAlt ? event.altKey : true;
+        const ctrl = evt.withCtrl ? kbdEvent.ctrlKey : true;
+        const alt = evt.withAlt ? kbdEvent.altKey : true;
 
         if (ctrl && alt) {
-
             thisNode.dispatchEvent(new CustomEvent(evt.eventName, {detail: {}, bubbles: true}));
         }
     }
@@ -45,7 +45,9 @@ export const addKeyEventListener = (window: Window, thisNode: Element | Text, ke
 
     Object.entries(keys).map(([key, value]) => thisNode.addEventListener(key, value.action));
 
-    return listener;
+    return () => {
+        thisNode.removeEventListener('keydown', listener);
+    };
 }
 
 export const removeKeyEventListener = (thisNode: Element | Text, listener: any) => {
