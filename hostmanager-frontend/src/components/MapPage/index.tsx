@@ -1,6 +1,7 @@
 import React from 'react';
 import { ForceGraph, ForceGraphNode, ForceGraphLink } from 'react-vis-force';
 import { Host } from '../../models/host';
+import { findAllDirs } from '../../util/tree';
 
 
 
@@ -22,9 +23,20 @@ const buildTreeRecurse = (host: Host, nodeStoreage: any[]) => {
     }
 }
 
+const buildTreeFlat = (hosts: Host[]) => {
+    let graphNodes: any = [];
+    hosts.map(host => {
+        if (host.parentId > 1) {
+            graphNodes.push(<ForceGraphLink link={{ source: host.parentId+'', target: host.id+'' }} />);
+        }
+        graphNodes.push(<ForceGraphNode node={{ id: (host.id+'') }} fill="red" />);
+    });
+    return graphNodes;
+}
+
 export default (props: {tree: Host}) => {
-    return (<ForceGraph zoom simulationOptions={{ height: '70vh', width: '70vw' }}>
-        {buildTree(props.tree)}
+    return (<ForceGraph zoom simulationOptions={{ height: 1000, width: 1000 }}>
+        {buildTreeFlat(findAllDirs(props.tree))}
         {/* <ForceGraphNode node={{ id: '1' }} fill="red" />
         <ForceGraphNode node={{ id: '2' }} fill="blue" />
         <ForceGraphNode node={{ id: '3' }} fill="yellow" />
