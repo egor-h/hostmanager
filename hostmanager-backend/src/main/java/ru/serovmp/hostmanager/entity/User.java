@@ -1,10 +1,7 @@
 package ru.serovmp.hostmanager.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,12 +16,15 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-@Data
+//@Data
+@Getter @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements Serializable, UserDetails {
     @Id @GeneratedValue
+    @EqualsAndHashCode.Include
     private long id;
     private String login;
     private String name;

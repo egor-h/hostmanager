@@ -1,23 +1,23 @@
 package ru.serovmp.hostmanager.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "settings")
-@Data
+//@Data
+@Getter @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Setting {
     public static enum Type {
         LONG, FLOAT, STRING, BOOLEAN;
     }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private long id;
     @ManyToOne
     private User user;
