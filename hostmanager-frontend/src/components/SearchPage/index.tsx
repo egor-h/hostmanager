@@ -1,18 +1,14 @@
 import { ListSubheader, TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FolderIcon from '@material-ui/icons/Folder';
-import ComputerIcon from '@material-ui/icons/Computer'
-import NoteIcon from '@material-ui/icons/Note'
-import ReceiptIcon from '@material-ui/icons/Receipt';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import ComputerIcon from '@material-ui/icons/Computer';
 import HelpIcon from '@material-ui/icons/Help';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import NoteIcon from '@material-ui/icons/Note';
+import ReceiptIcon from '@material-ui/icons/Receipt';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -91,7 +87,7 @@ export default () => {
     }
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <form noValidate autoComplete="off" onSubmit={() => { onSubmit(query) }}>
+            <form noValidate autoComplete="off" onSubmit={(e) => { onSubmit(query); e.preventDefault(); }}>
                 <TextField style={{ width: "50vw" }} autoFocus onChange={(e: any) => { setQuery(e.target.value) }} value={query} />
                 <List dense={true}>
                     {renderList}
