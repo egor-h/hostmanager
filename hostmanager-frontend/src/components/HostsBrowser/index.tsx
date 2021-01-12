@@ -91,11 +91,11 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
             this.props.getTags();
         }
 
-        let thisNode = ReactDOM.findDOMNode(this);
+        // let thisNode = ReactDOM.findDOMNode(this);
 
-        if (thisNode !== null) {
-            this.keyListener = addKeyEventListener(window, thisNode, this.keysObj);
-        }
+        // if (thisNode !== null) {
+        //     this.keyListener = addKeyEventListener(window, thisNode, this.keysObj);
+        // }
 
     }
 
@@ -110,9 +110,9 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
 
     componentWillUnmount() {
         let thisNode = ReactDOM.findDOMNode(this);
-        if (thisNode !== null && this.keyListener !== null) {
-            removeKeyEventListener(thisNode, this.keyListener);
-        }
+    //     if (thisNode !== null && this.keyListener !== null) {
+    //         removeKeyEventListener(thisNode, this.keyListener);
+    //     }
     }
 
     render() {
