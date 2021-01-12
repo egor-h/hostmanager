@@ -15,7 +15,8 @@ function createWindow () {
     webPreferences: {
       // preload: path.join(__dirname, "renderer/preload.ts"),
       nodeIntegration: true,
-      devTools: true
+      devTools: true,
+      webSecurity: false
     }
   })
   // mainWindow.removeMenu();
