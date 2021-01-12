@@ -1,21 +1,19 @@
-import { Chip, Paper, Typography } from '@material-ui/core';
-import React from 'react'
+import { IconButton, Paper, Tooltip, Typography } from '@material-ui/core';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Skeleton } from '@material-ui/lab';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as home from '../../api/home';
-import * as tags from '../../api/tag';
 import * as protocols from '../../api/protocol';
-import { RecentHost } from '../../models/host';
-import { HomeState } from '../../state/reducers/home';
-import { TagState } from '../../state/reducers/tags';
-import { auth } from '../../state/actions'
-import ClircleLoading from '../CircleLoading';
-import RecentHostList from './RecentHostList';
-import { TagChips } from './TagChips';
-import { IconButton, Tooltip } from '@material-ui/core';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import * as tags from '../../api/tag';
+import { auth } from '../../state/actions';
 import { AppState } from '../../state/reducers';
 import { AuthState } from '../../state/reducers/auth';
+import { HomeState } from '../../state/reducers/home';
+import { TagState } from '../../state/reducers/tags';
+import RecentHostList from './RecentHostList';
+import { TagChips } from './TagChips';
 
 
 type HomePageProps = {
@@ -23,10 +21,11 @@ type HomePageProps = {
     tags: TagState;
     auth: AuthState;
     getRecentHosts: any;
-    getTags: any;
-    getProtocols: any;
-    setNoAuth: any;
+    getTags: () => void;
+    getProtocols: () => void;
+    setNoAuth: () => void;
 }
+
 
 class MainPage extends React.Component<HomePageProps> {
     constructor(props: HomePageProps) {
@@ -41,7 +40,19 @@ class MainPage extends React.Component<HomePageProps> {
 
     render() {
         if (this.props.recents.loading) {
-            return (<ClircleLoading></ClircleLoading>);
+            return (<Paper elevation={0}>
+                <Typography variant="h4" component="h4" style={{ flexBasis: '100%' }} >
+                    <Skeleton animation="wave"></Skeleton>
+                </Typography>
+                <Skeleton animation="wave">
+                    <TagChips tagList={([1, 2, 3, 4, 5]).map(n => ({ id: n, name: 'Abcdef' }))} ></TagChips>
+                </Skeleton>
+                <Skeleton animation="wave">
+                    <RecentHostList
+                        items={([1, 2, 3, 4, 5]).map(n => ({ id: n, name: 'Some host loading', address: '192.168.0.1', createdAt: '01.01.2020' }))}
+                    />
+                </Skeleton>
+            </Paper>);
         }
         if (this.props.recents.error) {
             return (<div>An error occured check console</div>);
