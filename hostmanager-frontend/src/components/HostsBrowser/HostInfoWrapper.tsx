@@ -8,6 +8,7 @@ import { TreeState } from '../../state/reducers/hostsBrowser';
 import { ProtocolState } from '../../state/reducers/protocols';
 import { TagState } from '../../state/reducers/tags';
 import { findExactHostById } from '../../util/tree';
+import ClircleLoading from '../CircleLoading';
 import { TagChips } from '../MainPage/TagChips';
 import ProtocolList from './ProtocolList';
 
@@ -23,8 +24,12 @@ export default (): any => {
     let tree = useSelector((state: { hostsBrowser: { tree: TreeState } }) => state.hostsBrowser.tree)
     let protocols = useSelector((state: {protocols: ProtocolState}) => state.protocols);
 
-    if (tree.loading || tree.error) {
-        return (<p>Error somehow</p>)
+    if (tree.loading) {
+        return (<ClircleLoading />)
+    }
+
+    if (tree.error) {
+        return <p>Error</p>
     }
 
     let foundHost = findExactHostById(tree.tree, +hostId);
