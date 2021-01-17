@@ -10,6 +10,18 @@ export interface Host {
     chld: Host[]
 }
 
+export const EMPTY_HOST = {
+    id: -1,
+    parentId: -2,
+    name: '',
+    address: '',
+    enabled: true,
+    dir: false,
+    tags: [],
+    protocols: [],
+    chld: []
+}
+
 export interface HostFormData {
     name: string,
     address: string,
