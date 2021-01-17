@@ -47,11 +47,7 @@ class MainPage extends React.Component<HomePageProps> {
                 <Skeleton animation="wave">
                     <TagChips tagList={([1, 2, 3, 4, 5]).map(n => ({ id: n, name: 'Abcdef' }))} ></TagChips>
                 </Skeleton>
-                <Skeleton animation="wave">
-                    <RecentHostList
-                        items={([1, 2, 3, 4, 5]).map(n => ({ id: n, name: 'Some host loading', address: '192.168.0.1', createdAt: '01.01.2020' }))}
-                    />
-                </Skeleton>
+                    {([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).map(n => <Skeleton variant="rect" width={360} height={72} />)}
             </Paper>);
         }
         if (this.props.recents.error) {
