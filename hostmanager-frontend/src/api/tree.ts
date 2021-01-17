@@ -12,27 +12,36 @@ export const fetchTree = (rootNode: number) => get<Host>({
     actionOnError: hostsBrowser.hostsTreeFailed
 });
 
-export const createObject = (parentId: number, hostData: HostFormData) => post({
+export const createObject = (parentId: number, hostData: HostFormData, onSuccess?: () => void) => post({
     url: `${API_TREE}/${parentId}`,
     data: hostData,
     onSuccess: (dispatch) => {
+        if (onSuccess) {
+            onSuccess();
+        }
         dispatch(setSnackbar({severity: 'success', message: `Created ${hostData.dir ? 'directory' : 'host'} ${hostData.name}`}));
     },
     onError: (dispatch) => {}
 })
 
-export const saveObject = (parentId: number, hostData: HostFormData) => put({
+export const saveObject = (parentId: number, hostData: HostFormData, onSuccess?: () => void) => put({
     url: `${API_TREE}/${parentId}`,
     data: hostData,
     onSuccess: (dispatch) => {
+        if (onSuccess) {
+            onSuccess();
+        }
         dispatch(setSnackbar({severity: 'success', message: `Saved ${hostData.dir ? 'directory' : 'host'} ${hostData.name}`}));
     },
     onError: (dispatch) => {}
 })
 
-export const deleteObject = (objectId: number) => doDelete({
+export const deleteObject = (objectId: number, onSuccess?: () => void) => doDelete({
     url: `${API_TREE}/${objectId}`,
     onSuccess: (dispatch) => {
+        if (onSuccess) {
+            onSuccess();
+        }
         dispatch(setSnackbar({severity: 'success', message: 'Deleted host'}));
     },
     onError: (dispatch) => {}
