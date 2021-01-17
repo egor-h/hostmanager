@@ -1,5 +1,5 @@
 import { Host, Protocol } from "../../models/host"
-import { Settings } from "../../models/settings";
+import { DEFAULT_SETTINGS, Settings } from "../../models/settings";
 import { SET_EXPANDED, SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS } from "../constants"
 
 export type SnackbarSeverity = "error" | "warning" | "info" | "success";
@@ -43,9 +43,7 @@ const initialState = {
             message: ""
         }
     },
-    settings: {
-        
-    }
+    settings: DEFAULT_SETTINGS
 }
 
 export const local = (state = initialState, action: any) => {
