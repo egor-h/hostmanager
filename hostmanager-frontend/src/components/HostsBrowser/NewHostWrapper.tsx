@@ -37,8 +37,7 @@ export default (): any => {
             dir: host.dir,
             tags: host.tags.map(t => t.name),
             protocols: host.protocols
-        }));
-        dispatch(fetchTree(settings.rootNode));
+        }, () => {dispatch(fetchTree(settings.rootNode));}));
     }
 
     return (<Box display="flex" alignItems="stretch" maxWidth="" flexWrap="wrap">

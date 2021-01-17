@@ -47,9 +47,7 @@ export default (): any => {;
                 dir: host.dir, 
                 tags: host.tags.map(t => t.name),
                 protocols: host.protocols
-            }));
-            dispatch(fetchTree(settings.rootNode));
-            history.goBack();
+            }, () => {dispatch(fetchTree(settings.rootNode)); history.push(`/objects/info/${hostId}`);}));
         }}
         title={`Edit dir ${foundHost.name}`}/> : 
     <HostForm 
@@ -64,9 +62,7 @@ export default (): any => {;
                 dir: host.dir, 
                 tags: host.tags.map(t => t.name),
                 protocols: host.protocols
-            }));
-            dispatch(fetchTree(settings.rootNode));
-            history.goBack();
+            }, () => {dispatch(fetchTree(settings.rootNode)); history.push(`/objects/info/${hostId}`);}));
         }}
         title={`Edit host ${foundHost.name}`} />;
 }

@@ -1,6 +1,7 @@
 import { Breadcrumbs } from '@material-ui/core';
 import MaterialLink from '@material-ui/core/Link';
 import { withStyles } from '@material-ui/core/styles';
+import { Skeleton } from '@material-ui/lab';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
@@ -16,6 +17,7 @@ import { addKeyEventListener, KeyEventListenerType, KeysMap, removeKeyEventListe
 import { KEY_N } from '../../util/keyboard_codes';
 import { findAllDirs, findHostById } from '../../util/tree';
 import EditHostWrapper from './EditHostWrapper';
+import HostBreadCrumb from './HostBreadCrumb';
 import HostInfoWrapper from './HostInfoWrapper';
 import HostTree from './HostTree';
 import NewHostWrapper from './NewHostWrapper';
@@ -42,16 +44,6 @@ type HostsBrowserProps = {
     setExpanded: (nodeIds: string[]) => void
 } & RouteComponentProps;
 
-type BreadCrumbProps = {
-    links: { title: string, url: string, id: number }[];
-    setSelected: (selcted: string) => void
-}
-
-const HostBreadCrumb = (props: BreadCrumbProps) => {
-    return (<Breadcrumbs aria-label="breadcrumb">
-        {props.links.map(link => (<MaterialLink key={link.title} component={Link} to={link.url} onClick={() => props.setSelected(link.id+'')} color="inherit" >{link.title}</MaterialLink>))}
-    </Breadcrumbs>)
-}
 
 const resolveBreadcrumbs = (selected: number, tree: Host) => {
     let found = findHostById(tree, selected);
@@ -91,6 +83,10 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
             this.props.getTags();
         }
 
+        if (+this.props.local.selected < 2) {
+            this.props.setSelected(this.props.local.settings.rootNode+'');
+        }
+
         // let thisNode = ReactDOM.findDOMNode(this);
 
         // if (thisNode !== null) {
@@ -122,10 +118,10 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
             </div>
             <div style={{ flex: 3, display: 'flex', flexFlow: 'column nowrap' }}>
                 <div style={{ flex: 0, flexFlow: 'row nowrap' }}>
-                    <HostBreadCrumb 
+                    {this.props.tree.loading ? (<Skeleton></Skeleton>) : (<HostBreadCrumb 
                         setSelected={this.props.setSelected}
-                        links={resolveBreadcrumbs(+this.props.local.selected, this.props.tree.tree)} 
-                    />
+                        links={resolveBreadcrumbs(+this.props.local.selected, this.props.tree.tree)} />)
+                    }
                 </div>
 
                 <Switch>
@@ -145,7 +141,7 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
                         <HostInfoWrapper></HostInfoWrapper>
                     </Route>
                     <Route exact path="">
-                        <Redirect to="/objects/table/33"></Redirect>
+                        <Redirect to={`/objects/table/${this.props.local.settings.rootNode}`}></Redirect>
                     </Route>
                 </Switch>
             </div>

@@ -1,9 +1,10 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
-import { deleteObject } from '../../api/tree';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { deleteObject, fetchTree } from '../../api/tree';
 import { Host } from '../../models/host';
 import { setSelected } from '../../state/actions/local';
+import { AppState } from '../../state/reducers';
 import { findByTag } from '../../util/tree';
 import HostTable from './HostTable';
 
@@ -17,9 +18,8 @@ type PropType = {
 
 
 export default (props: PropType): any => {
-    console.log("TableWrapper")
-    let match = useRouteMatch();
     let history = useHistory();
+    let settings = useSelector((state: AppState) => state.local.settings) 
     let { tagId } = useParams<ParamTypes>();
     let dispatch = useDispatch();
     const onRowClicked = (row: Host): void => {
@@ -36,7 +36,7 @@ export default (props: PropType): any => {
     <HostTable
         tableTitle={`All items with tag ${tagId}`}
         parentId={-1}
-        onEntryDelete={(row) => {dispatch(deleteObject(row.id))}}
+        onEntryDelete={(row) => {dispatch(deleteObject(row.id, () => {dispatch(fetchTree(settings.rootNode))}))}}
         onRowClicked={onRowClicked}
         data={hosts} />);
 }

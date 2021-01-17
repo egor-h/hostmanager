@@ -45,8 +45,7 @@ export default (props: PropType): any => {
         parentId={+parentId}
         onRowClicked={onRowClicked}
         onEntryDelete={(row) => {
-            dispatch(deleteObject(row.id));
-            dispatch(fetchTree(settings.rootNode))
+            dispatch(deleteObject(row.id, () => {dispatch(fetchTree(settings.rootNode))}));
         }}
         data={(hosts && hosts.dir) ? hosts.chld : []} />);
 }
