@@ -39,42 +39,85 @@ type HostTableEntity = {
 }
 
 function nameComparator(a: HostTableEntity, b: HostTableEntity) {
-  if ((a.name.startsWith('_') && b.name.startsWith('_')) 
-  || (!a.name.startsWith('_') && !b.name.startsWith('_'))) {
+  const compareDirs = (a: HostTableEntity, b: HostTableEntity) => {
+    if (a.dir && b.dir) {
+      return generalCompare(a, b);
+    }
+    return (a.dir) ? -1 : 1;
+  }
+  const compareHosts = (a: HostTableEntity, b: HostTableEntity) => {
+    return generalCompare(a, b);
+  }
+  const generalCompare = (a: HostTableEntity, b: HostTableEntity) => {
     return a.name.localeCompare(b.name);
   }
-  if (a.name.startsWith('_') && !b.name.startsWith('_')) {
-    return -1;
-  } else {
-    return 1;
+
+  if (a.dir || b.dir) {
+    return compareDirs(a, b);
   }
+  return compareHosts(a, b);
+}
+
+function ipStringToBin(ip: string): string {
+  let octets = ip.split('.').map(oct => +oct);
+  return (octets[0]).toString(2) + (octets[1] << 16).toString(2) + (octets[2] << 8).toString(2) + (octets[3]).toString(2);
+}
+
+function isStringIp(str: string): boolean {
+  let octets = str.split('.');
+  if (octets.length != 4) {
+    return false;
+  }
+
+  let isIp = true;
+  octets.forEach(part => {
+    if (Number.isNaN(+part)) {
+      isIp = false;
+    }
+    if (+part < 0 || +part > 255) {
+      isIp = false;
+    }
+  });
+  return isIp;
 }
 
 function addressComparator(a: HostTableEntity, b: HostTableEntity) {
+  if (! isStringIp(a.address)) {
+    return -1
+  };
+  if (! isStringIp(b.address)) {
+    return 1;
+  }
 
+  let octetsA = a.address.split('.').map(oct => +oct);
+  let octetsB = b.address.split('.').map(oct => +oct);
+  if (octetsA[0] != octetsB[0]) return octetsA[0] - octetsB[0];
+  if (octetsA[1] != octetsB[1]) return octetsA[1] - octetsB[1];
+  if (octetsA[2] != octetsB[2]) return octetsA[2] - octetsB[2];
+  return octetsA[3] - octetsB[3];
 }
 
 function protocolsComparator(a: HostTableEntity, b: HostTableEntity) {
 
 }
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+function descendingComparator(a: HostTableEntity, b: HostTableEntity, orderBy: keyof HostTableEntity): number {
+  if (orderBy === 'name') {
+    return nameComparator(a, b);
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
+  if (orderBy === 'address') {
+    return addressComparator(a, b);
   }
-  return 0;
+  return a.name.localeCompare(b.name);
 }
 
 type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof HostTableEntity>(
-  order: Order,
-  orderBy: Key,
-): (a: { [key in Key]: number | string | boolean }, b: { [key in Key]: number | string | boolean }) => number {
-  return order === 'desc'
+  order: Order, 
+  orderBy: Key
+  ): (a: HostTableEntity, b: HostTableEntity) => number {
+    return order === 'desc' 
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -390,7 +433,9 @@ export default function EnhancedTable(props: {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
   // const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.data.length - page * rowsPerPage);
-
+  const preparedData = (searchQuery === '') 
+  ? (data as HostTableEntity[])
+  : (data as HostTableEntity[]).filter(h => h.name.toLowerCase().includes(searchQuery.toLowerCase()));
   return (
     // <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -420,9 +465,8 @@ export default function EnhancedTable(props: {
               rowCount={props.data.length}
             />
             <TableBody >
-              {stableSort(data as HostTableEntity[], getComparator(order, orderBy))
+              {stableSort(preparedData, getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .filter(h => (searchQuery === '' || h.name.toLowerCase().includes(searchQuery.toLowerCase())))
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
