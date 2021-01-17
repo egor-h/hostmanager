@@ -47,7 +47,7 @@ class MainPage extends React.Component<HomePageProps> {
                 <Skeleton animation="wave">
                     <TagChips tagList={([1, 2, 3, 4, 5]).map(n => ({ id: n, name: 'Abcdef' }))} ></TagChips>
                 </Skeleton>
-                    {([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).map(n => <Skeleton variant="rect" width={360} height={72} />)}
+                    {([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).map(n => <Skeleton key={`recents${n}`} variant="rect" width={360} height={72} />)}
             </Paper>);
         }
         if (this.props.recents.error) {
