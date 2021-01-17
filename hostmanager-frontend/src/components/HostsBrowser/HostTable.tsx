@@ -26,9 +26,12 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import clsx from 'clsx';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Host } from '../../models/host';
+import { Host, VALIDATE_OUTPUT } from '../../models/host';
 import PopupDialog from '../PopupDialog';
 import PopupField from '../PopupField';
+import { ProtocolResult, ProtocolResultMapByHostId } from '../../state/reducers/localState';
+import DoneIcon from '@material-ui/icons/Done';
+import { green, red } from '@material-ui/core/colors';
 
 type HostTableEntity = {
   id: number;
@@ -224,6 +227,7 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  additionalButtons: typeof Tooltip;
   tableTitle: string
   onSearchClicked: () => void;
   showResetSearchButton: boolean;
@@ -290,6 +294,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             </IconButton>
           </Tooltip>
           {
+            props.additionalButtons
+          }
+          {
             (props.showResetSearchButton) ? 
             (<Tooltip title="Reset search">
               <IconButton onClick={() => {props.onResetSearchButton()}} aria-label="find in list">
@@ -344,6 +351,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+
+const validateOutput = (output: string, regex: string): boolean => {
+  let exp = new RegExp(regex);
+  return exp.test(output);
+}
+
+const validateExitcode = (receivedExitcode: number, expectedExitcode: number): boolean => {
+  return receivedExitcode === expectedExitcode;
+}
+
 const initialState = {
   mouseX: null,
   mouseY: null,
@@ -352,6 +369,8 @@ const initialState = {
 
 export default function EnhancedTable(props: { 
   data: Host[], 
+  protocolResults: ProtocolResultMapByHostId,
+  additionalButtons: typeof Tooltip,
   onRowClicked: any, 
   tableTitle: string, 
   parentId: number, 
@@ -440,6 +459,7 @@ export default function EnhancedTable(props: {
     // <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar 
+          additionalButtons={props.additionalButtons}
           onSearchClicked={() => {setSearchPopupState(true)}}
           onAddClicked={() => {history.push(`/objects/new/${props.parentId}`)}}
           onResetSearchButton={() => {setSearchQuery('')}}
@@ -468,6 +488,18 @@ export default function EnhancedTable(props: {
               {stableSort(preparedData, getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
+                  // console.log(row.id);
+                  // console.log(Object.keys(props.protocolResults).includes([row.id]));
+                  const protocolResults = props.protocolResults[row.id];
+                  let validationOk = false;
+                  let protocolResult: ProtocolResult | null = null;
+                  if (protocolResults !== undefined) {
+                    protocolResult = protocolResults[VALIDATE_OUTPUT];
+                    if (protocolResult !== undefined) {
+                      validationOk = validateOutput(protocolResult.stderr+protocolResult.stdout, protocolResult.protocol.validationRegex);
+                    }
+                  }                  
+                  const colorAvail = validationOk ? {color: green[500]} : {color: red[500]};
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   const clickHandler = (e: any) => {onRowClicked(row)};
@@ -495,6 +527,7 @@ export default function EnhancedTable(props: {
                       <TableCell onClick={clickHandler} 
                         style={{ height: "20px", width: '70%', ...color }}
                         component="th" id={labelId} scope="row" padding="none">
+                        {protocolResults !== undefined ? <Tooltip title={`${protocolResult?.protocol.name} executedd at ${protocolResult?.createdAt}`} placement="right"><DoneIcon style={colorAvail} /></Tooltip> : ''}
                         {row.name}
                       </TableCell>
                       <TableCell onClick={clickHandler} 

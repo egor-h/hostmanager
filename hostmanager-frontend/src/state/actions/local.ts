@@ -2,9 +2,9 @@ import { Titlebar } from 'custom-electron-titlebar';
 import { Settings } from '../../models/settings';
 import {
     SET_EXPANDED,
-    SET_SELECTED, SET_PROTOCOL_RESULT, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS
+    SET_SELECTED, SET_PROTOCOL_RESULTS, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS, SET_ALL_PROTOCOL_RESULTS, SET_ONE_PROTOCOL_RESULT
 } from '../constants';
-import { ProtocolResult, SnackbarData } from '../reducers/localState';
+import { ProtocolResult, ProtocolResultMapByHostId, SnackbarData } from '../reducers/localState';
 
 
 export const setExpanded = (expanded: string[]) => ({
@@ -17,9 +17,19 @@ export const setSelected = (selected: string) => ({
     selected: selected
 });
 
+export const setOneProtocolResult = (protocolResult: ProtocolResult) => ({
+    type: SET_ONE_PROTOCOL_RESULT,
+    protocolResult: protocolResult
+})
+
 export const setProtocolResult = (protocolResults: ProtocolResult[]) => ({
-    type: SET_PROTOCOL_RESULT,
+    type: SET_PROTOCOL_RESULTS,
     protocolResults: protocolResults
+})
+
+export const setAllProtocolResults = (results: ProtocolResultMapByHostId) => ({
+    type: SET_ALL_PROTOCOL_RESULTS,
+    results: results
 })
 
 export const setIntervalId = (intervalId: number) => ({

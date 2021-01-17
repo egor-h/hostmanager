@@ -16,7 +16,7 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import { Host, Protocol, VALIDATE_EXITCODE, VALIDATE_OUTPUT } from '../../models/host';
 import { executeProtocolThunk } from '../../util/launcher';
 import { useDispatch, useSelector } from 'react-redux';
-import { LocalState, ProtocolResult } from '../../state/reducers/localState';
+import { LocalState, ProtocolResult, ProtocolResultMapByProtocolType } from '../../state/reducers/localState';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,16 +71,23 @@ const validateExitcode = (receivedExitcode: number, expectedExitcode: number): b
   return receivedExitcode === expectedExitcode;
 }
 
-const validateLaunch = (protocolResult: ProtocolResult) => {
-  switch(protocolResult.protocol.launchType) {
-    case VALIDATE_OUTPUT:
-      return (validateOutput(protocolResult.stdout, protocolResult.protocol.validationRegex) 
-      || validateOutput(protocolResult.stderr, protocolResult.protocol.validationRegex));
-    case VALIDATE_EXITCODE:
-      return validateExitcode(protocolResult.exitCode, protocolResult.protocol.expectedExitCode);
-    default:
-      return false;
+const validateLaunch = (protocolResultMap: ProtocolResultMapByProtocolType) => {
+  if (protocolResultMap[VALIDATE_OUTPUT] !== undefined || protocolResultMap[VALIDATE_EXITCODE] !== undefined) {
+    let protocolResultType = Object.keys(protocolResultMap)[0];
+    let protocolResult = protocolResultMap[protocolResultType];
+    switch(protocolResult.protocol.launchType) {
+      case VALIDATE_OUTPUT:
+        return (validateOutput(protocolResult.stdout, protocolResult.protocol.validationRegex) 
+        || validateOutput(protocolResult.stderr, protocolResult.protocol.validationRegex));
+      case VALIDATE_EXITCODE:
+        return validateExitcode(protocolResult.exitCode, protocolResult.protocol.expectedExitCode);
+      default:
+        return false;
+    }
+  } else {
+    return false;
   }
+  
 }
 
 export default function ProtocolList(props: PropsType) {
@@ -89,7 +96,8 @@ export default function ProtocolList(props: PropsType) {
   const protocolResults = useSelector((state: {local: LocalState}) => state.local.protocolResults);
 
   let protocolsForHost = props.host.protocols.map(p => props.protocols.find(proto => proto.id === p)).filter(p => p !== undefined);
-  let foundResult = protocolResults.find(p => p.hostId === props.host.id);
+  // let foundResult = protocolResults.find(p => p.hostId === props.host.id);
+  let foundResult = protocolResults[props.host.id];
   console.log(foundResult);
   let validationResult = (foundResult === undefined) ? false : validateLaunch(foundResult);
 
