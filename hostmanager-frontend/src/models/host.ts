@@ -64,6 +64,14 @@ export interface FullNote {
     hosts: Host[]
 }
 
+export const EMPTY_NOTE: FullNote = {
+    id: -1,
+    title: '',
+    text: '',
+    done: false,
+    hosts: []
+}
+
 export interface RecentHost {
     id: number,
     name: string,

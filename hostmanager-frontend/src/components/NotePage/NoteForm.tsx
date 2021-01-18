@@ -25,6 +25,7 @@ type FormProps = {
     classes: any;
     showDeleteButton: boolean;
     title: string;
+    preAddedHosts?: Host[];
 }
 
 type FormState = {
@@ -43,13 +44,14 @@ class NoteForm extends React.Component<FormProps, FormState> {
         let text = '';
         let done = false;
         let hosts: Host[] = [];
+        // this.props.preAddedHosts ? this.props.preAddedHosts : []
 
         if (this.props.note) {
             id = this.props.note.id;
             title = this.props.note.title;
             text = this.props.note.text;
             done = this.props.note.done;
-            hosts = this.props.note.hosts;
+            hosts = (this.props.note.hosts.length === 0 && this.props.preAddedHosts) ? this.props.preAddedHosts : this.props.note.hosts;
         }
 
         this.state = {

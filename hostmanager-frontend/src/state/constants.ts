@@ -32,9 +32,18 @@ export const PROTOCOLS_SUCCEDED = "PROTOCOLS_SUCCEDED";
 export const PROTOCOLS_FAILED = "PROTOCOLS_FAILED;"
 
 // notes
-export const NOTES = "NOTES";
-export const NOTES_SUCCEDED = "NOTES_SUCCEDED";
-export const NOTES_FAILED = "NOTES_FAILED";
+export const NOTES_LIST = "NOTES_LIST";
+export const NOTES_LIST_SUCCEDED = "NOTES_LIST_SUCCEDED";
+export const NOTES_LIST_FAILED = "NOTES_LIST_FAILED";
+
+export const NOTE_FOR_HOST = "NOTE_FOR_HOST";
+export const NOTE_FOR_HOST_SUCCEDED = "NOTE_FOR_HOST_SUCCEDED";
+export const NOTE_FOR_HOST_FAILED = "NOTE_FOR_HOST_FAILED";
+
+export const FULL_NOTE = "FULL_NOTE";
+export const FULL_NOTE_SUCCEDED = "FULL_NOTE_SUCCEDED";
+export const FULL_NOTE_FAILED = "FULL_NOTE_FAILED";
+
 
 // search
 export const SEARCH = "SEARCH";

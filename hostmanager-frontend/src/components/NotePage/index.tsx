@@ -44,7 +44,7 @@ const ProtocolPage = (props: any) => {
     let history = useHistory();
     let notes = useSelector((state: { notes: NoteState }) => state.notes)
 
-    if (notes.loading) {
+    if (notes.noteList.loading) {
         return (<Box>Loading..</Box>)
     }
 
@@ -54,7 +54,7 @@ const ProtocolPage = (props: any) => {
 
     return (<div>
         <List dense={true}>
-            {notes.data.map(note => getListItem(note))}
+            {notes.noteList.data.map(note => getListItem(note))}
             <ListItem button key={'addicon'} onClick={addNewProtocol}>
                 <ListItemAvatar>
                     <Avatar>
@@ -83,6 +83,9 @@ export default (props: any) => {
             {/* <ProtocolEditWrapper /> */}
         </Route>
         <Route exact path="/notes/new">
+            <NewNoteWrapper />
+        </Route>
+        <Route exact path="/notes/newWithHost/:hostId">
             <NewNoteWrapper />
         </Route>
         <Route exact path="/notes">

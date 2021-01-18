@@ -65,7 +65,7 @@ public class NoteController {
         return ResponseEntity.ok(noteRepository.findAll().stream().map(this::noteToBrief).collect(Collectors.toSet()));
     }
 
-    @GetMapping("/hosts")
+    @GetMapping("/{id}/hosts")
     public ResponseEntity hostListForNote() {
         return ResponseEntity.noContent().build();
     }
@@ -76,6 +76,17 @@ public class NoteController {
                 .map(this::noteToWhole)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new RuntimeException("note " + id + " not found"));
+    }
+
+    @GetMapping("/host/{id}")
+    public ResponseEntity getNotesForHost(@PathVariable("id") long id) {
+        return ResponseEntity.ok(hostRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException(String.format("user id = %d not found", id)))
+                .getNotes()
+                .stream()
+                .limit(5)
+                .collect(Collectors.toSet()));
     }
 
     @PostMapping
