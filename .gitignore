@@ -37,4 +37,4 @@ build/
 node_modules
 dist
 packages
-package.json
+package-lock.json
