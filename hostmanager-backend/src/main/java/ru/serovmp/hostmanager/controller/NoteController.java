@@ -39,7 +39,7 @@ public class NoteController {
                 .done(noteForm.isDone())
                 .createdAt(new Date())
                 .doneAt(doneAt)
-                .hosts(new HashSet<>(hosts))
+                .hosts(new HashSet<>())
                 .build();
     }
 
@@ -86,12 +86,21 @@ public class NoteController {
                 .getNotes()
                 .stream()
                 .limit(5)
+                .map(this::noteToBrief)
                 .collect(Collectors.toSet()));
     }
 
     @PostMapping
     public ResponseEntity addNote(@RequestBody NoteForm noteForm) {
-        return ResponseEntity.ok(noteRepository.save(formToNote(noteForm)));
+        var note = formToNote(noteForm);
+        var savedNote = noteRepository.saveAndFlush(note);
+        var associatedHosts = hostRepository.findAllById(noteForm.getHosts());
+        associatedHosts.forEach(host -> {
+            host.getNotes().add(savedNote);
+            hostRepository.save(host);
+        });
+
+        return ResponseEntity.ok(savedNote);
     }
 
     @PutMapping("/{id}")
@@ -109,8 +118,8 @@ public class NoteController {
     public ResponseEntity delete(@PathVariable("id") long id) {
         var found = noteRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("Note %d not found", id)));
         found.getHosts().stream().forEach(host -> {
-            if (host.getProtocols().contains(found)) {
-                host.getProtocols().remove(found);
+            if (host.getNotes().contains(found)) {
+                host.getNotes().remove(found);
             }
         });
         noteRepository.deleteById(id);

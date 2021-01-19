@@ -28,7 +28,7 @@ public class Note implements Serializable {
 //    private User createdBy;
     private Date doneAt;
 
-    @ManyToMany(mappedBy = "notes", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "notes", fetch = FetchType.LAZY)
     private Set<Host> hosts;
 
 

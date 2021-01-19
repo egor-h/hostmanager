@@ -34,6 +34,7 @@ public class User implements Serializable, UserDetails {
 
     private boolean enabled;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Setting> settings;
 
