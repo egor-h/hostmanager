@@ -4,6 +4,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import React from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { Link, RouteComponentProps, useHistory, useParams, withRouter } from 'react-router-dom';
+import { deleteNote, fetchNotesForHost } from '../../api/note';
 import { AppState } from '../../state/reducers';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { NotesForHostState } from '../../state/reducers/notes';
@@ -14,15 +15,15 @@ import ClircleLoading from '../CircleLoading';
 import { TagChips } from '../MainPage/TagChips';
 import NoteList from './NoteList';
 import ProtocolList from './ProtocolList';
-
-type ParamTypes = {
-    hostId: string;
-}
+import { bindActionCreators } from 'redux';
 
 type HostInfoProps = {
     tree: TreeState;
     protocols: ProtocolState;
     notes: NotesForHostState;
+
+    fetchNotes: (id: number) => void;
+    deleteNoteById: (id: number, onSuccess?: () => void) => void;
 } & RouteComponentProps<{hostId: string}>;
 
 const mapStateToProps = (state: AppState) => ({
@@ -32,7 +33,8 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-
+    fetchNotes: bindActionCreators(fetchNotesForHost, dispatch),
+    deleteNoteById: bindActionCreators(deleteNote, dispatch)
 })
 
 class HostInfoWrapper extends React.Component<HostInfoProps> {
@@ -41,7 +43,7 @@ class HostInfoWrapper extends React.Component<HostInfoProps> {
     }
 
     componentDidMount() {
-
+        this.props.fetchNotes(+this.props.match.params.hostId);
     }
 
     render() {
@@ -84,7 +86,14 @@ class HostInfoWrapper extends React.Component<HostInfoProps> {
                 <ProtocolList host={foundHost} protocols={this.props.protocols.data} />
             </div>
             <div style={{ display: 'flex', flexBasis: '100%', flexWrap: "wrap" }}>
-                <NoteList host={foundHost} notes={this.props.notes.data} />
+                <NoteList 
+                    host={foundHost} 
+                    notes={this.props.notes.data} 
+                    onDelete={(id: number) => { 
+                        this.props.deleteNoteById(id, () => {
+                            this.props.fetchNotes(+this.props.match.params.hostId)
+                        }); 
+                    }}/>
             </div>
 
         </Box>);

@@ -19,6 +19,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LocalState, ProtocolResult, ProtocolResultMapByProtocolType } from '../../state/reducers/localState';
 import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router-dom';
+import NoteIcon from '@material-ui/icons/Note';
+import { IconButton, ListItemSecondaryAction } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -37,25 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 type PropsType = {
     notes: Note[];
     host: Host;
-}
-
-const item = (protocol: Protocol, host: Host, onClick: (host: Host, protocol: Protocol) => void) => {
-    return (<ListItem button key={protocol.id + ''} onClick={() => onClick(host, protocol)}>
-        <ListItemIcon>
-            <ReceiptIcon />
-        </ListItemIcon>
-        <ListItemText primary={protocol.name} />
-    </ListItem>);
-}
-
-const coloredItem = (protocol: Protocol, host: Host, colored: boolean, succeded: boolean, onClick: (host: Host, protocol: Protocol) => void) => {
-    let coloredStyle = { color: succeded ? "#4caf50" : "#f44336" };
-    return (<ListItem button key={protocol.id + ''} onClick={() => onClick(host, protocol)}>
-        <ListItemIcon>
-            <ReceiptIcon style={colored ? coloredStyle : {}} />
-        </ListItemIcon>
-        <ListItemText primary={protocol.name} />
-    </ListItem>);
+    onDelete: (id: number) => void;
 }
 
 
@@ -78,9 +63,14 @@ export default function NoteList(props: PropsType) {
                 props.notes.map(note => (
                     <ListItem button key={note.id} onClick={() => { history.push(`/notes/edit/${note.id}`); }}>
                         <ListItemIcon>
-                            <AddIcon />
+                            <NoteIcon />
                         </ListItemIcon>
                         <ListItemText primary={note.title} />
+                        <ListItemSecondaryAction>
+                            <IconButton edge="end" aria-label="delete">
+                                <DeleteIcon onClick={() => {props.onDelete(note.id)}}/>
+                            </IconButton>
+                        </ListItemSecondaryAction>
                     </ListItem>))
             }
             <ListItem button key={'addnote'} onClick={() => { history.push(`/notes/newWithHost/${props.host.id}`); }}>

@@ -60,7 +60,7 @@ export const notes = (state = initialState, action: any) => {
             return {
                 ...state,
                 noteList: {
-                    loading: true,
+                    loading: false,
                     data: action.notes,
                     error: false
                 }
@@ -69,9 +69,9 @@ export const notes = (state = initialState, action: any) => {
             return {
                 ...state,
                 noteList: {
-                    loading: true,
+                    loading: false,
                     data: [],
-                    error: false
+                    error: true
                 }
             }
             case FULL_NOTE:
@@ -87,7 +87,7 @@ export const notes = (state = initialState, action: any) => {
             return {
                 ...state,
                 fullNote: {
-                    loading: true,
+                    loading: false,
                     data: action.fullNote,
                     error: false
                 }
@@ -96,9 +96,9 @@ export const notes = (state = initialState, action: any) => {
             return {
                 ...state,
                 fullNote: {
-                    loading: true,
+                    loading: false,
                     data: [],
-                    error: false
+                    error: true
                 }
             }
             case NOTE_FOR_HOST:
@@ -114,7 +114,7 @@ export const notes = (state = initialState, action: any) => {
             return {
                 ...state,
                 notesForHost: {
-                    loading: true,
+                    loading: false,
                     data: action.notes,
                     error: false
                 }
@@ -123,9 +123,9 @@ export const notes = (state = initialState, action: any) => {
             return {
                 ...state,
                 notesForHost: {
-                    loading: true,
+                    loading: false,
                     data: [],
-                    error: false
+                    error: true
                 }
             }
         default:

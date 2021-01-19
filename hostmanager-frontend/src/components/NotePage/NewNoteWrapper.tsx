@@ -15,10 +15,9 @@ export default () => {
     let params = useParams<{hostId: string}>();
     let tree = useSelector((hostsBrowser: AppState) => hostsBrowser.hostsBrowser.tree);
 
-    const submitNewTag = (note: FullNote) => {
-        console.log(note)
-        dispatch(createNote({...note, hosts: note.hosts.map(h => h.id)}))
-        history.push('/notes')
+    const submitNewNote = (note: FullNote) => {
+        dispatch(createNote({...note, hosts: note.hosts.map(h => h.id)}));
+        history.push('/notes');
     }
 
     let hostsList = flattenTree(tree.tree, h => ({id: h.id, name: h.name}));
@@ -28,9 +27,13 @@ export default () => {
         let foundPreAddedHost = findExactHostById(tree.tree, +params.hostId);
         console.log(foundPreAddedHost)
         if (foundPreAddedHost) {
-            return (<NoteForm title="New note" preAddedHosts={[foundPreAddedHost]} allHosts={hostsList} showDeleteButton={false} note={{id: -1, done: false, title: '', text: '', hosts: []}} onSubmit={submitNewTag}></NoteForm>)
+            const submitNewNoteBackToHost = (note: FullNote) => {
+                dispatch(createNote({...note, hosts: note.hosts.map(h => h.id)}));
+                history.push(`/objects/info/${foundPreAddedHost?.id}`);
+            }
+            return (<NoteForm title="New note" preAddedHosts={[foundPreAddedHost]} allHosts={hostsList} showDeleteButton={false} note={{id: -1, done: false, title: '', text: '', hosts: []}} onSubmit={submitNewNoteBackToHost}></NoteForm>)
         }
     }
 
-    return (<NoteForm title="New note" allHosts={hostsList} showDeleteButton={false} note={{id: -1, done: false, title: '', text: '', hosts: []}} onSubmit={submitNewTag}></NoteForm>)
+    return (<NoteForm title="New note" allHosts={hostsList} showDeleteButton={false} note={{id: -1, done: false, title: '', text: '', hosts: []}} onSubmit={submitNewNote}></NoteForm>)
 }
