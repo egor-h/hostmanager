@@ -61,7 +61,7 @@ export interface FullNote {
     title: string,
     text: string,
     done: boolean,
-    hosts: Host[]
+    hosts: number[]
 }
 
 export const EMPTY_NOTE: FullNote = {

@@ -15,6 +15,7 @@ import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { fetchNotes } from '../../api/note';
 import { Note } from '../../models/host';
 import { NoteState } from '../../state/reducers/notes';
+import EditNoteWrapper from './EditNoteWrapper';
 import NewNoteWrapper from './NewNoteWrapper';
 
 
@@ -39,7 +40,7 @@ const getListItem = (note: Note) => {
     </ListItem>)
 }
 
-const ProtocolPage = (props: any) => {
+const NotePage = (props: any) => {
     const dispatch = useDispatch();
     let history = useHistory();
     let notes = useSelector((state: { notes: NoteState }) => state.notes)
@@ -77,10 +78,10 @@ const ProtocolPage = (props: any) => {
 export default (props: any) => {
     return (<Switch>
         <Route exact path="/notes/all">
-            <ProtocolPage></ProtocolPage>
+            <NotePage />
         </Route>
         <Route exact path="/notes/edit/:notesId">
-            {/* <ProtocolEditWrapper /> */}
+            <EditNoteWrapper />
         </Route>
         <Route exact path="/notes/new">
             <NewNoteWrapper />

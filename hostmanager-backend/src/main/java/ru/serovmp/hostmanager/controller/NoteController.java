@@ -12,6 +12,7 @@ import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Note;
 import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.NoteRepository;
+import ru.serovmp.hostmanager.service.HostService;
 
 import java.util.Date;
 import java.util.HashSet;

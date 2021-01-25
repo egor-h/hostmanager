@@ -14,12 +14,15 @@ export const fetchNotes = () => get<Note[]>({
     actionOnError: notes.notesListFailed
 });
 
-export const fetchFullNote = (id: number) => {
+export const fetchFullNote = (id: number, onSuccess?: () => void) => {
     return (dispatch: any) => {
         dispatch(notes.fullNote());
         api.get<FullNote>(`${API_NOTES}/${id}`)
         .then(resp => {
             dispatch(notes.fullNoteSucceded(resp.data));
+            if (onSuccess) {
+                onSuccess();
+            }
         })
         .catch(error => {
             dispatch(notes.fullNoteFailed());
@@ -40,10 +43,13 @@ export const fetchNotesForHost = (hostId: number) => {
     }
 }
 
-export const createNote = (notes: Omit<FullNote, "id" | "hosts"> & {hosts: number[]}) => post<Omit<FullNote, "id" | "hosts"> & {hosts: number[]}>({
+export const createNote = (notes: Omit<FullNote, "id" | "hosts"> & {hosts: number[]}, onSuccess?: () => void) => post<Omit<FullNote, "id" | "hosts"> & {hosts: number[]}>({
     url: API_NOTES,
     data: notes,
     onSuccess: (dispatch) => {
+        if (onSuccess) {
+            onSuccess();
+        }
         dispatch(setSnackbar({severity: 'success', message: `Created note ${notes.title}`}));
         dispatch(fetchNotes());
     },
