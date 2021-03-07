@@ -24,6 +24,7 @@ import { putUserSettings } from '../../api/settings';
 import { Autocomplete } from '@material-ui/lab';
 import { EMPTY_HOST, Host } from '../../models/host';
 import { findAllDirs } from '../../util/tree';
+import UserPage from '../UserPage';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
@@ -204,7 +205,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 {settingsPage}
             </Route>
             <Route exact path="/settings/users">
-                <div>Users settings</div>
+                <UserPage />
             </Route>
             <Route exact path="/settings">
                 <Redirect to="/settings/all" />
@@ -215,66 +216,3 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SettingsList));
-
-// export default () => {
-//     let history = useHistory();
-//     const dispatch = useDispatch();
-//     const settingsState = useSelector((state: AppState) => state.local.settings);
-
-//     const settingsPage = (<div style={{ display: 'flex', flexDirection: 'column', width: '70vw', justifyContent: 'center' }}>
-//         <Typography variant="h4">Settings</Typography>
-//         <List>
-//             <ListSubheader>Application</ListSubheader>
-//             <ListItem button onClick={() => dispatch(local.settings({...settingsState, expandTreeOnStartup: !settingsState?.expandTreeOnStartup}))}>
-//                 <ListItemText id="switch-enable-autoexpand-on-start" primary="Expand tree on start" />
-//                 <ListItemSecondaryAction>
-//                     <Switch
-//                         edge="end"
-//                         onChange={(e: any, value: boolean) => {dispatch(local.settings({...settingsState, expandTreeOnStartup: value}))}}
-//                         checked={settingsState?.expandTreeOnStartup}
-//                         inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
-//                     />
-//                 </ListItemSecondaryAction>
-//             </ListItem>
-
-//             <ListItem button onClick={() => history.push("/settings/users")}>
-//                 <ListItemText primary="Edit users" />
-//                 <ListItemSecondaryAction>
-//                     <IconButton edge="end" aria-label="delete">
-//                         <NavigateNextIcon />
-//                     </IconButton>
-//                 </ListItemSecondaryAction>
-//             </ListItem>
-
-//             <ListItem button>
-//                 <ListItemText primary="Set tree root node" />
-//             </ListItem>
-
-//             <ListItem button>
-//                 <ListItemText primary="Set host name template in table" />
-//             </ListItem>
-
-//             <ListSubheader>Profile</ListSubheader>
-//             <ListItem button>
-//                 <ListItemText primary="Change profile" />
-//             </ListItem>
-
-//             <ListSubheader>Utilities</ListSubheader>
-//             <ListItem button>
-//                 <ListItemText primary="Export directory to zabbix" />
-//             </ListItem>
-//         </List>
-//     </div>);
-
-//     return (<RouterSwitch>
-//         <Route exact path="/settings/all">
-//             {settingsPage}
-//         </Route>
-//         <Route exact path="/settings/users">
-//             <div>Users settings</div>
-//         </Route>
-//         <Route exact path="/settings">
-//             <Redirect to="/settings/all" />
-//         </Route>
-//     </RouterSwitch>)
-// }
