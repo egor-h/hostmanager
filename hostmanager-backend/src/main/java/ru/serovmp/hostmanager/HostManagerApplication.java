@@ -3,6 +3,7 @@ package ru.serovmp.hostmanager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.serovmp.hostmanager.entity.Role;
 import ru.serovmp.hostmanager.entity.User;
@@ -14,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @SpringBootApplication
+@EnableConfigurationProperties
 public class HostManagerApplication {
 
 	public static void main(String[] args) {

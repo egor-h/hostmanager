@@ -21,4 +21,9 @@ public class ZabbixController {
     public ResponseEntity exportStatus() {
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping
+    public ResponseEntity zabbixGroups() {
+        return ResponseEntity.ok().build();
+    }
 }
