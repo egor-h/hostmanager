@@ -15,8 +15,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
     responseType: 'json',
-    // validateStatus: (status) => status > 200 && status < 300,
-    validateStatus: (status) => true
+    validateStatus: (status) => status < 400
 });
 
 api.interceptors.request.use((config) => {
@@ -29,9 +28,6 @@ api.interceptors.request.use((config) => {
     return config;
 }, (error) => Promise.reject(error));
 
-api.interceptors.response.use(response => {
-
-    return response;
-}, (error) => Promise.reject(error));
+api.interceptors.response.use(response => response, (error) => Promise.reject(error));
 
 export default api;
