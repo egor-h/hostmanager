@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { authNull } from '../state/actions/auth';
-import { setIntervalId, setSnackbar } from '../state/actions/local';
+import { setIntervalId, setOneProtocolResult, setAllProtocolResults, setSnackbar } from '../state/actions/local';
 import { AppState } from '../state/reducers';
 import { AuthState } from '../state/reducers/auth';
 import { TreeState } from '../state/reducers/hostsBrowser';
-import { LocalState, SnackbarData } from '../state/reducers/localState';
+import { LocalState, ProtocolResult, SnackbarData } from '../state/reducers/localState';
 import { addKeyEventListener, KeysMap } from '../util/events';
 import { KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_F, KEY_Q } from '../util/keyboard_codes';
 import { cleanOldResultsThunk } from '../util/launcher';
@@ -24,7 +24,7 @@ import SearchPage from './SearchPage';
 import SettingsPage from './SettingsPage';
 import StatisticPage from './StatisticPage';
 import TagPage from './TagPage';
-
+import { ipcRenderer } from 'electron';
 
 type PropsType = {
     local: LocalState;
@@ -34,6 +34,8 @@ type PropsType = {
     setIntervalId: (id: number) => void;
     setSnackBar: (data: SnackbarData) => void;
     logout: () => void;
+    oneProtocolResult: any;
+    allProtocolResults: any;
 } & RouteComponentProps;
 
 
@@ -56,6 +58,17 @@ class MainView extends React.Component<PropsType> {
     }
 
     componentDidMount() {
+        ipcRenderer.on('async-execute-reply', (event, newlyCreatedResult) => {
+            console.log('ping result from main process:');
+            console.log(newlyCreatedResult);
+            this.props.oneProtocolResult(newlyCreatedResult);
+        });
+
+        ipcRenderer.on('async-execute-all-reply', (event, newlyCreatedResults: ProtocolResult[]) => {
+            console.log(newlyCreatedResults);
+            this.props.allProtocolResults(newlyCreatedResults);
+        })
+
         let intervalId = setInterval(() => {
             this.props.doCleanupResults();
         }, 60000);
@@ -161,7 +174,9 @@ const mapDispatchToProps = (dispatch: any) => ({
     doCleanupResults: bindActionCreators(cleanOldResultsThunk, dispatch),
     setIntervalId: bindActionCreators(setIntervalId, dispatch),
     setSnackBar: bindActionCreators(setSnackbar, dispatch),
-    logout: bindActionCreators(authNull, dispatch)
+    logout: bindActionCreators(authNull, dispatch),
+    oneProtocolResult: bindActionCreators(setOneProtocolResult, dispatch),
+    allProtocolResults: bindActionCreators(setAllProtocolResults, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(MainView));

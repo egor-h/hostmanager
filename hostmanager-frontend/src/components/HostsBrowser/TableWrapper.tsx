@@ -11,7 +11,7 @@ import { findHostById } from '../../util/tree';
 import HostTable from './HostTable';
 import LoadingHostTableSkeleton from './LoadingHostTableSkeleton';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { executeProtocolThunk } from '../../util/launcher';
+import { executeProtocolThunk, executeProtocolsThunk } from '../../util/launcher';
 
 type ParamTypes = {
     parentId: string;
@@ -46,19 +46,18 @@ export default (props: PropType): any => {
     let hosts = findHostById(tree.tree, +parentId);
 
     const pingAll = () => {
-        hosts?.chld.forEach(host => {
-            if (host.dir) {
-                return;
-            }
-            dispatch(executeProtocolThunk(host, {
-                id: 5,
-                name: 'ICMP ping',
-                executionLine: 'ping {address} /n 1',
-                launchType: 'VALIDATE_OUTPUT',
-                validationRegex: 'TTL',
-                expectedExitCode: 0
-              }));
-        });
+        if (hosts === null || hosts.chld === undefined) {
+            return;
+        }
+
+        dispatch(executeProtocolsThunk(hosts.chld, {
+            id: 5,
+            name: 'ICMP ping',
+            executionLine: 'ping {address} /n 1',
+            launchType: 'VALIDATE_OUTPUT',
+            validationRegex: 'TTL',
+            expectedExitCode: 0
+          }));
     }
 
     return (<HostTable

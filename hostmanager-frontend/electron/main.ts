@@ -1,7 +1,11 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import * as url from 'url'
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer'
+import { _execute, unixTimestamp } from '../src/util/launcher';
+import format from 'string-format';
+import { Host, Protocol } from '../src/models/host';
+import { ProtocolResult, ProtocolResultMapByHostId } from '../src/state/reducers/localState';
 
 let mainWindow: Electron.BrowserWindow | null
 
@@ -38,6 +42,63 @@ function createWindow () {
     mainWindow = null
   })
 }
+
+ipcMain.on('async-execute-all', (event, arg) => {
+    // console.log('async-execute-all');
+    // console.log(arg)
+    let results: ProtocolResultMapByHostId = {}
+    let {protocol, hosts}: {protocol: Protocol, hosts: Host[]} = arg;
+    hosts.forEach(host => {
+      let formatted = format(protocol.executionLine, host);
+      _execute(formatted, (err, stderr, stdout) => {
+            
+      let exitCode: number = err?.code === undefined ? 0 : err.code;
+      let newlyCreatedResult = {
+        hostId: host.id,
+        protocol: protocol,
+        createdAt: unixTimestamp(new Date()),
+        stdout: stdout,
+        stderr: stderr,
+        exitCode: exitCode
+      }
+      // console.log(newlyCreatedResult)
+      results[host.id] = {[protocol.launchType]: newlyCreatedResult};
+    });
+    
+  });
+
+  let intervalId = setInterval((hostsTotal: number) => {
+    console.log(`Hosts total: ${hostsTotal}`);
+    console.log(`Hosts with results: ${Object.keys(results).length}`);
+    if (hostsTotal === Object.keys(results).length) {
+      event.reply('async-execute-all-reply', results);
+      clearInterval(intervalId);
+      return;
+    }
+    console.log('Results not ready. Sleeping...');
+  }, 1500, hosts.length);
+    
+})
+
+ipcMain.on('async-execute', (event, arg) => {
+  console.log(arg)
+  let {protocol, host} = arg;
+  let formatted = format(protocol.executionLine, host);
+  _execute(formatted, (err, stderr, stdout) => {
+            
+    let exitCode: number = err?.code === undefined ? 0 : err.code;
+    // let filteredResults = getState().local.protocolResults.filter(pr => pr.hostId !== host.id);
+    let newlyCreatedResult = {
+        hostId: host.id,
+        protocol: protocol,
+        createdAt: unixTimestamp(new Date()),
+        stdout: stdout,
+        stderr: stderr,
+        exitCode: exitCode
+    }
+    //event.reply('async-execute-reply', newlyCreatedResult);
+  });
+});
 
 app.on('ready', createWindow)
   .whenReady()
