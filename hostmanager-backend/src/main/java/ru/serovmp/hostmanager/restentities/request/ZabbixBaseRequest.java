@@ -17,7 +17,7 @@ public class ZabbixBaseRequest<T> {
     long id;
     String auth;
 
-    public static <U> ZabbixBaseRequest<U> baseRequest(String method, long id, String auth, U params) {
-        return new ZabbixBaseRequest<U>("2.0", method, params, id, auth);
+    public static <U extends MethodNameable> ZabbixBaseRequest<U> baseRequest(long id, String auth, U params) {
+        return new ZabbixBaseRequest<U>("2.0", params.methodName(), params, id, auth);
     }
 }

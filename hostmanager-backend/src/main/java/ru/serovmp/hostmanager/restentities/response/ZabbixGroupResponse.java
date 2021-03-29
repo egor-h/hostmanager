@@ -1,16 +1,32 @@
 package ru.serovmp.hostmanager.restentities.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+
 @NoArgsConstructor
-@Builder
 public class ZabbixGroupResponse {
-    String groupId;
-    String name;
-    String internal;
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class Result {
+        String groupId;
+        String name;
+        String internal;
+    }
+
+    @Getter
+    private List<Result> result;
+
+    @JsonProperty("result")
+    void setResult(List<Map<String, String>> results) {
+        result = results.stream()
+                .map(grpMap -> new Result(grpMap.get("groupid"), grpMap.get("name"), grpMap.get("internal")))
+                .collect(Collectors.toList());
+    }
+
 }

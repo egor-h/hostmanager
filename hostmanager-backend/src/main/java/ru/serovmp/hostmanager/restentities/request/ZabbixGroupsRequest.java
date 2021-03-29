@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ZabbixGroupsRequest {
+public class ZabbixGroupsRequest implements MethodNameable {
     String output;
+
+    @Override
+    public String methodName() {
+        return "hostgroup.get";
+    }
 }

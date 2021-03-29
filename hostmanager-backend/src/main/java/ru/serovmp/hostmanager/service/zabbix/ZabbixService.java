@@ -1,4 +1,4 @@
-package ru.serovmp.hostmanager.service;
+package ru.serovmp.hostmanager.service.zabbix;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class ZabbixService {
     private AtomicLong requestId = new AtomicLong(1);
     private RestTemplate rest = new RestTemplate();
+    private ZabbixClient client;
 
     private ZabbixConfigurationProperties zabbixConfig;
 
@@ -34,31 +35,24 @@ public class ZabbixService {
     @Autowired
     public ZabbixService(ZabbixConfigurationProperties zabbixConfig) {
         this.zabbixConfig = zabbixConfig;
+        client = new ZabbixClient(zabbixConfig.getUrl(), rest);
     }
 
     @PostConstruct
     void init() {
         authToZabbix();
-        groups();
-    }
-
-    private ZabbixBaseRequest getRequest(String method, Object body) {
-        return ZabbixBaseRequest.baseRequest(
-                method, requestId.getAndIncrement(), apiKey, body);
     }
 
     public void authToZabbix() {
-        var request = getRequest("user.login", new ZabbixAuthRequest(zabbixConfig.getLogin(), zabbixConfig.getPassword()));
-        log.debug("Zabbix auth: {}", request);
-        ZabbixBaseResponse<String> result = rest.postForObject(zabbixConfig.getUrl(), request, ZabbixBaseResponse.class);
-        apiKey = result.getResult();
-        log.debug("Zabbix auth result: {}", result);
+        var request = new ZabbixAuthRequest(zabbixConfig.getLogin(), zabbixConfig.getPassword());
+        var response = client.request(request, ZabbixAuthResponse.class, requestId.getAndIncrement(), apiKey);
+        apiKey = response.getResult();
     }
 
-    public void groups() {
-        var request = getRequest("hostgroup.get", new ZabbixGroupsRequest("extend"));
-        ZabbixBaseResponse<List<ZabbixGroupResponse>> result = rest.postForObject(zabbixConfig.getUrl(), request, ZabbixBaseResponse.class);
-        log.debug(String.join(", ", result.getResult().stream().map(g -> g.toString()).collect(Collectors.toList())));
-    }
 
+    public List<ZabbixGroupResponse.Result> groups() {
+        var request = new ZabbixGroupsRequest("extend");
+        var response = client.request(request, ZabbixGroupResponse.class, requestId.getAndIncrement(), apiKey);
+        return response.getResult();
+    }
 }

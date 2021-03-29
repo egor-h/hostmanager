@@ -9,7 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ZabbixAuthRequest<T> {
+public class ZabbixAuthRequest<T> implements MethodNameable {
     String user;
     String password;
+
+    @Override
+    public String methodName() {
+        return "user.login";
+    }
 }

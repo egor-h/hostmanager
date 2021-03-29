@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 @Builder
-public class ZabbixAuthResponse {
+public class ZabbixAuthResponse extends ZabbixBaseResponse {
+    String result;
 }

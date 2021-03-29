@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ZabbixBaseResponse<T> {
-    String jsonRpc;
-    T result;
+public class ZabbixBaseResponse {
+    String jsonrpc;
     long id;
 }
