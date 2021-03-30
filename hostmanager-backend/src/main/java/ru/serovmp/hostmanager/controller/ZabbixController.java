@@ -1,20 +1,30 @@
 package ru.serovmp.hostmanager.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.serovmp.hostmanager.service.zabbix.ZabbixService;
 
 @RequestMapping("/api/v1/zabbix")
 @RestController
 public class ZabbixController {
 
+    ZabbixService zabbixService;
+
+    @Autowired
+    public ZabbixController(ZabbixService zabbixService) {
+        this.zabbixService = zabbixService;
+    }
+
     @GetMapping
     public ResponseEntity getGroups() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(zabbixService.groups());
     }
 
     @GetMapping("/{hostsManagerId}/to/{zabbixGroupId}")
     public ResponseEntity export(@PathVariable long hostsManagerId, @PathVariable long zabbixGroupId, @RequestParam("merge") boolean mergeExistingEntries) {
-        return ResponseEntity.ok().build();
+        var added = zabbixService.syncGroup(hostsManagerId, String.valueOf(zabbixGroupId), mergeExistingEntries);
+        return ResponseEntity.ok(added);
     }
 
     @GetMapping("/exportStatus")
@@ -22,8 +32,4 @@ public class ZabbixController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity zabbixGroups() {
-        return ResponseEntity.ok().build();
-    }
 }
