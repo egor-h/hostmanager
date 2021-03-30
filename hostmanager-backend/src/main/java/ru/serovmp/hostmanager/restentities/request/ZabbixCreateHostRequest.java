@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor @Data
 public class ZabbixCreateHostRequest implements MethodNameable {
     private String host;
+    private String name;
     private List<Interface> interfaces;
     private List<Group> groups;
 

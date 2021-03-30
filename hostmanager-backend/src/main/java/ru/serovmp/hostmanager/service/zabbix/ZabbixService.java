@@ -2,24 +2,28 @@ package ru.serovmp.hostmanager.service.zabbix;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestTemplate;
 import ru.serovmp.hostmanager.config.ZabbixConfigurationProperties;
 import ru.serovmp.hostmanager.dto.HostDto;
-import ru.serovmp.hostmanager.restentities.request.*;
-import ru.serovmp.hostmanager.restentities.response.*;
+import ru.serovmp.hostmanager.restentities.request.ZabbixAuthRequest;
+import ru.serovmp.hostmanager.restentities.request.ZabbixCreateHostRequest;
+import ru.serovmp.hostmanager.restentities.request.ZabbixGroupsRequest;
+import ru.serovmp.hostmanager.restentities.request.ZabbixHostsRequest;
+import ru.serovmp.hostmanager.restentities.response.ZabbixAuthResponse;
+import ru.serovmp.hostmanager.restentities.response.ZabbixCreateHostResponse;
+import ru.serovmp.hostmanager.restentities.response.ZabbixGroupResponse;
+import ru.serovmp.hostmanager.restentities.response.ZabbixHostsResponse;
 import ru.serovmp.hostmanager.service.HostService;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -45,7 +49,6 @@ public class ZabbixService {
     @PostConstruct
     void init() {
         authToZabbix();
-        syncGroup(22, "39", true);
     }
 
     public void authToZabbix() {
@@ -75,16 +78,13 @@ public class ZabbixService {
                 .flatMap(host -> host.getInterfaces().stream().map(itf -> itf.getIp()))
                 .collect(Collectors.toSet());
 
-        var preparedHostsStream = hosts.stream();
-
-        if (dontAddExisted) {
-            preparedHostsStream.filter(host -> !usedAddressses.contains(host.getAddress()));
-        }
-        var preparedHosts = preparedHostsStream.map((HostDto host) -> {
-            var itf = new ZabbixCreateHostRequest.Interface(1, 1, 1, host.getAddress(), "", "10050");
-            var group = new ZabbixCreateHostRequest.Group(zabbixGroupId);
-            return new ZabbixCreateHostRequest(host.getName(), List.of(itf), List.of(group));
-        }).collect(toList());
+        var preparedHosts = hosts.stream()
+                .filter(host -> dontAddExisted && !usedAddressses.contains(host.getAddress()))
+                .map((HostDto host) -> {
+                    var itf = new ZabbixCreateHostRequest.Interface(1, 1, 1, host.getAddress(), "", "10050");
+                    var group = new ZabbixCreateHostRequest.Group(zabbixGroupId);
+                    return new ZabbixCreateHostRequest("host"+host.getId(), host.getName(), List.of(itf), List.of(group));
+                }).collect(toList());
 
         return preparedHosts.stream().map(this::createHost).collect(Collectors.toList());
     }
