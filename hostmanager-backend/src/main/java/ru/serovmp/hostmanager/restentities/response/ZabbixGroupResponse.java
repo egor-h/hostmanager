@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@NoArgsConstructor
-public class ZabbixGroupResponse {
+@NoArgsConstructor @AllArgsConstructor @Data
+public class ZabbixGroupResponse extends ZabbixBaseResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
