@@ -32,12 +32,15 @@ import PopupField from '../PopupField';
 import { ProtocolResult, ProtocolResultMapByHostId } from '../../state/reducers/localState';
 import DoneIcon from '@material-ui/icons/Done';
 import { green, red } from '@material-ui/core/colors';
+import { useSelector } from 'react-redux';
+import { AppState } from '../../state/reducers';
 
 type HostTableEntity = {
   id: number;
   name: string;
   address: string;
   enabled: boolean;
+  protocols: number[];
   dir: boolean;
 }
 
@@ -376,6 +379,7 @@ export default function EnhancedTable(props: {
   parentId: number, 
   onEntryDelete: (row: HostTableEntity) => void
 }) {
+  const protocolsState = useSelector((appState: AppState) => appState.protocols.data);
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof HostTableEntity>('name');
@@ -567,7 +571,13 @@ export default function EnhancedTable(props: {
             setDeletePopupState({showDelete: true, target: state.selectedItem})
           }}>Delete</MenuItem>
           <Divider />
-          <MenuItem onClick={handleClose}>?</MenuItem>
+          {
+            state.selectedItem?.protocols.map(protoId => {
+              let found = protocolsState.find(p => p.id === protoId);
+
+              return (<MenuItem onClick={handleClose}>{found?.name}</MenuItem>);
+            })
+          }
         </Menu>
         <PopupDialog 
           open={deletePopupState.showDelete}
