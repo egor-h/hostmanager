@@ -49,6 +49,7 @@ public class ZabbixService {
     @PostConstruct
     void init() {
         authToZabbix();
+        log.info("Connected to zabbix on {}", zabbixConfig.getUrl());
     }
 
     public void authToZabbix() {
