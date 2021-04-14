@@ -117,9 +117,10 @@ public class HostService {
     }
 
     HostDto hostToDto(Host root) {
+        var parent = root.getParent();
         var dto = HostDto.builder()
                 .id(root.getId())
-                .parentId(root.getParent().getId())
+                .parentId(parent == null ? -1 : parent.getId())
                 .name(root.getName())
                 .address(root.getAddress())
                 .enabled(root.isEnabled())
