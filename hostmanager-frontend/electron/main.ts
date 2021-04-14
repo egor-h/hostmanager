@@ -50,6 +50,7 @@ ipcMain.on('async-execute-all', (event, arg) => {
     let {protocol, hosts}: {protocol: Protocol, hosts: Host[]} = arg;
     hosts.forEach(host => {
       let formatted = format(protocol.executionLine, host);
+      if (host.dir) return;
       _execute(formatted, (err, stderr, stdout) => {
             
       let exitCode: number = err?.code === undefined ? 0 : err.code;
@@ -76,13 +77,14 @@ ipcMain.on('async-execute-all', (event, arg) => {
       return;
     }
     console.log('Results not ready. Sleeping...');
-  }, 1500, hosts.length);
+  }, 1500, hosts.filter(h => !h.dir).length);
     
 })
 
 ipcMain.on('async-execute', (event, arg) => {
   console.log(arg)
   let {protocol, host} = arg;
+  if (host.dir) return;
   let formatted = format(protocol.executionLine, host);
   _execute(formatted, (err, stderr, stdout) => {
             
@@ -96,7 +98,7 @@ ipcMain.on('async-execute', (event, arg) => {
         stderr: stderr,
         exitCode: exitCode
     }
-    //event.reply('async-execute-reply', newlyCreatedResult);
+    event.reply('async-execute-reply', newlyCreatedResult);
   });
 });
 
