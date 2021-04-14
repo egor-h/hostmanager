@@ -39,7 +39,7 @@ export default function InsetDividers(props: ListProps) {
         <div key={e.id+''}>
             <Grow in={true} timeout={timeouts[idx]}>
             <ListItem button onClick={() => {history.push(`/objects/info/${e.id}`)}}>
-                <ListItemText primary={e.name} secondary={e.createdAt} />
+                <ListItemText primary={e.name} secondary={new Date(Date.parse(e.createdAt)).toLocaleString()} />
             </ListItem>
             </Grow>
             <Divider variant="inset" component="li" />
