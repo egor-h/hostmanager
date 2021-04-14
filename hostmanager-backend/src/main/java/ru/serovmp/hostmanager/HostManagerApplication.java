@@ -5,8 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Role;
 import ru.serovmp.hostmanager.entity.User;
+import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.RoleRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
 
@@ -26,6 +28,8 @@ public class HostManagerApplication {
     UserRepository userRepository;
 	@Autowired
 	RoleRepository roleRepository;
+	@Autowired
+    HostRepository hostRepository;
 
 	@Autowired
     PasswordEncoder passwordEncoder;
@@ -43,6 +47,18 @@ public class HostManagerApplication {
 	    userRepository.save(adminAcc);
 
 	    // check root node
+        var rootNode = hostRepository.findByName("root")
+                .orElseGet(() -> hostRepository.save(Host.builder()
+                        .name("root")
+                        .address(" ")
+                        .createdAt(null)
+                        .enabled(true)
+                        .isDir(true)
+                        .notes(Set.of())
+                        .protocols(Set.of())
+                        .tags(Set.of())
+                        .parent(null)
+                        .build()));
     }
 
 }

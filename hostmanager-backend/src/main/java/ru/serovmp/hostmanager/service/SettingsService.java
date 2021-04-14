@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 import ru.serovmp.hostmanager.dto.SettingsDto;
 import ru.serovmp.hostmanager.entity.Setting;
+import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.SettingsRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
 
@@ -21,13 +22,26 @@ public class SettingsService {
             .rootNode(2)
             .build();
 
+    private SettingsDto defaultSettings;
+    private SettingsDto defaults() {
+        if (defaultSettings != null) {
+            return defaultSettings;
+        }
+        return SettingsDto.builder()
+                .expandTreeOnStartup(true)
+                .rootNode(hostRepository.findByName("root").orElseThrow(() -> new RuntimeException("No root node found")).getId())
+                .build();
+    }
+
     private SettingsRepository settingsRepository;
     private UserRepository userRepository;
+    private HostRepository hostRepository;
 
     @Autowired
-    public SettingsService(SettingsRepository settingsRepository, UserRepository userRepository) {
+    public SettingsService(SettingsRepository settingsRepository, UserRepository userRepository, HostRepository hostRepository) {
         this.settingsRepository = settingsRepository;
         this.userRepository = userRepository;
+        this.hostRepository = hostRepository;
     }
 
     private SettingsDto mapSettingsToDto(Set<Setting> settings) {
@@ -35,13 +49,13 @@ public class SettingsService {
     }
 
     public SettingsDto defaultSettings() {
-        return DEFAULT_SETTINGS;
+        return defaults();
     }
 
     public SettingsDto getSettingsForUser(long id) {
         Set<Setting> settingsSet = settingsRepository.findByUserId(id);
         if (settingsSet.size() == 0) {
-            return DEFAULT_SETTINGS;
+            return defaults();
         }
 
         SettingsDto mappedSettings = new SettingsDto();
@@ -62,7 +76,7 @@ public class SettingsService {
                 ReflectionUtils.setField(field, mappedSettings, curSettingValue);
 
             } else {
-                var value = ReflectionUtils.getField(field, DEFAULT_SETTINGS);
+                var value = ReflectionUtils.getField(field, defaults());
                 ReflectionUtils.setField(field, mappedSettings, value);
             }
 
