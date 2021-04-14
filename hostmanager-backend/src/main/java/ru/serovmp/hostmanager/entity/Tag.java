@@ -21,6 +21,7 @@ public class Tag implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
     @EqualsAndHashCode.Include
+    @Column(name = "id")
     private long id;
     @Getter @Setter
     @Column(unique = true)
