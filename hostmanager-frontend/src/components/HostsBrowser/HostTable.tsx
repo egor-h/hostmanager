@@ -32,8 +32,9 @@ import PopupField from '../PopupField';
 import { ProtocolResult, ProtocolResultMapByHostId } from '../../state/reducers/localState';
 import DoneIcon from '@material-ui/icons/Done';
 import { green, red } from '@material-ui/core/colors';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../state/reducers';
+import { executeProtocolThunk } from '../../util/launcher';
 
 type HostTableEntity = {
   id: number;
@@ -380,6 +381,7 @@ export default function EnhancedTable(props: {
   onEntryDelete: (row: HostTableEntity) => void
 }) {
   const protocolsState = useSelector((appState: AppState) => appState.protocols.data);
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof HostTableEntity>('name');
@@ -499,10 +501,10 @@ export default function EnhancedTable(props: {
                   let protocolResult: ProtocolResult | null = null;
                   if (protocolResults !== undefined) {
                     protocolResult = protocolResults[VALIDATE_OUTPUT];
-                    if (protocolResult !== undefined) {
+                    if (protocolResult) {
                       validationOk = validateOutput(protocolResult.stderr+protocolResult.stdout, protocolResult.protocol.validationRegex);
                     }
-                  }                  
+                  }
                   const colorAvail = validationOk ? {color: green[500]} : {color: red[500]};
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -531,7 +533,7 @@ export default function EnhancedTable(props: {
                       <TableCell onClick={clickHandler} 
                         style={{ height: "20px", width: '70%', ...color }}
                         component="th" id={labelId} scope="row" padding="none">
-                        {protocolResults !== undefined ? <Tooltip title={`${protocolResult?.protocol.name} executedd at ${protocolResult?.createdAt}`} placement="right"><DoneIcon style={colorAvail} /></Tooltip> : ''}
+                        {protocolResults !== undefined ? <Tooltip title={`${protocolResult?.protocol.name} executed at ${new Date(protocolResult?.createdAt*1000).toLocaleString()}`} placement="right"><DoneIcon style={colorAvail} /></Tooltip> : ''}
                         {row.name}
                       </TableCell>
                       <TableCell onClick={clickHandler} 
@@ -575,7 +577,12 @@ export default function EnhancedTable(props: {
             state.selectedItem?.protocols.map(protoId => {
               let found = protocolsState.find(p => p.id === protoId);
 
-              return (<MenuItem onClick={handleClose}>{found?.name}</MenuItem>);
+              let runProto = () => {
+                dispatch(executeProtocolThunk(state.selectedItem, found));
+                handleClose();
+              }
+
+              return (<MenuItem key={found?.name+found?.id} onClick={runProto}>{found?.name}</MenuItem>);
             })
           }
         </Menu>
