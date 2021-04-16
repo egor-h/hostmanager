@@ -8,6 +8,10 @@ export interface User {
     roles: string[],
 }
 
+export interface NewUser extends User {
+    password: string;
+}
+
 export interface Auth {
     token: string;
     user: User;
