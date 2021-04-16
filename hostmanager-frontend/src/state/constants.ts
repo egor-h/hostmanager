@@ -60,3 +60,8 @@ export const AUTH = "AUTH";
 export const AUTH_SUCCEDED = "AUTH_SUCCEDED";
 export const AUTH_FAILED = "AUTH_FAILED";
 export const AUTH_NULL = "AUTH_NULL";
+
+// Zabbix groups
+export const ZABBIX_GROUPS = "ZABBIX_GROUPS";
+export const ZABBIX_GROUPS_SUCCEDED = "ZABBIX_GROUPS_SUCCEDED";
+export const ZABBIX_GROUPS_FAILED = "ZABBIX_GROUPS_FAILED";

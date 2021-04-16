@@ -1,6 +1,6 @@
 import { Host, Protocol } from "../../models/host"
-import { DEFAULT_SETTINGS, Settings } from "../../models/settings";
-import { SET_EXPANDED, SET_SELECTED, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS, SET_ALL_PROTOCOL_RESULTS, SET_PROTOCOL_RESULTS, SET_ONE_PROTOCOL_RESULT } from "../constants"
+import { DEFAULT_SETTINGS, Settings, ZabbixGroup } from "../../models/settings";
+import { SET_EXPANDED, SET_SELECTED, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS, SET_ALL_PROTOCOL_RESULTS, SET_PROTOCOL_RESULTS, SET_ONE_PROTOCOL_RESULT, ZABBIX_GROUPS, ZABBIX_GROUPS_FAILED, ZABBIX_GROUPS_SUCCEDED } from "../constants"
 
 export type SnackbarSeverity = "error" | "warning" | "info" | "success";
 export type SnackbarData = {
@@ -36,7 +36,12 @@ export type LocalState = {
         show: boolean,
         data: SnackbarData
     },
-    settings: Settings
+    settings: Settings;
+    zabbixGroups: {
+        loading: boolean,
+        data: ZabbixGroup[],
+        error: false
+    };
 }
 
 const initialState = {
@@ -52,7 +57,12 @@ const initialState = {
             message: ""
         }
     },
-    settings: DEFAULT_SETTINGS
+    settings: DEFAULT_SETTINGS,
+    zabbixGroups: {
+        loading: false,
+        data: [],
+        error: false
+    }
 }
 
 export const local = (state = initialState, action: any) => {
@@ -119,6 +129,33 @@ export const local = (state = initialState, action: any) => {
             return {
                 ...state,
                 settings: action.settings
+            }
+        case ZABBIX_GROUPS:
+            return {
+                ...state,
+                zabbixGroups: {
+                    loading: true,
+                    data: [],
+                    error: false
+                }
+            }
+        case ZABBIX_GROUPS_FAILED: 
+            return {
+                ...state,
+                zabbixGroups: {
+                    loading: false,
+                    data: [],
+                    error: true
+                }
+            }
+        case ZABBIX_GROUPS_SUCCEDED:
+            return {
+                ...state,
+                zabbixGroups: {
+                    loading: false,
+                    data: action.groups,
+                    error: false
+                }
             }
         default:
             return state;

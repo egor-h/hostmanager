@@ -17,10 +17,10 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { AppState } from '../../state/reducers';
 import { local } from '../../state/actions';
-import { Settings } from '../../models/settings';
+import { Settings, ZabbixGroup } from '../../models/settings';
 import SaveIcon from '@material-ui/icons/Save';
 import PopupField from '../PopupField';
-import { putUserSettings } from '../../api/settings';
+import { getZabbixGroups, putUserSettings, syncDirToZabbix } from '../../api/settings';
 import { Autocomplete } from '@material-ui/lab';
 import { EMPTY_HOST, Host } from '../../models/host';
 import { findAllDirs } from '../../util/tree';
@@ -28,25 +28,34 @@ import UserPage from '../UserPage';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
+    zabbixGroups: state.local.zabbixGroups,
     hosts: state.hostsBrowser.tree.tree
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     setSettings: bindActionCreators(local.settings, dispatch),
-    putSettings: bindActionCreators(putUserSettings, dispatch)
+    putSettings: bindActionCreators(putUserSettings, dispatch),
+    loadZabbixGroups: bindActionCreators(getZabbixGroups, dispatch),
+    beginZabbixImport: bindActionCreators(syncDirToZabbix, dispatch)
 })
 
 type SettingsProps = {
     settings: Settings,
     hosts: Host,
     setSettings: (settings: Settings) => void,
-    putSettings: (settings: Settings) => void
+    putSettings: (settings: Settings) => void,
+    zabbixGroups: {loading: boolean, data: ZabbixGroup[], error: boolean},
+    loadZabbixGroups: () => void,
+    beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void
 } & RouteComponentProps<{}>;
 
 type SettingsState = {
     showChangeRootNode: boolean;
     showChangeNameTemplate: boolean;
     settings: Settings;
+    hostsmanGroupId: number;
+    zabbixGroupId: string;
+    zabbixMergeEntries: boolean;
 }
 
 class SettingsList extends React.Component<SettingsProps, SettingsState> {
@@ -59,14 +68,22 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
         this.state = {
             settings: {
                 expandTreeOnStartup: expandTreeOnStartup,
-                rootNode: rootNode
+                rootNode: rootNode,
             },
-
+            hostsmanGroupId: rootNode,
+            zabbixGroupId: '',
+            zabbixMergeEntries: false,
             showChangeRootNode: false,
             showChangeNameTemplate: false
         }
         this.saveSettings = this.saveSettings.bind(this);
         this.handleRootHostChange = this.handleRootHostChange.bind(this);
+        this.handleTargetHostsManDir = this.handleTargetHostsManDir.bind(this);
+        this.handleTargetZabbixGroup = this.handleTargetZabbixGroup.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.loadZabbixGroups();
     }
 
     saveSettings() {
@@ -75,13 +92,29 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
     }
 
     handleRootHostChange(e: any, rootHostName: string) {
+        console.log(`Root host change`);
+        console.log(rootHostName);
         const allDirs = findAllDirs(this.props.hosts);
         const found = allDirs.find(host => host.name === rootHostName);
-        this.setState(() => ({settings: {...this.state.settings, rootNode: found === undefined ? this.state.settings.rootNode : found.id}}))
+        this.setState(() => ({settings: {...this.state.settings, rootNode: found === undefined ? this.state.settings.rootNode : found.id}}));
+    }
+
+    handleTargetHostsManDir(e: any, hostsDir: string) {
+        const allDirs = findAllDirs(this.props.hosts);
+        const found = allDirs.find(host => host.name === hostsDir);
+        this.setState({hostsmanGroupId: found === undefined ? this.state.settings.rootNode : found.id});
+    }
+
+    handleTargetZabbixGroup(e: any, zabbixGroupName: string) {
+        const zabbixGroup = this.props.zabbixGroups.data.find(v => v.name == zabbixGroupName)
+        if (zabbixGroup) {
+            this.setState({zabbixGroupId: zabbixGroup.groupId});
+        }
     }
 
     render() {
         const allDirs = findAllDirs(this.props.hosts);
+        console.log(this.state);
         const curRootNode = allDirs.find(host => host.id === this.state.settings.rootNode);
         const curRootNodeName: Host = curRootNode === undefined ? {...EMPTY_HOST, name: `Host id=${this.state.settings.rootNode}not found`} : curRootNode;
         const settingsChanged = JSON.stringify(this.state.settings) !== JSON.stringify(this.props.settings);
@@ -129,7 +162,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                             style={{ width: 300 }}
                             getOptionLabel={(option: Host) => option.name}
                             value={curRootNodeName}
-                            onInputChange={this.handleRootHostChange}
+                            onChange={this.handleRootHostChange}
                             renderInput={(params) => <TextField  size="small" {...params} label="Root node" />}
                         />
                     </ListItemSecondaryAction>
@@ -160,7 +193,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                             style={{ width: 300 }}
                             getOptionLabel={(option: Host) => option.name}
                             value={allDirs[0]}
-                            onInputChange={() => {}}
+                            onInputChange={this.handleTargetHostsManDir}
                             renderInput={(params) => <TextField  size="small" {...params}  />}
                         />
                     </ListItemSecondaryAction>
@@ -170,28 +203,29 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     <ListItemSecondaryAction>
                         <Autocomplete
                             id="combo-box-demo"
-                            options={allDirs}
+                            loading={this.props.zabbixGroups.loading}
+                            options={this.props.zabbixGroups.data}
                             // onChange={this.handleLaunchTypeChange}
                             style={{ width: 300 }}
-                            getOptionLabel={(option: Host) => option.name}
-                            value={allDirs[0]}
-                            onInputChange={() => {}}
+                            getOptionLabel={(option: ZabbixGroup) => option.name}
+                            value={undefined}
+                            onInputChange={this.handleTargetZabbixGroup}
                             renderInput={(params) => <TextField  size="small" {...params} />}
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
                 <ListItem button onClick={() => {}}>
-                       <ListItemText id="switch-enable-autoexpand-on-start" primary="Merge with existing entries" />
+                       <ListItemText id="switch-merge-with-existing" primary="Merge with existing entries" />
                     <ListItemSecondaryAction>
                         <Switch
                             edge="end"
-                            // onChange={(e: any, value: boolean) => {this.setState({expandTreeOnStartup: value})}}
-                            // checked={this.state.expandTreeOnStartup}
+                            onChange={(e: any, value: boolean) => {this.setState({zabbixMergeEntries: value})}}
+                            checked={this.state.zabbixMergeEntries}
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary="Begin import" />
+                    <ListItemText onClick={() => this.props.beginZabbixImport(this.state.hostsmanGroupId, this.state.zabbixGroupId, this.state.zabbixMergeEntries)} primary="Begin import" />
                 </ListItem>
 
 

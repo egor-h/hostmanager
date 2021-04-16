@@ -1,8 +1,8 @@
 import { Titlebar } from 'custom-electron-titlebar';
-import { Settings } from '../../models/settings';
+import { Settings, ZabbixGroup } from '../../models/settings';
 import {
     SET_EXPANDED,
-    SET_SELECTED, SET_PROTOCOL_RESULTS, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS, SET_ALL_PROTOCOL_RESULTS, SET_ONE_PROTOCOL_RESULT
+    SET_SELECTED, SET_PROTOCOL_RESULTS, SET_INTERVAL_ID, SET_BREADCRUMB, HIDE_SNACKBAR, SET_SNACKBAR, SETTINGS, SET_ALL_PROTOCOL_RESULTS, SET_ONE_PROTOCOL_RESULT, ZABBIX_GROUPS_FAILED, ZABBIX_GROUPS_SUCCEDED, ZABBIX_GROUPS
 } from '../constants';
 import { ProtocolResult, ProtocolResultMapByHostId, SnackbarData } from '../reducers/localState';
 
@@ -54,4 +54,17 @@ export const hideSnackbar = () => ({
 export const settings = (settings: Settings) => ({
     type: SETTINGS,
     settings: settings
+})
+
+export const zabbixGroups = () => ({
+    type: ZABBIX_GROUPS
+})
+
+export const zabbixGroupsSucceded = (groups: ZabbixGroup[]) => ({
+    type: ZABBIX_GROUPS_SUCCEDED,
+    groups: groups
+})
+
+export const zabbixGroupFailed = () => ({
+    type: ZABBIX_GROUPS_FAILED
 })
