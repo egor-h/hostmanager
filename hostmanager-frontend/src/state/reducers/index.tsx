@@ -7,6 +7,7 @@ import { notes, NoteState } from './notes';
 import { search, SearchState } from './search';
 import { stat, StatState } from './stat';
 import { auth, AuthState } from './auth';
+import { users, UserState } from './users';
 
 export type AppState = {
     local: LocalState;
@@ -18,6 +19,7 @@ export type AppState = {
     search: SearchState;
     stat: StatState;
     auth: AuthState;
+    users: UserState;
 }
 
 export {
@@ -29,5 +31,6 @@ export {
     search,
     stat,
     auth,
-    hostsBrowser
+    hostsBrowser,
+    users
 }

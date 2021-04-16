@@ -65,3 +65,8 @@ export const AUTH_NULL = "AUTH_NULL";
 export const ZABBIX_GROUPS = "ZABBIX_GROUPS";
 export const ZABBIX_GROUPS_SUCCEDED = "ZABBIX_GROUPS_SUCCEDED";
 export const ZABBIX_GROUPS_FAILED = "ZABBIX_GROUPS_FAILED";
+
+// users management
+export const USERS = "USERS";
+export const USERS_SUCCEDED = "USERS_SUCCEDED";
+export const USERS_FAILED = "USERS_FAILED";
