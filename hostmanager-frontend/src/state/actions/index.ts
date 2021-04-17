@@ -7,6 +7,7 @@ import * as notes from './notes';
 import * as search from './search';
 import * as stat from './stat';
 import * as auth from './auth';
+import * as users from './users';
 
 export {
     local,
@@ -17,5 +18,6 @@ export {
     search,
     stat,
     auth,
+    users,
     hostsBrowser
 }
