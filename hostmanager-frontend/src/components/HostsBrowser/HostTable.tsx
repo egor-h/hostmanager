@@ -35,6 +35,8 @@ import { green, red } from '@material-ui/core/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../state/reducers';
 import { executeProtocolThunk } from '../../util/launcher';
+import FolderOpenTwoToneIcon from '@material-ui/icons/FolderOpenTwoTone';
+import ComputerTwoToneIcon from '@material-ui/icons/ComputerTwoTone';
 
 type HostTableEntity = {
   id: number;
@@ -179,6 +181,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             onChange={onSelectAllClick}
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
+        </TableCell>
+        <TableCell>
+          {' '}
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -408,7 +413,6 @@ export default function EnhancedTable(props: {
 
   const handleClickMenu = (event: React.MouseEvent<HTMLDivElement>, row: HostTableEntity) => {
     event.preventDefault();
-    console.log(row);
     setState({
       mouseX: event.clientX - 2,
       mouseY: event.clientY - 4,
@@ -494,8 +498,6 @@ export default function EnhancedTable(props: {
               {stableSort(preparedData, getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  // console.log(row.id);
-                  // console.log(Object.keys(props.protocolResults).includes([row.id]));
                   const protocolResults = props.protocolResults[row.id];
                   let validationOk = false;
                   let protocolResult: ProtocolResult | null = null;
@@ -513,7 +515,7 @@ export default function EnhancedTable(props: {
                   const color = row.enabled ? {} : {color: '#C0C0BC'} 
                   return (
                     <TableRow 
-                      style={{ width: "10%", height: "20px", padding: "0px" }}
+                      style={{ width: "100%", height: "20px", padding: "0px" }}
                       hover
                       onContextMenu={(e) => handleClickMenu(e, row)}
                       role="checkbox"
@@ -523,12 +525,16 @@ export default function EnhancedTable(props: {
                       selected={isItemSelected}
                     >
                       <TableCell
+                        style={{width: '5%'}}
                         padding="checkbox">
                         <Checkbox
                           onClick={(event) => handleClick(event, row.name)}
                           checked={isItemSelected}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
+                      </TableCell>
+                      <TableCell style={{width: '5%'}}>
+                        { row.dir ? <FolderOpenTwoToneIcon /> : <ComputerTwoToneIcon /> }
                       </TableCell>
                       <TableCell onClick={clickHandler} 
                         style={{ height: "20px", width: '70%', ...color }}
