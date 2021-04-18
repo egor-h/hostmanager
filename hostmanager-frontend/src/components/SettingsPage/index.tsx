@@ -143,7 +143,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
 
-                <ListItem button onClick={() => this.props.history.push("/settings/users")}>
+                <ListItem button onClick={() => this.props.history.push("/users")}>
                     <ListItemText primary="Edit users" />
                     <ListItemSecondaryAction>
                         <IconButton edge="end" aria-label="delete">
