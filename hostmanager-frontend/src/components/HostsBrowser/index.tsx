@@ -1,11 +1,10 @@
-import { Breadcrumbs } from '@material-ui/core';
-import MaterialLink from '@material-ui/core/Link';
 import { withStyles } from '@material-ui/core/styles';
 import { Skeleton } from '@material-ui/lab';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SplitPane from 'react-flex-split-pane';
 import { connect } from 'react-redux';
-import { Link, Redirect, Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
+import { Redirect, Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import { bindActionCreators } from 'redux';
 import { fetchTags } from '../../api/tag';
 import { fetchTree } from '../../api/tree';
@@ -13,7 +12,7 @@ import { Host } from '../../models/host';
 import { local } from '../../state/actions';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { LocalState } from '../../state/reducers/localState';
-import { addKeyEventListener, KeyEventListenerType, KeysMap, removeKeyEventListener } from '../../util/events';
+import { KeyEventListenerType, KeysMap } from '../../util/events';
 import { KEY_N } from '../../util/keyboard_codes';
 import { findAllDirs, findHostById } from '../../util/tree';
 import EditHostWrapper from './EditHostWrapper';
@@ -48,30 +47,39 @@ type HostsBrowserProps = {
 const resolveBreadcrumbs = (selected: number, tree: Host) => {
     let found = findHostById(tree, selected);
     if (found === null) {
-        return [{title: `Host ${selected} not found`, url: `/objects/table`,  id: 0}];
+        return [{ title: `Host ${selected} not found`, url: `/objects/table`, id: 0 }];
     }
     let locationsList = [];
-    locationsList.push({title: found.name, url: `/objects/table/${found.id}`, id: found.id});
-    while (found.parentId !== 0) { 
+    locationsList.push({ title: found.name, url: `/objects/table/${found.id}`, id: found.id });
+    while (found.parentId !== 0) {
         found = findHostById(tree, found.parentId);
         if (found === null) {
             break;
         }
-        locationsList.push({title: found.name, url: `/objects/table/${found.id}`, id: found.id});
+        locationsList.push({ title: found.name, url: `/objects/table/${found.id}`, id: found.id });
     }
     return locationsList.reverse();
 }
 
-class HostsBrowser extends React.Component<HostsBrowserProps> {
+type State = {
+    size: number;
+    isResizing: boolean;
+}
+
+class HostsBrowser extends React.Component<HostsBrowserProps, State> {
     keysObj: KeysMap;
-    keyListener:  null | KeyEventListenerType;
+    keyListener: null | KeyEventListenerType;
 
     constructor(props: any) {
         super(props);
+        this.state = {
+            size: 250,
+            isResizing: false
+        }
 
         this.keysObj = {
             NEW_HOST_KEY: {
-                keyCode: [KEY_N], withAlt: false, withCtrl: true, action: () => {console.log('N')},
+                keyCode: [KEY_N], withAlt: false, withCtrl: true, action: () => { console.log('N') },
             }
         }
         this.keyListener = null;
@@ -84,7 +92,7 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
         }
 
         if (+this.props.local.selected < 2) {
-            this.props.setSelected(this.props.local.settings.rootNode+'');
+            this.props.setSelected(this.props.local.settings.rootNode + '');
         }
 
         // let thisNode = ReactDOM.findDOMNode(this);
@@ -99,26 +107,70 @@ class HostsBrowser extends React.Component<HostsBrowserProps> {
         if (nextProps.local.settings.expandTreeOnStartup) {
             if (nextProps.local.expanded.length === 0 && nextProps.tree.tree.dir) {
                 console.log('set all expanded')
-                this.props.setExpanded(findAllDirs(this.props.tree.tree).map(h => h.id+''));
+                this.props.setExpanded(findAllDirs(this.props.tree.tree).map(h => h.id + ''));
             }
         }
     }
 
     componentWillUnmount() {
         let thisNode = ReactDOM.findDOMNode(this);
-    //     if (thisNode !== null && this.keyListener !== null) {
-    //         removeKeyEventListener(thisNode, this.keyListener);
-    //     }
+        //     if (thisNode !== null && this.keyListener !== null) {
+        //         removeKeyEventListener(thisNode, this.keyListener);
+        //     }
     }
 
     render() {
+        const onResizeStart = () => this.setState({ isResizing: true })
+        const onResizeEnd = () => this.setState({ isResizing: false })
+        const onChange = (size: number) => this.setState({ size })
+
+        return (
+            <SplitPane type="vertical"
+                size={this.state.size}
+                isResizing={this.state.isResizing}
+                onResizeStart={onResizeStart}
+                onResizeEnd={onResizeEnd}
+                onChange={onChange}
+            >
+                <HostTree ></HostTree>
+                <div style={{margin: '5px', flex: 3, display: 'flex', flexFlow: 'column nowrap', height: 'calc(100% - 24px)' }}>
+                    {this.props.tree.loading ? (<Skeleton></Skeleton>) : (<HostBreadCrumb
+                        setSelected={this.props.setSelected}
+                        links={resolveBreadcrumbs(+this.props.local.selected, this.props.tree.tree)} />)
+                    }
+
+                    <Switch>
+                        <Route exact path="/objects/table/:parentId">
+                            <TableWrapper selectedDir={this.props.local.selected} wholeTree={this.props.tree.tree} />
+                        </Route>
+                        <Route exact path="/objects/tableTag/:tagId">
+                            <TagTableWrapper wholeTree={this.props.tree.tree} />
+                        </Route>
+                        <Route exact path="/objects/new/:parentId">
+                            <NewHostWrapper></NewHostWrapper>
+                        </Route>
+                        <Route exact path="/objects/edit/:hostId">
+                            <EditHostWrapper></EditHostWrapper>
+                        </Route>
+                        <Route exact path="/objects/info/:hostId">
+                            <HostInfoWrapper></HostInfoWrapper>
+                        </Route>
+                        <Route exact path="">
+                            <Redirect to={`/objects/table/${this.props.local.settings.rootNode}`}></Redirect>
+                        </Route>
+                    </Switch>
+                </div>
+            </SplitPane>
+        );
+    }
+    render0() {
         return (<div style={{ flexDirection: 'row', display: 'flex', height: 'calc(100% - 24px)' }}>
             <div style={{ flex: 2, display: 'flex', flexFlow: 'column nowrap' }}>
                 <HostTree ></HostTree>
             </div>
             <div style={{ flex: 3, display: 'flex', flexFlow: 'column nowrap' }}>
                 <div style={{ flex: 0, flexFlow: 'row nowrap' }}>
-                    {this.props.tree.loading ? (<Skeleton></Skeleton>) : (<HostBreadCrumb 
+                    {this.props.tree.loading ? (<Skeleton></Skeleton>) : (<HostBreadCrumb
                         setSelected={this.props.setSelected}
                         links={resolveBreadcrumbs(+this.props.local.selected, this.props.tree.tree)} />)
                     }
