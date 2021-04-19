@@ -114,7 +114,6 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
 
     render() {
         const allDirs = findAllDirs(this.props.hosts);
-        console.log(this.state);
         const curRootNode = allDirs.find(host => host.id === this.state.settings.rootNode);
         const curRootNodeName: Host = curRootNode === undefined ? {...EMPTY_HOST, name: `Host id=${this.state.settings.rootNode}not found`} : curRootNode;
         const settingsChanged = JSON.stringify(this.state.settings) !== JSON.stringify(this.props.settings);

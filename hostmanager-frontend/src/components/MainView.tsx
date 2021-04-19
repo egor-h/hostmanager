@@ -25,6 +25,7 @@ import SettingsPage from './SettingsPage';
 import StatisticPage from './StatisticPage';
 import TagPage from './TagPage';
 import { ipcRenderer } from 'electron';
+import UserPage from './UserPage';
 
 type PropsType = {
     local: LocalState;
@@ -153,6 +154,9 @@ class MainView extends React.Component<PropsType> {
                         </Route>
                         <Route path="/stats">
                             <StatisticPage />
+                        </Route>
+                        <Route path="/users">
+                            <UserPage></UserPage>
                         </Route>
                         <Route path="/">
                             <MainPage></MainPage>
