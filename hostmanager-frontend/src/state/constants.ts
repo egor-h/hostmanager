@@ -70,3 +70,8 @@ export const ZABBIX_GROUPS_FAILED = "ZABBIX_GROUPS_FAILED";
 export const USERS = "USERS";
 export const USERS_SUCCEDED = "USERS_SUCCEDED";
 export const USERS_FAILED = "USERS_FAILED";
+
+// single user
+export const USER = "USER";
+export const USER_SUCCEDED = "USER_SUCCEDED";
+export const USER_FAILED = "USER_FAILED";
