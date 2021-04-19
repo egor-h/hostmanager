@@ -15,10 +15,7 @@ import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.ProtocolRepository;
 import ru.serovmp.hostmanager.repository.TagRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +52,7 @@ public class HostService {
         }
         var createdHost = formToHost(newHost);
         createdHost.setParent(parentHost);
+        createdHost.setCreatedAt(new Date());
         hostRepository.save(createdHost);
 
         return hostRepository.findById(parentId).map(this::hostToDto).get();
