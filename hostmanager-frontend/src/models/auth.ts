@@ -5,11 +5,16 @@ export interface User {
     login: string,
     email: string,
     name: string,
-    roles: string[],
+    roles: number[],
 }
 
-export interface NewUser extends User {
+export interface UserWithPassword extends User {
     password: string;
+}
+
+export interface Role {
+    id: number;
+    name: string;
 }
 
 export interface Auth {
