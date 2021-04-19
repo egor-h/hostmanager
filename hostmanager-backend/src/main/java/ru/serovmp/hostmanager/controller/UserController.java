@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.controller.form.UserForm;
 import ru.serovmp.hostmanager.dto.TagDto;
+import ru.serovmp.hostmanager.dto.UserDto;
+import ru.serovmp.hostmanager.dto.UserWithPasswordDto;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.RoleRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
@@ -15,6 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @RequestMapping("/api/v1/users")
 @RestController
@@ -33,14 +37,28 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity users() {
-        return ResponseEntity.ok(userRepository.findAll().stream().map(tag -> new TagDto(tag.getId(), tag.getName())));
+        return ResponseEntity.ok(userRepository.findAll()
+                .stream()
+                .map(user -> new UserDto(user.getId(), user.getLogin(), user.getName(), user.getEmail(), user.getRoles()
+                        .stream()
+                        .map(r -> r.getId())
+                        .collect(toSet()))
+                ));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity userWithPw(@PathVariable("id") long id) {
+        return ResponseEntity.ok(userRepository.findById(id)
+                .map(user -> new UserWithPasswordDto(
+                        user.getId(), user.getLogin(), user.getName(),
+                        user.getEmail(), user.getPassword(), user.getRoles().stream().map(r -> r.getId()).collect(toSet()))));
     }
 
     @PostMapping
     public ResponseEntity save(@RequestBody UserForm user) {
         var roles = roleRepository.findAllById(user.getRoles());
         var saved = userRepository.save(
-                new User(0, user.getLogin(), user.getName(), user.getEmail(), passwordEncoder.encode(user.getPassword()), true, new HashSet<>(), roles.stream().collect(Collectors.toSet()), new HashSet<>()));
+                new User(0, user.getLogin(), user.getName(), user.getEmail(), passwordEncoder.encode(user.getPassword()), true, new HashSet<>(), roles.stream().collect(toSet()), new HashSet<>()));
         return ResponseEntity.ok(new TagDto(saved.getId(), saved.getName()));
     }
 
@@ -52,14 +70,17 @@ public class UserController {
         found.setEmail(userForm.getEmail());
         found.setName(userForm.getName());
         found.setSettings(new HashSet<>());
-        found.setRoles(roles.stream().collect(Collectors.toSet()));
+        found.setRoles(roles.stream().collect(toSet()));
         var updated = userRepository.save(found);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
-        var found = userRepository.findById(id).orElseThrow(() -> new RuntimeException("tag not found"));
+        var found = userRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
+        found.getHosts().stream().forEach(host -> {
+            host.setCreatedBy(null);
+        });
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

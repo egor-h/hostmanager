@@ -58,7 +58,7 @@ public class AuthController {
                     .email(user.getEmail())
                     .login(user.getLogin())
                     .name(user.getName())
-                    .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
+                    .roles(user.getRoles().stream().map(Role::getId).collect(Collectors.toSet()))
                     .build(),
                     settingsService.getSettingsForUser(user.getId())));
         } catch (AuthenticationException e) {
