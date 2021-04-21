@@ -5,9 +5,6 @@ import org.springframework.web.client.RestTemplate;
 import ru.serovmp.hostmanager.restentities.request.MethodNameable;
 import ru.serovmp.hostmanager.restentities.request.ZabbixBaseRequest;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 @Slf4j
 public class ZabbixClient {
     private static final String RPC_PATH = "/api_jsonrpc.php";
