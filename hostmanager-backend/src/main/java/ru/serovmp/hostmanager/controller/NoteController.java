@@ -1,6 +1,7 @@
 
 package ru.serovmp.hostmanager.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+@SecurityRequirement(name = "bearer-key")
 @RestController
 @RequestMapping("/api/v1/notes")
 public class NoteController {

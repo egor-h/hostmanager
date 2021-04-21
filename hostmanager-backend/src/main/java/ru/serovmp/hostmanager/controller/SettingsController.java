@@ -1,5 +1,6 @@
 package ru.serovmp.hostmanager.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import ru.serovmp.hostmanager.dto.SettingsDto;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.service.SettingsService;
 
+@SecurityRequirement(name = "bearer-key")
 @RequestMapping("/api/v1/settings")
 @RestController
 public class SettingsController {

@@ -1,5 +1,6 @@
 package ru.serovmp.hostmanager.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import ru.serovmp.hostmanager.service.HostService;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearer-key")
 @RestController
 @RequestMapping("/api/v1/welcome")
 public class HomePageController {

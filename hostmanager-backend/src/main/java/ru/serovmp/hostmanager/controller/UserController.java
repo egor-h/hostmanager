@@ -1,6 +1,7 @@
 package ru.serovmp.hostmanager.controller;
 
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
+@SecurityRequirement(name = "bearer-key")
 @RequestMapping("/api/v1/users")
 @RestController
 public class UserController {

@@ -1,5 +1,6 @@
 package ru.serovmp.hostmanager.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.serovmp.hostmanager.dto.StatisticsDto;
 import ru.serovmp.hostmanager.service.StatisticService;
 
+@SecurityRequirement(name = "bearer-key")
 @RequestMapping("/api/v1/stats")
 @RestController
 public class StatisticController {
