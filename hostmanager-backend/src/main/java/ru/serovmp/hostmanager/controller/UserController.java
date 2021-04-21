@@ -13,6 +13,7 @@ import ru.serovmp.hostmanager.dto.UserWithPasswordDto;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.RoleRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
+import ru.serovmp.hostmanager.service.SettingsService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,12 +30,14 @@ public class UserController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private SettingsService settingsService;
 
     @Autowired
-    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, SettingsService settingsService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.settingsService = settingsService;
     }
 
     @GetMapping
@@ -71,6 +74,7 @@ public class UserController {
         found.setLogin(userForm.getLogin());
         found.setEmail(userForm.getEmail());
         found.setName(userForm.getName());
+        found.setPassword(passwordEncoder.encode(userForm.getPassword()));
         found.setSettings(new HashSet<>());
         found.setRoles(roles.stream().collect(toSet()));
         var updated = userRepository.save(found);
