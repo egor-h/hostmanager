@@ -26,6 +26,7 @@ import StatisticPage from './StatisticPage';
 import TagPage from './TagPage';
 import { ipcRenderer } from 'electron';
 import UserPage from './UserPage';
+import Mousetrap from 'mousetrap';
 
 type PropsType = {
     local: LocalState;
@@ -107,7 +108,7 @@ class MainView extends React.Component<PropsType> {
             },
             LOGOUT_KEY: {
                 keyCode: [KEY_Q], withAlt: true, withCtrl: true, action: () => this.props.logout(),
-            },
+            }
         }
 
         if (thisNode !== null) {
@@ -117,6 +118,7 @@ class MainView extends React.Component<PropsType> {
 
     componentWillUnmount() {
         clearInterval(this.props.local.intervalId);
+        Mousetrap.reset();
     }
 
     render() {

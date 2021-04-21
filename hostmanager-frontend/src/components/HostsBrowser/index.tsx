@@ -15,6 +15,7 @@ import { LocalState } from '../../state/reducers/localState';
 import { KeyEventListenerType, KeysMap } from '../../util/events';
 import { KEY_N } from '../../util/keyboard_codes';
 import { findAllDirs, findHostById } from '../../util/tree';
+import AvailabilityDialog from './AvailabilityCheck';
 import EditHostWrapper from './EditHostWrapper';
 import HostBreadCrumb from './HostBreadCrumb';
 import HostInfoWrapper from './HostInfoWrapper';
@@ -22,6 +23,7 @@ import HostTree from './HostTree';
 import NewHostWrapper from './NewHostWrapper';
 import TableWrapper from './TableWrapper';
 import TagTableWrapper from './TagTableWrapper';
+import Mousetrap from 'mousetrap';
 
 const styles = {
     root: {
@@ -64,6 +66,7 @@ const resolveBreadcrumbs = (selected: number, tree: Host) => {
 type State = {
     size: number;
     isResizing: boolean;
+    showAvailabilityMenu: boolean;
 }
 
 class HostsBrowser extends React.Component<HostsBrowserProps, State> {
@@ -74,7 +77,8 @@ class HostsBrowser extends React.Component<HostsBrowserProps, State> {
         super(props);
         this.state = {
             size: 250,
-            isResizing: false
+            isResizing: false,
+            showAvailabilityMenu: false
         }
 
         this.keysObj = {
@@ -83,6 +87,7 @@ class HostsBrowser extends React.Component<HostsBrowserProps, State> {
             }
         }
         this.keyListener = null;
+        this.showAvailMenu = this.showAvailMenu.bind(this);
     }
 
     componentDidMount() {
@@ -100,7 +105,9 @@ class HostsBrowser extends React.Component<HostsBrowserProps, State> {
         // if (thisNode !== null) {
         //     this.keyListener = addKeyEventListener(window, thisNode, this.keysObj);
         // }
-
+        Mousetrap.bind("f5", () => {
+            this.showAvailMenu();
+        })
     }
 
     componentWillReceiveProps(nextProps: HostsBrowserProps) {
@@ -113,10 +120,16 @@ class HostsBrowser extends React.Component<HostsBrowserProps, State> {
     }
 
     componentWillUnmount() {
+        Mousetrap.unbind('f5');
         let thisNode = ReactDOM.findDOMNode(this);
         //     if (thisNode !== null && this.keyListener !== null) {
         //         removeKeyEventListener(thisNode, this.keyListener);
         //     }
+    }
+
+
+    showAvailMenu() {
+        this.setState({showAvailabilityMenu: true});
     }
 
     render() {

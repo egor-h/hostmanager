@@ -37,6 +37,8 @@ import { AppState } from '../../state/reducers';
 import { executeProtocolThunk } from '../../util/launcher';
 import FolderOpenTwoToneIcon from '@material-ui/icons/FolderOpenTwoTone';
 import ComputerTwoToneIcon from '@material-ui/icons/ComputerTwoTone';
+import AvailabilityDialog from './AvailabilityCheck';
+import Mousetrap from 'mousetrap';
 
 type HostTableEntity = {
   id: number;
@@ -383,6 +385,7 @@ export default function EnhancedTable(props: {
   onRowClicked: any, 
   tableTitle: string, 
   parentId: number, 
+  popups: any[],
   onEntryDelete: (row: HostTableEntity) => void
 }) {
   const protocolsState = useSelector((appState: AppState) => appState.protocols.data);
@@ -423,6 +426,7 @@ export default function EnhancedTable(props: {
   const handleClose = () => {
     setState(initialState);
   };
+
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof HostTableEntity) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -613,6 +617,7 @@ export default function EnhancedTable(props: {
           onYes={(query: string) => {setSearchQuery(query), setSearchPopupState(false)}}
           onNo={() => {setSearchPopupState(false)}}
         />
+        {props.popups}
       </Paper>
     // </div>
   );
