@@ -6,6 +6,7 @@ import { _execute, unixTimestamp } from '../src/util/launcher';
 import format from 'string-format';
 import { Host, Protocol } from '../src/models/host';
 import { ProtocolResult, ProtocolResultMapByHostId } from '../src/state/reducers/localState';
+import net from 'net';
 
 let mainWindow: Electron.BrowserWindow | null
 
@@ -101,6 +102,71 @@ ipcMain.on('async-execute', (event, arg) => {
     event.reply('async-execute-reply', newlyCreatedResult);
   });
 });
+
+type Host = {
+  id: number;
+  address: string;
+  port: number;
+}
+
+const portCheckProtocol = {
+    id: 999,
+    name: '',
+    executionLine: '',
+    validationRegex: '',
+    expectedExitCode: 1,
+    launchType: "VALIDATE_EXITCODE"
+
+}
+
+ipcMain.on('port-check', (event, arg) => {
+  let {hosts}: { hosts: Host[] } = arg;
+
+  let results: ProtocolResultMapByHostId = {};
+
+  hosts.forEach(h => {
+    let client = net.connect({host: h.address, port: h.port}, () => {
+      console.log('success');
+      let newlyCreatedResult = {
+        hostId: h.id,
+        protocol: portCheckProtocol,
+        createdAt: unixTimestamp(new Date()),
+        stdout: '',
+        stderr: '',
+        exitCode: 1
+      }
+      results[h.id] = {"VALIDATE_EXITCODE": newlyCreatedResult}
+      
+    })
+    client.on('error', () => {
+      console.log('error');
+      let newlyCreatedResult = {
+        hostId: h.id,
+        protocol: portCheckProtocol,
+        createdAt: unixTimestamp(new Date()),
+        stdout: '',
+        stderr: '',
+        exitCode: 0
+      }
+      results[h.id] = {"VALIDATE_EXITCODE": newlyCreatedResult}
+    });
+    client.setTimeout(1500, () => {
+      console.log('timeout');
+      let newlyCreatedResult = {
+        hostId: h.id,
+        protocol: portCheckProtocol,
+        createdAt: unixTimestamp(new Date()),
+        stdout: '',
+        stderr: '',
+        exitCode: 0
+      }
+      results[h.id] = {"VALIDATE_EXITCODE": newlyCreatedResult}
+      client.destroy();
+    })
+  });
+
+  event.reply('port-check-reply', results);
+})
 
 app.on('ready', createWindow)
   .whenReady()

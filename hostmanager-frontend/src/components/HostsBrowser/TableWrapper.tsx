@@ -11,7 +11,7 @@ import { findHostById } from '../../util/tree';
 import HostTable from './HostTable';
 import LoadingHostTableSkeleton from './LoadingHostTableSkeleton';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { executeProtocolThunk, executeProtocolsThunk } from '../../util/launcher';
+import { executeProtocolThunk, executeProtocolsThunk, executePortCheckThunk } from '../../util/launcher';
 import AvailabilityDialog from './AvailabilityCheck';
 import Mousetrap from 'mousetrap';
 
@@ -92,11 +92,22 @@ export default (props: PropType): any => {
         }}
         // popups={[]}
         popups={[<AvailabilityDialog hosts={hosts === null ? [] : hosts.chld} protocols={[icmp]} onProtocolSelected={(p) => {
-            if (hosts !== null) {
-                dispatch(setSnackbar({severity: 'info', message: `Check ${hosts.chld.length} hosts`}));
-                dispatch(executeProtocolsThunk(hosts.chld, p));
+            if (hosts === null) {
+                setAvailPopup(false);
+                return;
             }
+
+            if (p.name === 'Port check') {
+                dispatch(setSnackbar({severity: 'info', message: `Check ${hosts.chld.length} hosts`}));
+                dispatch(executePortCheckThunk(hosts.chld))
+                setAvailPopup(false);
+                return;
+            }
+
+            dispatch(setSnackbar({severity: 'info', message: `Check port on  ${hosts.chld.length} hosts`}));
+            dispatch(executeProtocolsThunk(hosts.chld, p));
             setAvailPopup(false);
+            
         }} open={showAvailPopup} selectedValue="" onClose={() => {setAvailPopup(false)}}/>]}
         data={(hosts && hosts.dir) ? hosts.chld : []} />);
 }

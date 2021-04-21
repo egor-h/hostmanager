@@ -15,6 +15,12 @@ export const executeProtocolsThunk = (hosts: Host[], protocol: Protocol) => {
     }
 }
 
+export const executePortCheckThunk = (hosts: Host[]) => {
+    return (dispatch: any, getState: (() => {local: LocalState})) => {
+        ipcRenderer.send('port-check', {hosts: hosts})
+    }
+}
+
 export const executeProtocolThunk = (host: Host, protocol: Protocol) => {
     return (dispatch: any, getState: (() => {local: LocalState})) => {
         // console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
