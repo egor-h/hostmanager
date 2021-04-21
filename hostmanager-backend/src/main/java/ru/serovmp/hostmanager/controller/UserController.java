@@ -76,7 +76,7 @@ public class UserController {
         found.setName(userForm.getName());
         found.setPassword(passwordEncoder.encode(userForm.getPassword()));
         found.setSettings(new HashSet<>());
-        found.setRoles(roles.stream().collect(toSet()));
+        found.setSettings(settingsService.getSettingsForUserAsMap(id).values().stream().collect(toSet()));
         var updated = userRepository.save(found);
         return ResponseEntity.ok(updated);
     }

@@ -12,6 +12,7 @@ import ru.serovmp.hostmanager.repository.UserRepository;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -52,11 +53,8 @@ public class SettingsService {
         return defaults();
     }
 
-    public SettingsDto getSettingsForUser(long id) {
+    public Map<String, Setting> getSettingsForUserAsMap(long id) {
         Set<Setting> settingsSet = settingsRepository.findByUserId(id);
-        if (settingsSet.size() == 0) {
-            return defaults();
-        }
 
         SettingsDto mappedSettings = new SettingsDto();
 
@@ -64,7 +62,12 @@ public class SettingsService {
         settingsSet.stream().forEach(setting -> {
             settingsMap.put(setting.getKeyName(), setting);
         });
+        return settingsMap;
+    }
 
+    public SettingsDto getSettingsForUser(long id) {
+        SettingsDto mappedSettings = new SettingsDto();
+        Map<String, Setting> settingsMap = getSettingsForUserAsMap(id);
 
         for (Field field: mappedSettings.getClass().getFields()) {
             var stringKey = field.getName();
