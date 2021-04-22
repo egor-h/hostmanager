@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { deleteObject, fetchTree } from '../../api/tree';
-import { Host } from '../../models/host';
+import { Host, Protocol } from '../../models/host';
 import { setSelected, setSnackbar } from '../../state/actions/local';
 import { AppState } from '../../state/reducers';
 import { findHostById } from '../../util/tree';
@@ -14,6 +14,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { executeProtocolThunk, executeProtocolsThunk, executePortCheckThunk } from '../../util/launcher';
 import AvailabilityDialog from './AvailabilityCheck';
 import Mousetrap from 'mousetrap';
+import { internal, PORT_CHECK_LOCAL_ID, PORT_CHECK_REMOTE_ID } from '../../state/reducers/protocols';
 
 type ParamTypes = {
     parentId: string;
@@ -67,7 +68,7 @@ export default (props: PropType): any => {
           }));
     }
 
-    const icmp = {
+    const icmp: Protocol = {
         id: 5,
         name: 'ICMP ping',
         executionLine: 'ping {address} /n 1',
@@ -91,16 +92,20 @@ export default (props: PropType): any => {
             dispatch(deleteObject(row.id, () => {dispatch(fetchTree(settings.rootNode))}));
         }}
         // popups={[]}
-        popups={[<AvailabilityDialog hosts={hosts === null ? [] : hosts.chld} protocols={[icmp]} onProtocolSelected={(p) => {
+        popups={[<AvailabilityDialog hosts={hosts === null ? [] : hosts.chld} protocols={[...internal, icmp]} onProtocolSelected={(p) => {
             if (hosts === null) {
                 setAvailPopup(false);
                 return;
             }
 
-            if (p.name === 'Port check') {
+            if (p.id === PORT_CHECK_LOCAL_ID) {
                 dispatch(setSnackbar({severity: 'info', message: `Check ${hosts.chld.length} hosts`}));
                 dispatch(executePortCheckThunk(hosts.chld))
                 setAvailPopup(false);
+                return;
+            }
+
+            if (p.id === PORT_CHECK_REMOTE_ID) {
                 return;
             }
 

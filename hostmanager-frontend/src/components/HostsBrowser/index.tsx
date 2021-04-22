@@ -11,7 +11,7 @@ import { fetchTree } from '../../api/tree';
 import { Host } from '../../models/host';
 import { local } from '../../state/actions';
 import { TreeState } from '../../state/reducers/hostsBrowser';
-import { LocalState } from '../../state/reducers/localState';
+import { LocalState, ProtocolResult } from '../../state/reducers/localState';
 import { KeyEventListenerType, KeysMap } from '../../util/events';
 import { KEY_N } from '../../util/keyboard_codes';
 import { findAllDirs, findHostById } from '../../util/tree';
@@ -24,6 +24,8 @@ import NewHostWrapper from './NewHostWrapper';
 import TableWrapper from './TableWrapper';
 import TagTableWrapper from './TagTableWrapper';
 import Mousetrap from 'mousetrap';
+import { ipcRenderer } from 'electron';
+import { setAllProtocolResults } from '../../state/actions/local';
 
 const styles = {
     root: {
@@ -43,6 +45,7 @@ type HostsBrowserProps = {
     getTags: () => void;
     setSelected: (nodeId: string) => void;
     setExpanded: (nodeIds: string[]) => void
+    allProtocolResults: typeof setAllProtocolResults;
 } & RouteComponentProps;
 
 
@@ -107,6 +110,11 @@ class HostsBrowser extends React.Component<HostsBrowserProps, State> {
         // }
         Mousetrap.bind("f5", () => {
             this.showAvailMenu();
+        })
+
+        ipcRenderer.on('port-check-reply', (event, newlyCreatedResults: ProtocolResult[]) => {
+            console.log(newlyCreatedResults);
+            this.props.allProtocolResults(newlyCreatedResults);
         })
     }
 
@@ -224,7 +232,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     getTree: bindActionCreators(fetchTree, dispatch),
     getTags: bindActionCreators(fetchTags, dispatch),
     setSelected: bindActionCreators(local.setSelected, dispatch),
-    setExpanded: bindActionCreators(local.setExpanded, dispatch)
+    setExpanded: bindActionCreators(local.setExpanded, dispatch),
+    allProtocolResults: bindActionCreators(setAllProtocolResults, dispatch)
 });
 
 let HostsBrowserRouted = withRouter(HostsBrowser);

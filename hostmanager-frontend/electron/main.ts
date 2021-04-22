@@ -165,7 +165,14 @@ ipcMain.on('port-check', (event, arg) => {
     })
   });
 
-  event.reply('port-check-reply', results);
+  const returnInterval = setInterval((hostsTotal: number) => {
+    console.log(results);
+    if (Object.keys(results).length === hostsTotal) {
+      event.reply('port-check-reply', results);
+      clearInterval(returnInterval);
+    }
+    console.log("port results not ready, sleeping ...");
+  }, 1500,  hosts.length);
 })
 
 app.on('ready', createWindow)

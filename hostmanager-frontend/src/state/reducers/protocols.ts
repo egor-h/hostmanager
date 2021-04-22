@@ -13,6 +13,29 @@ export type ProtocolState = {
     error: boolean;
 }
 
+
+export const PORT_CHECK_LOCAL_ID = -1
+export const PORT_CHECK_REMOTE_ID = -2
+
+export const internal: Protocol[] = [
+    {
+        id: PORT_CHECK_LOCAL_ID,
+        name: "Port check",
+        executionLine: "",
+        validationRegex: "",
+        expectedExitCode: 0,
+        launchType: "INTERNAL"
+    },
+    {
+        id: PORT_CHECK_REMOTE_ID,
+        name: "Port check (remote)",
+        executionLine: "",
+        validationRegex: "",
+        expectedExitCode: 0,
+        launchType: "INTERNAL"
+    }
+]
+
 export const protocols = (state = initialState, action: any) => {
     switch(action.type) {
         case PROTOCOLS:
@@ -24,7 +47,7 @@ export const protocols = (state = initialState, action: any) => {
         case PROTOCOLS_SUCCEDED:
             return {
                 loading: false,
-                data: action.protocols,
+                data: [...internal, action.protocols],
                 error: false
             }
         case PROTOCOLS_FAILED:
