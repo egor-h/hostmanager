@@ -66,12 +66,18 @@ public class ZabbixServiceImpl implements ZabbixService {
         return client.request(request, ZabbixCreateHostResponse.class, requestId.getAndIncrement(), apiKey);
     }
 
+    private ZabbixHostsResponse getHostsOfGroup(String zabbixGroupId) {
+        var request = new ZabbixHostsRequest(List.of(zabbixGroupId), List.of("hostid", "host", "name"), List.of("interfaceid", "ip"));
+        var response = client.request(request, ZabbixHostsResponse.class, requestId.getAndIncrement(), apiKey);
+        return response;
+    }
+
     public List<ZabbixCreateHostResponse> syncGroup(long hostManagerGroupId, String zabbixGroupId, boolean dontAddExisted) {
         log.trace("Syncing group with hostManagerGroupId {} zabbixGroupId {} dontAddExisted {}",
                 hostManagerGroupId, zabbixGroupId, dontAddExisted);
         var hosts = hostService.getTree(hostManagerGroupId).getChildren();
-        var request = new ZabbixHostsRequest(List.of(zabbixGroupId), List.of("hostid", "host", "name"), List.of("interfaceid", "ip"));
-        var response = client.request(request, ZabbixHostsResponse.class, requestId.getAndIncrement(), apiKey);
+        ZabbixHostsResponse response = getHostsOfGroup(zabbixGroupId);
+
         Set<String> usedAddressses = response.getResult().stream()
                 .flatMap(host -> host.getInterfaces().stream().map(itf -> itf.getIp()))
                 .collect(Collectors.toSet());
