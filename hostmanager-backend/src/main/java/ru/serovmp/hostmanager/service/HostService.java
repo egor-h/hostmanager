@@ -59,9 +59,16 @@ public class HostService {
     }
 
 
-    public void move() {
+    public void move(long hostOrDirId, long newParentId) {
+        var srcHost = hostRepository.findById(hostOrDirId)
+                .orElseThrow(() -> new HostNotFoundException("host " + hostOrDirId + " not found"));
+        var destinationDir = hostRepository.findById(newParentId)
+                .filter(Host::isDir)
+                .orElseThrow(() -> new HostNotFoundException("host " + newParentId + " not found or is not dir"));
 
+        srcHost.setParent(destinationDir);
     }
+
     public HostDto update(long id, HostForm changedHost) {
         var foundHost = hostRepository.findById(id).orElseThrow(() -> new HostNotFoundException(String.format("Root element not found (id = %d)", id)));
         var tags = changedHost.getTags().stream()
