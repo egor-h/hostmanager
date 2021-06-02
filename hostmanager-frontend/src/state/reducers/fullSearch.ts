@@ -1,21 +1,18 @@
-import { BriefSearchResult, BriefHost } from "../../models/search";
-import { SEARCH, SEARCH_FAILED, SEARCH_SUCCEDED } from "../constants";
+import { BriefSearchResult, BriefHost, FullSearchResult } from "../../models/search";
+import { FULL_SEARCH, FULL_SEARCH_FAILED, FULL_SEARCH_SUCCEDED } from "../constants";
 
-const EMPTY_SEARCH = {
+const EMPTY_SEARCH: SearchData = {
     page: 0,
     hosts: []
 }
 
-const initialState: SearchState = {
+const initialState: FullSearchState = {
     loading: false,
     data: EMPTY_SEARCH,
     error: false
 }
 
-export type SearchData = {
-    page: number,
-    hosts: BriefHost[]
-}
+export type SearchData = FullSearchResult
 
 export type FullSearchState = {
     loading: boolean;
@@ -25,19 +22,22 @@ export type FullSearchState = {
 
 export const fullSearch = (state = initialState, action: any) => {
     switch(action.type) {
-        case SEARCH:
+        case FULL_SEARCH:
             return {
                 loading: true,
-                data: EMPTY_SEARCH,
+                data: state.data,
                 error: false
             }
-        case SEARCH_SUCCEDED:
+        case FULL_SEARCH_SUCCEDED:
             return {
                 loading: false,
-                data: action.data,
+                data: {
+                    page: action.data.page,
+                    hosts: [...state.data.hosts, ...action.data.hosts]
+                },
                 error: false
             }
-        case SEARCH_FAILED:
+        case FULL_SEARCH_FAILED:
             return {
                 loading: false,
                 data: EMPTY_SEARCH,

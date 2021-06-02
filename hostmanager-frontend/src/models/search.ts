@@ -6,6 +6,11 @@ export interface BriefHost {
     address: string
 }
 
+export interface FullSearchResult {
+    page: number,
+    hosts: BriefHost[]
+}
+
 export interface BriefSearchResult {
     hosts: BriefHost[],
     notes: Note[],

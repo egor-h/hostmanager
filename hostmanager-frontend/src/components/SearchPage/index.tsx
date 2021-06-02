@@ -13,7 +13,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { briefSearch } from '../../api/search';
+import { briefSearch, fullHostSearch } from '../../api/search';
 import { AppState } from '../../state/reducers';
 
 
@@ -72,7 +72,10 @@ export default () => {
     if (searchResults.data.hosts.length !== 0) {
         renderList.push(<ListSubheader key="hosts" onClick={() => history.push(`/search_hosts/${query}`)}>All results</ListSubheader>);
         renderList.push(searchResults.data.hosts.map(h => resultItem(h.name, h.address, "host", () => history.push(`/objects/info/${h.id}`))));
-        renderList.push(resultItem(`Complete results for "${query}"`, "", "goto", () => history.push(`/search_hosts/${query}`)))
+        renderList.push(resultItem(`Complete results for "${query}"`, "", "goto", () => {
+            dispatch(fullHostSearch(query, 0));
+            history.push(`/search_hosts/${query}`);
+        }));
     }
     if (searchResults.data.tags.length !== 0) {
         renderList.push(<ListSubheader key="tags">Tags</ListSubheader>);

@@ -140,7 +140,7 @@ class MainView extends React.Component<PropsType> {
                         <Route path="/search">
                             <SearchPage />
                         </Route>
-                        <Route path="/search_hosts">
+                        <Route path="/search_hosts/:query">
                             <CompleteSearchResults />
                         </Route>
                         <Route path="/map">
