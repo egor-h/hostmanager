@@ -50,6 +50,11 @@ export const SEARCH = "SEARCH";
 export const SEARCH_SUCCEDED = "SEARCH_SUCCEDED";
 export const SEARCH_FAILED = "SEARCH_FAILED";
 
+// full search
+export const FULL_SEARCH = "FULL_SEARCH";
+export const FULL_SEARCH_SUCCEDED = "FULL_SEARCH_SUCCEDED";
+export const FULL_SEARCH_FAILED = "FULL_SEARCH_FAILED";
+
 // stat
 export const STAT = "STAT";
 export const STAT_SUCCEDED = "STAT_SUCCEDED";

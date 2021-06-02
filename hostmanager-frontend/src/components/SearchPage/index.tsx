@@ -1,4 +1,4 @@
-import { ListSubheader, TextField } from '@material-ui/core';
+import { ListSubheader, TextField, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -9,6 +9,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import NoteIcon from '@material-ui/icons/Note';
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -16,10 +17,12 @@ import { briefSearch } from '../../api/search';
 import { AppState } from '../../state/reducers';
 
 
-type IconType = "host" | "tag" | "protocol" | "note";
+type IconType = "goto" | "host" | "tag" | "protocol" | "note";
 
 const getIcon = (iconType: IconType) => {
     switch (iconType) {
+        case "goto":
+            return (<ArrowForwardIosIcon />);
         case "host":
             return (<ComputerIcon />);
         case "tag":
@@ -67,8 +70,9 @@ export default () => {
 
     let renderList: any[] = [];
     if (searchResults.data.hosts.length !== 0) {
-        renderList.push(<ListSubheader key="hosts">Hosts</ListSubheader>);
+        renderList.push(<ListSubheader key="hosts" onClick={() => history.push(`/search_hosts/${query}`)}>All results</ListSubheader>);
         renderList.push(searchResults.data.hosts.map(h => resultItem(h.name, h.address, "host", () => history.push(`/objects/info/${h.id}`))));
+        renderList.push(resultItem(`Complete results for "${query}"`, "", "goto", () => history.push(`/search_hosts/${query}`)))
     }
     if (searchResults.data.tags.length !== 0) {
         renderList.push(<ListSubheader key="tags">Tags</ListSubheader>);

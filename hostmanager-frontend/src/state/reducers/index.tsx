@@ -5,6 +5,7 @@ import { tags, TagState } from './tags';
 import { protocols, ProtocolState } from './protocols';
 import { notes, NoteState } from './notes';
 import { search, SearchState } from './search';
+import { fullSearch, FullSearchState } from './fullSearch';
 import { stat, StatState } from './stat';
 import { auth, AuthState } from './auth';
 import { users, UserState } from './users';
@@ -17,6 +18,7 @@ export type AppState = {
     notes: NoteState;
     hostsBrowser: HostsBrowserState;
     search: SearchState;
+    fullSearch: FullSearchState;
     stat: StatState;
     auth: AuthState;
     users: UserState;
@@ -29,6 +31,7 @@ export {
     protocols,
     notes,
     search,
+    fullSearch,
     stat,
     auth,
     hostsBrowser,

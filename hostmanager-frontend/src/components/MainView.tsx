@@ -27,6 +27,7 @@ import TagPage from './TagPage';
 import { ipcRenderer } from 'electron';
 import UserPage from './UserPage';
 import Mousetrap from 'mousetrap';
+import CompleteSearchResults from './CompleteSearchResults';
 
 type PropsType = {
     local: LocalState;
@@ -138,6 +139,9 @@ class MainView extends React.Component<PropsType> {
                         </Route>
                         <Route path="/search">
                             <SearchPage />
+                        </Route>
+                        <Route path="/search_hosts">
+                            <CompleteSearchResults />
                         </Route>
                         <Route path="/map">
                             <MapPage tree={this.props.tree.tree}/>
