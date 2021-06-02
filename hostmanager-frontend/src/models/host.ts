@@ -3,6 +3,7 @@ export interface Host {
     parentId: number,
     name: string,
     address: string,
+    port: number,
     enabled: boolean,
     dir: boolean,
     tags: Tag[],
@@ -25,6 +26,7 @@ export const EMPTY_HOST = {
 export interface HostFormData {
     name: string,
     address: string,
+    port: number,
     enabled: boolean,
     dir: boolean,
     tags: string[],

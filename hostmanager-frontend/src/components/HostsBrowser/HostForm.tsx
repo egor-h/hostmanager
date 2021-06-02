@@ -39,6 +39,7 @@ type FormState = {
     parentId: number;
     name: string;
     address: string;
+    port: number;
     enabled: boolean;
     tags: Tag[];
     protocols: number[];
@@ -53,6 +54,7 @@ class HostForm extends React.Component<FormProps, FormState> {
         let parentId = -1;
         let name = '';
         let address = '';
+        let port = 0;
         let enabled = true;
         let tags: Tag[] = [];
         let protocols: number[] = [];
@@ -63,6 +65,7 @@ class HostForm extends React.Component<FormProps, FormState> {
             parentId = this.props.host.parentId;
             name = this.props.host.name;
             address = this.props.host.address;
+            port = this.props.host.port;
             enabled = this.props.host.enabled;
             tags = this.props.host.tags;
             protocols = this.props.host.protocols;
@@ -74,6 +77,7 @@ class HostForm extends React.Component<FormProps, FormState> {
             parentId: parentId,
             name: name,
             address: address,
+            port: port,
             enabled: enabled,
             tags: tags,
             protocols: protocols,
@@ -82,6 +86,7 @@ class HostForm extends React.Component<FormProps, FormState> {
 
         this.handleNameChange = this.handleNameChange.bind(this)
         this.handleAddressChange = this.handleAddressChange.bind(this)
+        this.handlePortChange = this.handlePortChange.bind(this)
         this.handleEnabledChecked = this.handleEnabledChecked.bind(this)
         this.handleTagChange = this.handleTagChange.bind(this)
         this.handleProtocolChange = this.handleProtocolChange.bind(this)
@@ -100,6 +105,11 @@ class HostForm extends React.Component<FormProps, FormState> {
     handleAddressChange(e: any) {
         let address = e.target.value;
         this.setState(() => ({address}))
+    }
+
+    handlePortChange(e: any) {
+        let port = e.target.value;
+        this.setState(() => ({port}))
     }
 
     handleTagChange(e: any, newValue: Tag[]) {
@@ -123,6 +133,7 @@ class HostForm extends React.Component<FormProps, FormState> {
             parentId: this.state.parentId,
             name: this.state.name,
             address: this.state.address,
+            port: this.state.port,
             enabled: this.state.enabled,
             tags: this.state.tags,
             protocols: this.state.protocols,
@@ -138,6 +149,7 @@ class HostForm extends React.Component<FormProps, FormState> {
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
             <TextField style={{display: 'flex', width: '50vw', flexBasis: '100%'}} className={classes.margin} value={this.state.name} onChange={this.handleNameChange} required size="small" id="standard-required" label="Name" defaultValue="" />
             <TextField style={{display: 'flex', flexBasis: '100%'}} className={classes.margin} value={this.state.address} onChange={this.handleAddressChange} required size="small" id="standard-required" label="Address" defaultValue="" ></TextField>
+            <TextField style={{display: 'flex', flexBasis: '100%'}} className={classes.margin} value={this.state.port} onChange={this.handlePortChange} required size="small" id="standard-required" label="Port" defaultValue="" ></TextField>
             {/* <TextField className={classes.margin} required size="small" id="standard-required" label="Address" defaultValue="" ></TextField>
             <TextField className={classes.margin} required size="small" id="standard-required" label="Address" defaultValue="" ></TextField> */}
             <FormControlLabel
