@@ -47,7 +47,7 @@ export const protocols = (state = initialState, action: any) => {
         case PROTOCOLS_SUCCEDED:
             return {
                 loading: false,
-                data: [...internal, action.protocols],
+                data: [...internal, ...action.protocols],
                 error: false
             }
         case PROTOCOLS_FAILED:
