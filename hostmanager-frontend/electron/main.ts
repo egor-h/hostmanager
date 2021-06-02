@@ -125,6 +125,7 @@ ipcMain.on('port-check', (event, arg) => {
   let results: ProtocolResultMapByHostId = {};
 
   hosts.forEach(h => {
+    console.log(`Check ${h.address} ${h.port}`);
     let client = net.connect({host: h.address, port: h.port}, () => {
       console.log('success');
       let newlyCreatedResult = {

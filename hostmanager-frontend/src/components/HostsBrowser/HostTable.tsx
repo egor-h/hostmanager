@@ -26,7 +26,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import clsx from 'clsx';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Host, VALIDATE_OUTPUT } from '../../models/host';
+import { Host, VALIDATE_EXITCODE, VALIDATE_OUTPUT } from '../../models/host';
 import PopupDialog from '../PopupDialog';
 import PopupField from '../PopupField';
 import { ProtocolResult, ProtocolResultMapByHostId } from '../../state/reducers/localState';
@@ -509,6 +509,9 @@ export default function EnhancedTable(props: {
                     protocolResult = protocolResults[VALIDATE_OUTPUT];
                     if (protocolResult) {
                       validationOk = validateOutput(protocolResult.stderr+protocolResult.stdout, protocolResult.protocol.validationRegex);
+                    } else {
+                      protocolResult = protocolResults[VALIDATE_EXITCODE];
+                      validationOk = validateExitcode(protocolResult.exitCode, protocolResult.protocol.expectedExitCode);
                     }
                   }
                   const colorAvail = validationOk ? {color: green[500]} : {color: red[500]};
