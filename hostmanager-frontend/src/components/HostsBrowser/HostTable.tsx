@@ -310,7 +310,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           {
             (props.showResetSearchButton) ? 
             (<Tooltip title="Reset search">
-              <IconButton onClick={() => {props.onResetSearchButton()}} aria-label="find in list">
+              <IconButton onClick={() => {props.oResetSearchButton()}} aria-label="find in list">
                 <ClearIcon />
               </IconButton>
             </Tooltip>)
@@ -511,7 +511,9 @@ export default function EnhancedTable(props: {
                       validationOk = validateOutput(protocolResult.stderr+protocolResult.stdout, protocolResult.protocol.validationRegex);
                     } else {
                       protocolResult = protocolResults[VALIDATE_EXITCODE];
-                      validationOk = validateExitcode(protocolResult.exitCode, protocolResult.protocol.expectedExitCode);
+                      if (protocolResult) {
+                        validationOk = validateExitcode(protocolResult.exitCode, protocolResult.protocol.expectedExitCode);
+                      }
                     }
                   }
                   const colorAvail = validationOk ? {color: green[500]} : {color: red[500]};
@@ -541,12 +543,22 @@ export default function EnhancedTable(props: {
                         />
                       </TableCell>
                       <TableCell style={{width: '5%'}}>
-                        { row.dir ? <FolderOpenTwoToneIcon /> : <ComputerTwoToneIcon /> }
+                        {(() => {
+                          if (row.dir) {
+                            return <FolderOpenTwoToneIcon />;
+                          }
+                          return (
+                            <Tooltip 
+                              title={`${protocolResult?.protocol.name} executed at ${new Date(protocolResult?.createdAt*1000).toLocaleString()}`} 
+                              placement="right">
+                              <ComputerTwoToneIcon style={protocolResult ? colorAvail : {} }/>
+                            </Tooltip>);
+                        })() }
                       </TableCell>
                       <TableCell onClick={clickHandler} 
                         style={{ height: "20px", width: '70%', ...color }}
                         component="th" id={labelId} scope="row" padding="none">
-                        {protocolResults !== undefined ? <Tooltip title={`${protocolResult?.protocol.name} executed at ${new Date(protocolResult?.createdAt*1000).toLocaleString()}`} placement="right"><DoneIcon style={colorAvail} /></Tooltip> : ''}
+                        {/* {protocolResults !== undefined ? <Tooltip title={`${protocolResult?.protocol.name} executed at ${new Date(protocolResult?.createdAt*1000).toLocaleString()}`} placement="right"><DoneIcon style={colorAvail} /></Tooltip> : ''} */}
                         {row.name}
                       </TableCell>
                       <TableCell onClick={clickHandler} 
