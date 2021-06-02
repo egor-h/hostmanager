@@ -2,12 +2,12 @@ package ru.serovmp.hostmanager.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.dto.BriefSearchResultDto;
+import ru.serovmp.hostmanager.dto.HostDto;
 import ru.serovmp.hostmanager.service.SearchService;
+
+import java.util.List;
 
 @SecurityRequirement(name = "bearer-key")
 @RequestMapping("/api/v1/search")
@@ -28,5 +28,10 @@ public class SearchController {
     @GetMapping("/in/{category}/detail/{query}")
     public void detailedSearchInCategory(@PathVariable("category") String category, @PathVariable("query") String query) {
         
+    }
+
+    @GetMapping("/hosts/{query}")
+    public List<BriefSearchResultDto.BriefHost> fullSearchHost(@PathVariable("query") String query, @RequestParam("page") int page) {
+        return searchService.searchHosts(query, page);
     }
 }

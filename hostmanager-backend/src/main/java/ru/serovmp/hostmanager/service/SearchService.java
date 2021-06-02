@@ -1,11 +1,10 @@
 package ru.serovmp.hostmanager.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.serovmp.hostmanager.dto.BriefNoteDto;
-import ru.serovmp.hostmanager.dto.BriefSearchResultDto;
-import ru.serovmp.hostmanager.dto.ProtocolDto;
-import ru.serovmp.hostmanager.dto.TagDto;
+import ru.serovmp.hostmanager.dto.*;
 import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.NoteRepository;
 import ru.serovmp.hostmanager.repository.ProtocolRepository;
@@ -17,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class SearchService {
     private static final long SEARCH_LIMIT = 5;
+    private static final int SEARCH_PAGE_SIZE = 20;
 
     private HostRepository hostRepository;
     private NoteRepository noteRepository;
@@ -51,5 +51,11 @@ public class SearchService {
                 .protocols(protocols)
                 .tags(tags)
                 .build();
+    }
+
+    public List<BriefSearchResultDto.BriefHost> searchHosts(String query, int page) {
+        return hostRepository.findByHostNameOrAddressPagable(query, PageRequest.of(page, SEARCH_PAGE_SIZE)).stream()
+                .map(host -> new BriefSearchResultDto.BriefHost(host.getId(), host.getName(), host.getAddress()))
+                .collect(Collectors.toList());
     }
 }
