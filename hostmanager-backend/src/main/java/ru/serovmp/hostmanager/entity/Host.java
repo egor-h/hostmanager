@@ -30,6 +30,9 @@ public class Host extends AbstractAuditableEntity implements Serializable {
     @NotNull @Length(min = 1)
     private String address;
 
+    @Getter @Setter
+    private int port;
+
 //    private List<Protocol> protocols;
 //    private User createdBy;
 

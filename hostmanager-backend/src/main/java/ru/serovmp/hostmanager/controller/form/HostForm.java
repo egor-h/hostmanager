@@ -12,6 +12,7 @@ import java.util.List;
 public class HostForm {
     private String name;
     private String address;
+    private int port;
     private boolean enabled;
     private boolean dir;
     private List<String> tags;
