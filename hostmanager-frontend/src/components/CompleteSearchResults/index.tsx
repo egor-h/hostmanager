@@ -4,12 +4,14 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ComputerIcon from '@material-ui/icons/Computer';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { fullHostSearch } from '../../api/search';
 import { AppState } from '../../state/reducers';
 
+
+export const SEARCH_RESULTS_PAGE_SIZE = 20;
 
 const resultItem = (primaryText: string, secondaryText: string, onClick: () => void) => {
     return (<ListItem key={primaryText} button onClick={() => onClick()}>
@@ -36,9 +38,9 @@ export default () => {
     const history = useHistory();
     let { query } = useParams<{query: string}>();
 
-    let renderList: any[] = [];
-    if (searchResults.data.hosts.length !== 0) {
-        renderList = searchResults.data.hosts.map(searchResult => resultItem(searchResult.name, searchResult.address, () => history.push(`/objects/info/${searchResult.id}`)));
+    
+    let renderList = searchResults.data.hosts.map(searchResult => resultItem(searchResult.name, searchResult.address, () => history.push(`/objects/info/${searchResult.id}`)));
+    if ((searchResults.data.hosts.length % SEARCH_RESULTS_PAGE_SIZE) === 0) {
         renderList.push(resultItem("Load more", "", () => dispatch(fullHostSearch(query, searchResults.data.page+1))));
     }
 
