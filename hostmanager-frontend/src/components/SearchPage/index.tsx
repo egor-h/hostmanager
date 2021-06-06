@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { briefSearch, fullHostSearch } from '../../api/search';
 import { AppState } from '../../state/reducers';
+import { fullSearchClear } from '../../state/actions/fullSearch';
 
 
 type IconType = "goto" | "host" | "tag" | "protocol" | "note";
@@ -72,10 +73,13 @@ export default () => {
     if (searchResults.data.hosts.length !== 0) {
         renderList.push(<ListSubheader key="hosts" onClick={() => history.push(`/search_hosts/${query}`)}>All results</ListSubheader>);
         renderList.push(searchResults.data.hosts.map(h => resultItem(h.name, h.address, "host", () => history.push(`/objects/info/${h.id}`))));
-        renderList.push(resultItem(`Complete results for "${query}"`, "", "goto", () => {
-            dispatch(fullHostSearch(query, 0));
-            history.push(`/search_hosts/${query}`);
-        }));
+        if (searchResults.data.hosts.length >= 5) {
+            renderList.push(resultItem(`Complete results for "${query}"`, "", "goto", () => {
+                dispatch(fullHostSearch(query, 0));
+                dispatch(fullSearchClear()); // clear previous results
+                history.push(`/search_hosts/${query}`);
+            }));
+        }
     }
     if (searchResults.data.tags.length !== 0) {
         renderList.push(<ListSubheader key="tags">Tags</ListSubheader>);

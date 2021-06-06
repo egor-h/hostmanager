@@ -53,6 +53,7 @@ export const SEARCH_FAILED = "SEARCH_FAILED";
 // full search
 export const FULL_SEARCH = "FULL_SEARCH";
 export const FULL_SEARCH_SUCCEDED = "FULL_SEARCH_SUCCEDED";
+export const FULL_SEARCH_CLEAR = "FULL_SEARCH_CLEAR";
 export const FULL_SEARCH_FAILED = "FULL_SEARCH_FAILED";
 
 // stat
