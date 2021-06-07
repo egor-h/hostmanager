@@ -25,6 +25,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { EMPTY_HOST, Host } from '../../models/host';
 import { findAllDirs } from '../../util/tree';
 import UserPage from '../UserPage';
+import { withTranslation } from 'react-i18next';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
@@ -47,6 +48,8 @@ type SettingsProps = {
     zabbixGroups: {loading: boolean, data: ZabbixGroup[], error: boolean},
     loadZabbixGroups: () => void,
     beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void
+
+    t: (s: string) => string
 } & RouteComponentProps<{}>;
 
 type SettingsState = {
@@ -113,6 +116,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
     }
 
     render() {
+        const t = this.props.t;
         const allDirs = findAllDirs(this.props.hosts);
         const curRootNode = allDirs.find(host => host.id === this.state.settings.rootNode);
         const curRootNodeName: Host = curRootNode === undefined ? {...EMPTY_HOST, name: `Host id=${this.state.settings.rootNode}not found`} : curRootNode;
@@ -127,12 +131,12 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                         <SaveIcon />
                     </IconButton>
                 </Tooltip>) : (<IconButton disabled={true} onClick={() => {}} aria-label="logout"><SaveIcon /></IconButton>)}
-                Settings
+                {t("settings_page_title")}
             </Typography>
             <List>
-                <ListSubheader>Application</ListSubheader>
+                <ListSubheader>{t("settings_page_application_subheader")}</ListSubheader>
                 <ListItem button onClick={() => {this.setState({settings: {...this.state.settings, expandTreeOnStartup: ! this.state.settings.expandTreeOnStartup}})}}>
-                       <ListItemText id="switch-enable-autoexpand-on-start" primary="Expand tree on start" />
+                       <ListItemText id="switch-enable-autoexpand-on-start" primary={t("settings_page_application_expand_tree_on_start")} />
                     <ListItemSecondaryAction>
                         <Switch
                             edge="end"
@@ -143,7 +147,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 </ListItem>
 
                 <ListItem button onClick={() => this.props.history.push("/users")}>
-                    <ListItemText primary="Edit users" />
+                    <ListItemText primary={t("settings_page_application_edit_users")} />
                     <ListItemSecondaryAction>
                         <IconButton edge="end" aria-label="delete">
                             <NavigateNextIcon />
@@ -152,7 +156,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 </ListItem>
 
                 <ListItem>
-                    <ListItemText primary="Tree root node" />
+                    <ListItemText primary={t("settings_page_application_tree_root_node")} />
                     <ListItemSecondaryAction>
                         <Autocomplete
                             id="combo-box-demo"
@@ -162,28 +166,28 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                             getOptionLabel={(option: Host) => option.name}
                             value={curRootNodeName}
                             onChange={this.handleRootHostChange}
-                            renderInput={(params) => <TextField  size="small" {...params} label="Root node" />}
+                            renderInput={(params) => <TextField  size="small" {...params} label={t("settings_page_application_tree_root_node_sub")} />}
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
 
                 <ListItem>
-                    <ListItemText primary="Host table name template" />
+                    <ListItemText primary={t("settings_page_application_host_table_name_template")} />
                     <ListItemSecondaryAction>
-                        <Tooltip title="Template with placeholders like .." placement="bottom">
-                            <TextField size="small" label="Name template" style={{ width: 300 }} />
+                        <Tooltip title={t("settings_page_application_host_table_name_template_tooltip")} placement="bottom">
+                            <TextField size="small" label={t("settings_page_application_host_table_name_template_field")} style={{ width: 300 }} />
                         </Tooltip>
                     </ListItemSecondaryAction>
                 </ListItem>
 
-                <ListSubheader>Profile</ListSubheader>
+                <ListSubheader>{t("settings_page_profile_subheader")}</ListSubheader>
                 <ListItem button>
-                    <ListItemText primary="Change profile" />
+                    <ListItemText primary={t("settings_page_profile_change_profile")} />
                 </ListItem>
 
                 <ListSubheader>Zabbix</ListSubheader>
                 <ListItem>
-                    <ListItemText primary="Host manager target directory" />
+                    <ListItemText primary={t("settings_page_zabbix_hostsmanager_target_dir")} />
                     <ListItemSecondaryAction>
                         <Autocomplete
                             id="combo-box-demo"
@@ -198,7 +202,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
                 <ListItem>
-                    <ListItemText primary="Zabbix target group" />
+                    <ListItemText primary={t("settings_page_zabbix_zabbix_target_group")} />
                     <ListItemSecondaryAction>
                         <Autocomplete
                             id="combo-box-demo"
@@ -214,7 +218,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
                 <ListItem button onClick={() => {}}>
-                       <ListItemText id="switch-merge-with-existing" primary="Merge with existing entries" />
+                       <ListItemText id="switch-merge-with-existing" primary={t("settings_page_zabbix_merge_with_existing")} />
                     <ListItemSecondaryAction>
                         <Switch
                             edge="end"
@@ -224,7 +228,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
                 <ListItem button>
-                    <ListItemText onClick={() => this.props.beginZabbixImport(this.state.hostsmanGroupId, this.state.zabbixGroupId, this.state.zabbixMergeEntries)} primary="Begin import" />
+                    <ListItemText onClick={() => this.props.beginZabbixImport(this.state.hostsmanGroupId, this.state.zabbixGroupId, this.state.zabbixMergeEntries)} primary={t("settings_page_zabbix_begin_import")} />
                 </ListItem>
 
 
@@ -248,4 +252,4 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
 
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SettingsList));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(SettingsList)));

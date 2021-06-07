@@ -7,6 +7,7 @@ import thunk from 'redux-thunk'
 import MainView from './components/MainView'
 import * as reducersRaw from './state/reducers'
 import { GlobalStyle } from './styles'
+import i18n from './i18n'
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
@@ -14,6 +15,8 @@ document.body.appendChild(mainElement)
 
 const reducers = combineReducers(reducersRaw)
 const store = createStore(reducers, compose(applyMiddleware(thunk), window.devToolsExtension ? window.devToolsExtension() : f => f))
+
+i18n; // to make expression evaluate
 
 const App = () => {
   return (
