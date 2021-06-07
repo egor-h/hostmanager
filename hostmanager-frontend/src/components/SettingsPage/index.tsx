@@ -25,7 +25,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { EMPTY_HOST, Host } from '../../models/host';
 import { findAllDirs } from '../../util/tree';
 import UserPage from '../UserPage';
-import { withTranslation } from 'react-i18next';
+import { useTranslation, WithTranslation, withTranslation } from 'react-i18next';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
@@ -49,8 +49,7 @@ type SettingsProps = {
     loadZabbixGroups: () => void,
     beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void
 
-    t: (s: string) => string
-} & RouteComponentProps<{}>;
+} & RouteComponentProps<{}> & WithTranslation;
 
 type SettingsState = {
     showChangeRootNode: boolean;
