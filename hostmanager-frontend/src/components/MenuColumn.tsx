@@ -11,68 +11,76 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import SettingsIcon from '@material-ui/icons/Settings'
 import { Link } from 'react-router-dom'
+import { WithTranslation, withTranslation } from 'react-i18next'
 
-export default class MenuColumn extends React.Component {
+class MenuColumn extends React.Component<WithTranslation> {
+
+  constructor(props: WithTranslation) {
+    super(props);
+  }
+
   render() {
+    const { t } = this.props;
+
     return (<Container>
       <Link to="/">
-        <Tooltip title="Home page" placement="right">
+        <Tooltip title={t("menu_column_home_page")} placement="right">
           <IconButton aria-label="home">
             <HomeIcon />
           </IconButton>
         </Tooltip>
       </Link>
       <Link to="/objects">
-        <Tooltip title="Objects" placement="right">
+        <Tooltip title={t("menu_column_objects")} placement="right">
           <IconButton aria-label="objects">
             <ComputerIcon />
           </IconButton>
         </Tooltip>
       </Link>
       <Link to="/search">
-        <Tooltip title="Search" placement="right">
+        <Tooltip title={t("menu_column_search")} placement="right">
           <IconButton aria-label="search">
             <SearchIcon />
           </IconButton>
         </Tooltip>
       </Link>
       {/* <Link to="/map">
-        <Tooltip title="Map" placement="right">
+        <Tooltip title={t("menu_column_map")} placement="right">
           <IconButton aria-label="map">
             <ExploreIcon />
           </IconButton>
         </Tooltip>
       </Link> */}
       <Link to="/notes">
-        <Tooltip title="Notes" placement="right">
+        <Tooltip title={t("menu_column_notes")} placement="right">
           <IconButton aria-label="notes">
             <NoteIcon />
           </IconButton>
         </Tooltip>
       </Link>
       <Link to="/protocols">
-        <Tooltip title="Protocols" placement="right">
+        <Tooltip title={t("menu_column_protocols")} placement="right">
           <IconButton aria-label="protocol">
             <ReceiptIcon />
           </IconButton>
         </Tooltip>
       </Link>
       <Link to="/tags">
-        <Tooltip title="Tags" placement="right">
+        <Tooltip title={t("menu_column_tags")} placement="right">
           <IconButton aria-label="tags">
             <LocalOfferIcon />
           </IconButton>
         </Tooltip>
       </Link>
       <Link to="/stats">
-        <Tooltip title="Statistics" placement="right">
+        <Tooltip title={t("menu_column_stats")} placement="right">
           <IconButton aria-label="stats">
             <BarChartIcon />
           </IconButton>
         </Tooltip>
       </Link>
       <Link to="/settings">
-        <Tooltip title="Settings" placement="right">
+        <Tooltip title={t("menu_column_settings")} placement="right">
           <IconButton aria-label="settings">
             <SettingsIcon />
           </IconButton>
@@ -82,3 +90,5 @@ export default class MenuColumn extends React.Component {
   }
 
 }
+
+export default withTranslation()(MenuColumn);

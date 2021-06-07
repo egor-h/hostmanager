@@ -1,4 +1,15 @@
 export default {
+    "menu_column_home_page": "Home page",
+    "menu_column_objects": "Objects",
+    "menu_column_search": "Search",
+    "menu_column_map": "Map",
+    "menu_column_notes": "Notes",
+    "menu_column_protocols": "Protocols",
+    "menu_column_tags": "Tags",
+    "menu_column_stats": "Statistics",
+    "menu_column_settings": "Settings",
+
+
     "brief_search_complete_results": 'Complete results for "{{query}}"',
     "brief_search_all_results": "All results",
     "brief_search_tags_subheader": "Tags",

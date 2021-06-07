@@ -1,4 +1,15 @@
 export default {
+    "menu_column_home_page": "Домашняя страница",
+    "menu_column_objects": "Объекты",
+    "menu_column_search": "Поиск",
+    "menu_column_map": "Карта",
+    "menu_column_notes": "Заметки",
+    "menu_column_protocols": "Протоколы",
+    "menu_column_tags": "Метки",
+    "menu_column_stats": "Статистика",
+    "menu_column_settings": "Настройки",
+
+
     "brief_search_complete_results": 'Все результаты для запроса "{{query}}"',
     "brief_search_all_results": "Все результаты",
     "brief_search_tags_subheader": "Метки",
