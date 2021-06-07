@@ -1,4 +1,15 @@
 export default {
+    "brief_search_complete_results": 'Complete results for "{{query}}"',
+    "brief_search_all_results": "All results",
+    "brief_search_tags_subheader": "Tags",
+    "brief_search_protocols_subheader": "Protocols",
+    "brief_search_notes_subheader": "Notes",
+    "brief_search_settings_subheader": "Settings",
+
+
+    "full_search_load_more": "Load more",
+
+
     "settings_page_title": "Settings",
     "settings_page_application_subheader": "Application",
     "settings_page_application_expand_tree_on_start": "Expand tree on start",

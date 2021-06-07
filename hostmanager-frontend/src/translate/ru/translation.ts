@@ -1,4 +1,15 @@
 export default {
+    "brief_search_complete_results": 'Все результаты для запроса "{{query}}"',
+    "brief_search_all_results": "Все результаты",
+    "brief_search_tags_subheader": "Метки",
+    "brief_search_protocols_subheader": "Протоколы",
+    "brief_search_notes_subheader": "Записи",
+    "brief_search_settings_subheader": "Настройки",
+
+
+    "full_search_load_more": "Загрузить еще",
+
+
     "settings_page_title": "Настройки",
     "settings_page_application_subheader": "Приложение",
     "settings_page_application_expand_tree_on_start": "Раскрыть дерево при запуске",

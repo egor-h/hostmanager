@@ -5,6 +5,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ComputerIcon from '@material-ui/icons/Computer';
 import React, { useEffect } from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { fullHostSearch } from '../../api/search';
@@ -32,16 +33,16 @@ const resultItem = (primaryText: string, secondaryText: string, onClick: () => v
     </ListItem>)
 }
 
-export default () => {
+export default withTranslation()((props: WithTranslation) => {
     const dispatch = useDispatch();
     const searchResults = useSelector((state: AppState) => state.fullSearch);
     const history = useHistory();
     let { query } = useParams<{query: string}>();
-
+    const { t } = props;
     
     let renderList = searchResults.data.hosts.map(searchResult => resultItem(searchResult.name, searchResult.address, () => history.push(`/objects/info/${searchResult.id}`)));
     if ((searchResults.data.hosts.length % SEARCH_RESULTS_PAGE_SIZE) === 0) {
-        renderList.push(resultItem("Load more", "", () => dispatch(fullHostSearch(query, searchResults.data.page+1))));
+        renderList.push(resultItem(t("full_search_load_more"), "", () => dispatch(fullHostSearch(query, searchResults.data.page+1))));
     }
 
     return (
@@ -50,4 +51,4 @@ export default () => {
                     {renderList}
                 </List>
         </div>)
-}
+})

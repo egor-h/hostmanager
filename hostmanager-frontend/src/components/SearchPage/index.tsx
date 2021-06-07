@@ -16,6 +16,7 @@ import { useHistory } from 'react-router-dom';
 import { briefSearch, fullHostSearch } from '../../api/search';
 import { AppState } from '../../state/reducers';
 import { fullSearchClear } from '../../state/actions/fullSearch';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 
 type IconType = "goto" | "host" | "tag" | "protocol" | "note";
@@ -56,11 +57,12 @@ const resultItem = (primaryText: string, secondaryText: string, iconType: IconTy
     </ListItem>)
 }
 
-export default () => {
+export default withTranslation()((props: WithTranslation) => {
     const [query, setQuery] = React.useState<string>('');
     const dispatch = useDispatch();
     const searchResults = useSelector((state: AppState) => state.search);
     const history = useHistory();
+    const { t } = props;
 
     const onSubmit = (query: string) => {
         if (query.trim() !== '') {
@@ -71,10 +73,10 @@ export default () => {
 
     let renderList: any[] = [];
     if (searchResults.data.hosts.length !== 0) {
-        renderList.push(<ListSubheader key="hosts" onClick={() => history.push(`/search_hosts/${query}`)}>All results</ListSubheader>);
+        renderList.push(<ListSubheader key="hosts" onClick={() => history.push(`/search_hosts/${query}`)}>{t("brief_search_all_results")}</ListSubheader>);
         renderList.push(searchResults.data.hosts.map(h => resultItem(h.name, h.address, "host", () => history.push(`/objects/info/${h.id}`))));
         if (searchResults.data.hosts.length >= 5) {
-            renderList.push(resultItem(`Complete results for "${query}"`, "", "goto", () => {
+            renderList.push(resultItem(t("brief_search_complete_results", {query: query}), "", "goto", () => {
                 dispatch(fullHostSearch(query, 0));
                 dispatch(fullSearchClear()); // clear previous results
                 history.push(`/search_hosts/${query}`);
@@ -82,19 +84,19 @@ export default () => {
         }
     }
     if (searchResults.data.tags.length !== 0) {
-        renderList.push(<ListSubheader key="tags">Tags</ListSubheader>);
+        renderList.push(<ListSubheader key="tags">{t("brief_search_tags_subheader")}</ListSubheader>);
         renderList.push(searchResults.data.tags.map(t => resultItem(t.name, '', "tag", () => history.push(`/tags/edit/${t.id}`))));
     }
     if (searchResults.data.protocols.length !== 0) {
-        renderList.push(<ListSubheader key="protocols">Protocols</ListSubheader>);
+        renderList.push(<ListSubheader key="protocols">{t("brief_search_protocols_subheader")}</ListSubheader>);
         renderList.push(searchResults.data.protocols.map(p => resultItem(p.name, p.launchType, "protocol", () => history.push(`/protocols/edit/${p.id}`))));
     }
     if (searchResults.data.notes.length !== 0) {
-        renderList.push(<ListSubheader key="notes">Notes</ListSubheader>);
+        renderList.push(<ListSubheader key="notes">{t("brief_search_notes_subheader")}</ListSubheader>);
         renderList.push(searchResults.data.notes.map(n => resultItem(n.title, '', "note", () => history.push(`/notes/edit/${n.id}`))));
     }
     if (false) {
-        renderList.push(<ListSubheader key="settings">Settings</ListSubheader>);
+        renderList.push(<ListSubheader key="settings">{t("brief_search_settings_subheader")}</ListSubheader>);
     }
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -105,4 +107,4 @@ export default () => {
                 </List>
             </form>
         </div>)
-}
+})
