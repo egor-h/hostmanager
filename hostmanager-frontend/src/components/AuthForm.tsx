@@ -44,7 +44,7 @@ class LoginForm extends React.Component<FormProps, FormState> {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                 <TextField autoFocus label="Login" value={this.state.login} onChange={(e) => this.setState({login: e.target.value})}></TextField>
                 <TextField label="Password" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} type="password"></TextField>
-                <Button variant="contained" color="primary" type="submit" style={{ alignSelf: 'left', margin: '10px' }}>Login</Button>
+                <Button disabled={this.props.auth.loading} variant="contained" color="primary" type="submit" style={{ alignSelf: 'left', margin: '10px' }}>Login</Button>
                 <AppSnackbar />
             </div>
         </form>);

@@ -10,7 +10,7 @@ const API_AUTH = '/auth/login';
 
 export const doAuth = (username: string, password: string) => {
     return (dispatch: any) => {
-        dispatch(auth.auth)
+        dispatch(auth.auth());
         api.post(API_AUTH, {username, password })
         .then(res => {
             if (res.status === 401) {
@@ -25,6 +25,7 @@ export const doAuth = (username: string, password: string) => {
             }
         })
         .catch(error => {
+            dispatch(auth.authFailed());
             dispatch(setSnackbar({severity: 'error', message: error.message}));
             return Promise.reject(error);
         });
