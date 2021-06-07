@@ -36,13 +36,13 @@ export default class MenuColumn extends React.Component {
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/map">
+      {/* <Link to="/map">
         <Tooltip title="Map" placement="right">
           <IconButton aria-label="map">
             <ExploreIcon />
           </IconButton>
         </Tooltip>
-      </Link>
+      </Link> */}
       <Link to="/notes">
         <Tooltip title="Notes" placement="right">
           <IconButton aria-label="notes">
