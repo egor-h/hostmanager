@@ -12,10 +12,12 @@ import AddIcon from '@material-ui/icons/Add';
 import { Link, useHistory } from 'react-router-dom';
 import { User } from '../../models/auth';
 import { UserState } from "../../state/reducers/users";
+import { WithTranslation, withTranslation } from "react-i18next";
 
 type Props = {
     users: UserState;
-}
+} & WithTranslation;
+
 const getListItem = (user: User, onClick: (u: User) => void) => {
     return (<ListItem button onClick={() => onClick(user)} key={user.id + ''}>
         <ListItemAvatar>
@@ -36,8 +38,9 @@ const getListItem = (user: User, onClick: (u: User) => void) => {
         </ListItemSecondaryAction>
     </ListItem>)
 }
-export default (props: Props) => {
+export default withTranslation()((props: Props) => {
     const {data, error, loading} = props.users;
+    const { t } = props;
     const history = useHistory();
     
     if (loading) {
@@ -54,7 +57,7 @@ export default (props: Props) => {
                         <AddIcon />
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary="Add new user" />
+                <ListItemText primary={t("user_page_add_new_user")} />
                 <ListItemSecondaryAction>
                     <Link to={'/users/new'}>
                         <IconButton edge="end" aria-label="adduser">
@@ -68,4 +71,4 @@ export default (props: Props) => {
         }
         </List>
     </div>);
-}
+})

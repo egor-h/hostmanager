@@ -26,6 +26,16 @@ export default {
     "stats_subnet_table_subnet": "Подсеть",
     "stats_subnet_table_hosts": "Узлы",
 
+    "user_page_add_new_user": "Добавить нового пользователя",
+    "user_page_add_new_user_header": "Создать пользователя",
+    "user_page_edit_user_header": "Редактирование {{username}}",
+    "user_page_add_new_user_name_field": "Имя",
+    "user_page_add_new_user_login_field": "Логин",
+    "user_page_add_new_user_email_field": "Email",
+    "user_page_add_new_user_password_field": "Пароль",
+    "user_page_add_new_user_save_button": "Сохранить",
+    "user_page_add_new_user_delete_button": "Удалить",
+    "user_page_user_not_found": "Пользователь id={{userId}} не найден",
 
 
     "settings_page_title": "Настройки",

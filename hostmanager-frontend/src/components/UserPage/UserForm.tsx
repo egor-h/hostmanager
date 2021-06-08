@@ -5,6 +5,7 @@ import { UserWithPassword } from '../../models/auth';
 import { AppState } from '../../state/reducers';
 import { Box, Button, TextField, Tooltip, Typography, withStyles } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
+import { WithTranslation, withTranslation } from 'react-i18next';
 
 
 const styles = (theme: any) => ({
@@ -28,7 +29,7 @@ type Props = {
     showDeleteButton: boolean;
     handleDeleteButton: (user: UserWithPassword) => void;
     classes: any;
-}
+} & WithTranslation;
 
 type State = {
     id: number;
@@ -87,7 +88,7 @@ class UserForm extends React.Component<Props, State> {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, t } = this.props;
         return (<Box display="flex" alignItems="stretch" flexShrink={0} flexWrap="wrap" style={{ padding: '20px' }}>
             <Typography variant="h4" component="h4" style={{ flexBasis: '100%' }}>{this.props.title}</Typography>
             <form noValidate autoComplete="off" onSubmit={this.handleSubmitButton} >
@@ -100,7 +101,7 @@ class UserForm extends React.Component<Props, State> {
                 required
                 size="small"
                 id="standard-required"
-                label="Name" />
+                label={t("user_page_add_new_user_name_field")} />
             <TextField
                 style={{ display: 'flex', flexBasis: '100%' }}
                 className={classes.margin}
@@ -110,7 +111,7 @@ class UserForm extends React.Component<Props, State> {
                 required
                 size="small"
                 id="standard-required2"
-                label="Login" />
+                label={t("user_page_add_new_user_login_field")} />
             <TextField
                 style={{ display: 'flex', flexBasis: '100%' }}
                 className={classes.margin}
@@ -120,7 +121,7 @@ class UserForm extends React.Component<Props, State> {
                 required
                 size="small"
                 id="standard-required3"
-                label="Email" />
+                label={t("user_page_add_new_user_email_field")} />
             <TextField
                 name="password"
                 type="password"
@@ -131,18 +132,18 @@ class UserForm extends React.Component<Props, State> {
                 required
                 size="small"
                 id="standard-required4"
-                label="Password" />
-            <Button style={{ margin: '10px' }} type="submit" variant="contained">Save</Button>
+                label={t("user_page_add_new_user_password_field")} />
+            <Button style={{ margin: '10px' }} type="submit" variant="contained">{t("user_page_add_new_user_save_button")}</Button>
 
             {this.props.showDeleteButton ? 
                 <Button style={{ margin: '10px' }} 
                     color="secondary" 
                     variant="contained" 
-                    onClick={this.handleDeleteButton}>Delete
+                    onClick={this.handleDeleteButton}>{t("user_page_add_new_user_delete_button")}
                 </Button> : ''}
             </form>
         </Box>);
     }
 }
 
-export default withStyles(styles, {withTheme: true})(UserForm);
+export default withTranslation()(withStyles(styles, {withTheme: true})(UserForm));

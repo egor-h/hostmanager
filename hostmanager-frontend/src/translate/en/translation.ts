@@ -27,6 +27,18 @@ export default {
     "stats_subnet_table_hosts": "Hosts",
 
 
+    "user_page_add_new_user": "Add new user",
+    "user_page_add_new_user_header": "Create new user",
+    "user_page_edit_user_header": "Edit user {{username}}",
+    "user_page_add_new_user_name_field": "Name",
+    "user_page_add_new_user_login_field": "Login",
+    "user_page_add_new_user_email_field": "Email",
+    "user_page_add_new_user_password_field": "Password",
+    "user_page_add_new_user_save_button": "Save",
+    "user_page_add_new_user_delete_button": "Delete",
+    "user_page_user_not_found": "User id={{userId}} not found",
+
+
     "settings_page_title": "Settings",
     "settings_page_application_subheader": "Application",
     "settings_page_application_expand_tree_on_start": "Expand tree on start",

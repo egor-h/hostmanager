@@ -1,4 +1,5 @@
 import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -18,7 +19,7 @@ type PropsType = {
     newUser: typeof createUser;
     deleteUser: typeof deleteUser;
     currentUser: User | undefined;
-} & RouteComponentProps;
+} & RouteComponentProps & WithTranslation;
 
 const mapStateToProps = (state: AppState) => ({
     users: state.users,
@@ -43,6 +44,7 @@ class UserPage extends React.Component<PropsType> {
     }
 
     render() {
+        const { t } = this.props;
         return (<Switch>
             <Route exact path="/users/all">
                 <UsersList users={this.props.users}></UsersList>
@@ -64,4 +66,4 @@ class UserPage extends React.Component<PropsType> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPage));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPage)));
