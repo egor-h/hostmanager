@@ -21,6 +21,13 @@ export default {
     "full_search_load_more": "Загрузить еще",
 
 
+    "stats_subnet_chart_header":"Диаграмма подсетей",
+    "stats_subnet_refresh_tooltip": "Обновить статистику",
+    "stats_subnet_table_subnet": "Подсеть",
+    "stats_subnet_table_hosts": "Узлы",
+
+
+
     "settings_page_title": "Настройки",
     "settings_page_application_subheader": "Приложение",
     "settings_page_application_expand_tree_on_start": "Раскрыть дерево при запуске",

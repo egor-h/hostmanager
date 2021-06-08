@@ -21,6 +21,12 @@ export default {
     "full_search_load_more": "Load more",
 
 
+    "stats_subnet_chart_header":"Subnets chart",
+    "stats_subnet_refresh_tooltip": "Refresh statistics",
+    "stats_subnet_table_subnet": "Subnet",
+    "stats_subnet_table_hosts": "Hosts",
+
+
     "settings_page_title": "Settings",
     "settings_page_application_subheader": "Application",
     "settings_page_application_expand_tree_on_start": "Expand tree on start",

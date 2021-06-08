@@ -15,11 +15,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { Skeleton } from '@material-ui/lab';
+import { WithTranslation, withTranslation } from 'react-i18next';
 
 type StatProps = {
   fetchStats: () => void;
   stats: StatState;
-}
+} & WithTranslation;
 
 type StatStatae = {
   value: any;
@@ -46,18 +47,19 @@ class StatisticPage extends React.PureComponent<StatProps, StatStatae> {
   }
 
   render() {
+    const { t } = this.props;
     let subnets = this.props.stats.data.bySubnet
       .sort((a, b) => b.hosts - a.hosts)
       .map(s => ({ label: s.network, angle: s.hosts }))
     return (
       <Box width="50vw">
         <Typography variant="h4">
-          <Tooltip title="Refresh statistics" placement="right">
+          <Tooltip title={t("stats_subnet_refresh_tooltip")} placement="right">
             <IconButton onClick={() => this.props.fetchStats()} aria-label="stats">
               <RefreshIcon />
             </IconButton>
           </Tooltip>
-        Subnets chart
+        {t("stats_subnet_chart_header")}
       </Typography>
         {(this.props.stats.loading) ? (<Skeleton animation="wave" variant="circle" height={300} width={300} />) :
           (<RadialChart
@@ -78,8 +80,8 @@ class StatisticPage extends React.PureComponent<StatProps, StatStatae> {
           <Table size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell>Subnet</TableCell>
-                <TableCell align="right">Hosts</TableCell>
+                <TableCell>{t(("stats_subnet_table_subnet"))}</TableCell>
+                <TableCell align="right">{t(("stats_subnet_table_hosts"))}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -115,4 +117,4 @@ const mapDispatchToProps = (dispatch: any) => ({
   fetchStats: bindActionCreators(statBySubnet, dispatch)
 })
 
-export default connect(mapStateToPorps, mapDispatchToProps)(StatisticPage)
+export default withTranslation()(connect(mapStateToPorps, mapDispatchToProps)(StatisticPage));
