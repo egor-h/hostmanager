@@ -21,6 +21,14 @@ export default {
     "full_search_load_more": "Загрузить еще",
 
 
+    "tags_page_add_new_tag": "Добавить новую метку",
+    "tags_page_add_new_tag_header": "Новая метка",
+    "tags_page_edit_tag_header": "Редактировать метку {{tagName}}",
+    "tags_page_add_new_tag_name_field": "Имя метки",
+    "tags_page_add_new_tag_save_button": "Сохранить метку",
+    "tags_page_add_new_tag_delete_button": "Удалить метку",
+
+
     "stats_subnet_chart_header":"Диаграмма подсетей",
     "stats_subnet_refresh_tooltip": "Обновить статистику",
     "stats_subnet_table_subnet": "Подсеть",

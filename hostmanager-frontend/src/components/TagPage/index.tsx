@@ -10,6 +10,7 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { Tag } from '../../models/host';
@@ -38,7 +39,8 @@ const getListItem = (tag: Tag) => {
     </ListItem>)
 }
 
-const TagPage = () => {
+const TagPage = withTranslation()((props: WithTranslation) => {
+    const { t } = props;
     let history = useHistory();
     let tags = useSelector((state: { tags: TagState }) => state.tags)
 
@@ -59,7 +61,7 @@ const TagPage = () => {
                         <AddIcon />
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary="Add new tag" />
+                <ListItemText primary={t("tags_page_add_new_tag")} />
                 <ListItemSecondaryAction>
                     <Link to={'/tags/new'}>
                         <IconButton edge="end" aria-label="addtag">
@@ -70,7 +72,7 @@ const TagPage = () => {
             </ListItem>
         </List>
     </div>)
-}
+});
 
 export default () => {
     return (<Switch>

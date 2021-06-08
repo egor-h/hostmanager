@@ -21,6 +21,14 @@ export default {
     "full_search_load_more": "Load more",
 
 
+    "tags_page_add_new_tag": "Add new tag",
+    "tags_page_add_new_tag_header": "New tag",
+    "tags_page_edit_tag_header": "Edit tag {{tagName}}",
+    "tags_page_add_new_tag_name_field": "Tag name",
+    "tags_page_add_new_tag_save_button": "Save tag",
+    "tags_page_add_new_tag_delete_button": "Delete tag",
+
+
     "stats_subnet_chart_header":"Subnets chart",
     "stats_subnet_refresh_tooltip": "Refresh statistics",
     "stats_subnet_table_subnet": "Subnet",

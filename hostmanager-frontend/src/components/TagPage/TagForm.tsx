@@ -1,5 +1,6 @@
 import { Box, Button, TextField, Typography, withStyles } from '@material-ui/core';
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { Tag } from '../../models/host';
 
 const styles = (theme: any) => ({
@@ -23,7 +24,7 @@ type FormProps = {
     classes: any;
     showDeleteButton: boolean;
     title: string;
-}
+} & WithTranslation;
 
 type FormState = {
     id: number;
@@ -72,7 +73,7 @@ class TagForm extends React.Component<FormProps, FormState> {
     }
 
     render() {
-        let {classes} = this.props;
+        let {classes, t} = this.props;
         
         return (<Box display="flex" alignItems="stretch" flexShrink={0} flexWrap="wrap" style={{padding: '20px'}}>
             <Typography variant="h4" component="h4" style={{flexBasis: '100%'}}>{this.props.title}</Typography>
@@ -85,12 +86,12 @@ class TagForm extends React.Component<FormProps, FormState> {
                     required 
                     size="small" 
                     id="standard-required" 
-                    label="Name" />
-                <Button style={{margin: '10px'}} type="submit" variant="contained">Save</Button>
-                {this.props.showDeleteButton ? <Button style={{margin: '10px'}} color="secondary" variant="contained" onClick={this.handleDeleteButton}>Delete</Button> : ''}
+                    label={t("tags_page_add_new_tag_name_field")} />
+                <Button style={{margin: '10px'}} type="submit" variant="contained">{t("tags_page_add_new_tag_save_button")}</Button>
+                {this.props.showDeleteButton ? <Button style={{margin: '10px'}} color="secondary" variant="contained" onClick={this.handleDeleteButton}>{t("tags_page_add_new_tag_delete_button")}</Button> : ''}
             </form>
         </Box>)
     }
 }
 
-export default withStyles(styles, { withTheme: true})(TagForm);
+export default withTranslation()(withStyles(styles, { withTheme: true})(TagForm));

@@ -1,4 +1,5 @@
 import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { deleteTag, saveTag } from '../../api/tag';
@@ -7,7 +8,8 @@ import { TagState } from '../../state/reducers/tags';
 import TagForm from './TagForm';
 
 
-export default () => {
+export default withTranslation()((props: WithTranslation) => {
+    const { t } = props;
     let history = useHistory();
     let { tagId } = useParams<{tagId: string}>();
     let dispatch = useDispatch();
@@ -30,10 +32,10 @@ export default () => {
     }
 
     return (<TagForm 
-        title={`Edit tag: ${foundTag[0].name}`} 
+        title={t("tags_page_edit_tag_header", {tagName: foundTag[0].name})} 
         showDeleteButton={true} 
         tag={foundTag[0]} 
         onSubmit={onSubmitTag}
         onDelete={onDeleteTag}
         ></TagForm>)
-}
+});
