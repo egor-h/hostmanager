@@ -1,6 +1,7 @@
 import { Box, Button, TextField, Tooltip, Typography, withStyles } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { Protocol } from '../../models/host';
 
 const styles = (theme: any) => ({
@@ -24,7 +25,7 @@ type FormProps = {
     classes: any;
     showDeleteButton: boolean;
     title: string;
-}
+} & WithTranslation;
 
 type FormState = {
     id: number;
@@ -111,7 +112,7 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
     }
 
     render() {
-        let { classes } = this.props;
+        let { classes, t} = this.props;
 
         return (<Box display="flex" alignItems="stretch" flexShrink={0} flexWrap="wrap" style={{ padding: '20px' }}>
             <Typography variant="h4" component="h4" style={{ flexBasis: '100%' }}>{this.props.title}</Typography>
@@ -124,8 +125,8 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
                     required
                     size="small"
                     id="standard-required"
-                    label="Name" />
-                <Tooltip title="Use template keywords to access host metadata" enterDelay={300} leaveDelay={500}>
+                    label={t("protocols_page_add_new_protocol_name_field")} />
+                <Tooltip title={t("protocols_page_add_new_protocol_execution_line_tooltip")} enterDelay={300} leaveDelay={500}>
                     <TextField
                         style={{ display: 'flex', flexBasis: '100%' }}
                         className={classes.margin}
@@ -134,7 +135,7 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
                         required
                         size="small"
                         id="standard-required"
-                        label="Execution line" />
+                        label={t("protocols_page_add_new_protocol_execution_line")} />
                 </Tooltip>
                 {this.state.launchType === "VALIDATE_OUTPUT" ? <TextField
                     style={{ display: 'flex', flexBasis: '100%' }}
@@ -144,7 +145,7 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
                     required
                     size="small"
                     id="standard-required"
-                    label="Validation regex" /> : ''
+                    label={t("protocols_page_add_new_protocol_valid_regex")} /> : ''
                 }
                 {this.state.launchType === "VALIDATE_EXITCODE" ? <TextField
                     style={{ display: 'flex', flexBasis: '100%' }}
@@ -155,7 +156,7 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
                     required
                     size="small"
                     id="standard-required"
-                    label="Expected exit code" /> : ''
+                    label={t("protocols_page_add_new_protocol_valid_excode")} /> : ''
                 }
                 <Autocomplete
                     id="combo-box-demo"
@@ -164,13 +165,13 @@ class ProtocolForm extends React.Component<FormProps, FormState> {
                     style={{ width: 300 }}
                     value={this.state.launchType}
                     onInputChange={this.handleLaunchTypeChange}
-                    renderInput={(params) => <TextField {...params} label="Protocol launch type" variant="outlined" />}
+                    renderInput={(params) => <TextField {...params} label={t("protocols_page_add_new_protocol_protocol_launch_type")} variant="outlined" />}
                 />
-                <Button style={{ margin: '10px' }} type="submit" variant="contained">Save</Button>
-                {this.props.showDeleteButton ? <Button style={{ margin: '10px' }} color="secondary" variant="contained" onClick={this.handleDeleteButton}>Delete</Button> : ''}
+                <Button style={{ margin: '10px' }} type="submit" variant="contained">{t("protocols_page_add_new_protocol_save_button")}</Button>
+                {this.props.showDeleteButton ? <Button style={{ margin: '10px' }} color="secondary" variant="contained" onClick={this.handleDeleteButton}>{t("protocols_page_add_new_protocol_delete_button")}</Button> : ''}
             </form>
         </Box>)
     }
 }
 
-export default withStyles(styles, { withTheme: true })(ProtocolForm);
+export default withTranslation()(withStyles(styles, { withTheme: true })(ProtocolForm));

@@ -10,6 +10,7 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { Protocol } from '../../models/host';
@@ -38,7 +39,8 @@ const getListItem = (proto: Protocol) => {
     </ListItem>)
 }
 
-const ProtocolPage = (props: any) => {
+const ProtocolPage = withTranslation()((props: WithTranslation) => {
+    const { t } = props;
     let history = useHistory();
     let protocols = useSelector((state: { protocols: ProtocolState }) => state.protocols)
 
@@ -59,7 +61,7 @@ const ProtocolPage = (props: any) => {
                         <AddIcon />
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary="Add new protocol" />
+                <ListItemText primary={t("protocols_page_add_new_protocol")} />
                 <ListItemSecondaryAction>
                     <Link to={'/protocols/new'}>
                         <IconButton edge="end" aria-label="addproto">
@@ -70,7 +72,7 @@ const ProtocolPage = (props: any) => {
             </ListItem>
             </List>
     </div>)
-}
+});
 
 export default (props: any) => {
     return (<Switch>

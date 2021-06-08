@@ -21,6 +21,20 @@ export default {
     "full_search_load_more": "Загрузить еще",
 
 
+    "protocols_page_add_new_protocol": "Добавить новый протокол",
+    "protocols_page_add_new_protocol_header": "Новый протокол",
+    "protocols_page_edit_protocol_header": "Редактировать протокол {{protocolName}}",
+    "protocols_page_protocol_not_found": "Протокол {{protocolId}} не найден",
+    "protocols_page_add_new_protocol_name_field": "Имя",
+    "protocols_page_add_new_protocol_execution_line": "Команда",
+    "protocols_page_add_new_protocol_execution_line_tooltip": "Команда с параметрами, которые могут быть подставлены (например: ping {address})",
+    "protocols_page_add_new_protocol_valid_regex": "Регулярное выражение для валидации",
+    "protocols_page_add_new_protocol_valid_excode": "Ожидаемый exitcode",
+    "protocols_page_add_new_protocol_protocol_launch_type": "Тип запуска протокола",
+    "protocols_page_add_new_protocol_save_button": "Сохранить протокол",
+    "protocols_page_add_new_protocol_delete_button": "Удалить протокол",
+
+
     "tags_page_add_new_tag": "Добавить новую метку",
     "tags_page_add_new_tag_header": "Новая метка",
     "tags_page_edit_tag_header": "Редактировать метку {{tagName}}",

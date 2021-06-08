@@ -21,6 +21,20 @@ export default {
     "full_search_load_more": "Load more",
 
 
+    "protocols_page_add_new_protocol": "Add new protocol",
+    "protocols_page_add_new_protocol_header": "New protocol",
+    "protocols_page_edit_protocol_header": "Edit protocol {{protocolName}}",
+    "protocols_page_protocol_not_found": "Tag {{protocolId}} not found",
+    "protocols_page_add_new_protocol_name_field": "Name",
+    "protocols_page_add_new_protocol_execution_line": "Execution line",
+    "protocols_page_add_new_protocol_execution_line_tooltip": "Execution line with parameters substitution",
+    "protocols_page_add_new_protocol_valid_regex": "Validation regex",
+    "protocols_page_add_new_protocol_valid_excode": "Expected exit code",
+    "protocols_page_add_new_protocol_protocol_launch_type": "Protocol launch type",
+    "protocols_page_add_new_protocol_save_button": "Save protocol",
+    "protocols_page_add_new_protocol_delete_button": "Delete protocol",
+
+
     "tags_page_add_new_tag": "Add new tag",
     "tags_page_add_new_tag_header": "New tag",
     "tags_page_edit_tag_header": "Edit tag {{tagName}}",
