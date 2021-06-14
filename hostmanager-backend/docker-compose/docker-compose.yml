@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  hostsmanager:
+    build: ..
+    ports:
+      - 8080:8080
+    volumes:
+      - ./application.yml:/root/application.yml
+    depends_on:
+      - mysql
+    environment:
+      ADMIN_EMAIL: "someone@somewhere.com"
+      SERVICE_LOCATION: "Somewhere"
+      SERVICE_DESCRIPTION: ""
+
+  mysql:
+    image: mysql/mysql-server:8.0
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: hostsmanager
+    volumes:
+      - /location/to/datadir:/var/lib/mysql
