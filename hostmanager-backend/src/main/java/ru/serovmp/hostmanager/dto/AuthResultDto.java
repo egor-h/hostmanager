@@ -11,4 +11,6 @@ public class AuthResultDto {
     private String token;
     private UserDto user;
     private SettingsDto settings;
+    private ServiceInfoDto serviceInfo;
+    private ServiceCapabilitiesDto serviceCapabilities;
 }

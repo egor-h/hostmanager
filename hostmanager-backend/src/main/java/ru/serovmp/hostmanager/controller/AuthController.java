@@ -12,18 +12,16 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.controller.form.AuthForm;
-import ru.serovmp.hostmanager.controller.form.RegistrationForm;
 import ru.serovmp.hostmanager.dto.AuthResultDto;
 import ru.serovmp.hostmanager.dto.UserDto;
 import ru.serovmp.hostmanager.entity.Role;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.UserRepository;
 import ru.serovmp.hostmanager.security.JwtUtils;
+import ru.serovmp.hostmanager.service.InfoService;
 import ru.serovmp.hostmanager.service.SettingsService;
 import ru.serovmp.hostmanager.service.UserDetailsServiceImpl;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,15 +33,17 @@ public class AuthController {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private SettingsService settingsService;
+    private InfoService infoService;
 
     @Autowired
-    public AuthController(UserDetailsServiceImpl users, JwtUtils jwtUtils, AuthenticationManager am, UserRepository userRepository, PasswordEncoder passwordEncoder, SettingsService settingsService) {
+    public AuthController(UserDetailsServiceImpl users, JwtUtils jwtUtils, AuthenticationManager am, UserRepository userRepository, PasswordEncoder passwordEncoder, SettingsService settingsService, InfoService infoService) {
         this.users = users;
         this.jwtUtils = jwtUtils;
         this.am = am;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.settingsService = settingsService;
+        this.infoService = infoService;
     }
 
     @PostMapping("/login")
@@ -60,7 +60,9 @@ public class AuthController {
                     .name(user.getName())
                     .roles(user.getRoles().stream().map(Role::getId).collect(Collectors.toSet()))
                     .build(),
-                    settingsService.getSettingsForUser(user.getId())));
+                    settingsService.getSettingsForUser(user.getId()),
+                    infoService.info(),
+                    infoService.serviceCapabilities()));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException(signinForm.getUsername());
         }
