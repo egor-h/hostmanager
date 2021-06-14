@@ -1,33 +1,26 @@
 package ru.serovmp.hostmanager.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
+import ru.serovmp.hostmanager.dto.ServiceCapabilitiesDto;
+import ru.serovmp.hostmanager.dto.ServiceInfoDto;
+import ru.serovmp.hostmanager.service.InfoService;
 
 @RestController
 @RequestMapping("/info")
 public class InfoController {
 
-    @Value("${hostsmanager.service-info.admin-email}")
-    private String adminEmail;
+    private InfoService infoService;
 
-    @Value("${hostsmanager.service-info.location}")
-    private String serviceLocation;
+    @GetMapping("/info")
+    public ServiceInfoDto info() {
+        return infoService.info();
+    }
 
-    @Value("${hostsmanager.service-info.description}")
-    private String description;
-
-    @GetMapping
-    public Map info() {
-        return Map.of(
-                "adminEmail", adminEmail,
-                "location", serviceLocation,
-                "description", description
-        );
+    @GetMapping("/capabilities")
+    public ServiceCapabilitiesDto serviceCapabilities() {
+        return infoService.serviceCapabilities();
     }
 
 }
