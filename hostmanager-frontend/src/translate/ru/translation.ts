@@ -75,5 +75,9 @@ export default {
     "settings_page_zabbix_begin_import": "Начать импорт",
     "settings_page_application_tree_root_node_sub": "Корневой узел",
     "settings_page_application_host_table_name_template_tooltip": "Шаблон с плейсхолдерами как ..",
-    "settings_page_application_host_table_name_template_field": "Имя шаблона"
+    "settings_page_application_host_table_name_template_field": "Имя шаблона",
+    "settings_page_service_info": "Этот сервис",
+    "settings_page_service_info_admin_email": "Admin email",
+    "settings_page_service_info_location": "Местоположение",
+    "settings_page_service_info_description": "Описание"
 }

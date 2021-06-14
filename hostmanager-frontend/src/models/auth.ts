@@ -1,3 +1,4 @@
+import { serviceInfo } from "../state/actions/serviceInfo";
 import { Settings } from "./settings";
 
 export interface User {
@@ -17,8 +18,25 @@ export interface Role {
     name: string;
 }
 
-export interface Auth {
+export interface ServiceCapabilities {
+    zabbix: boolean;
+    serverSideAvailability: boolean;
+    mapping: boolean;
+}
+
+export interface ServiceInfo {
+    adminEmail: string;
+    location: string;
+    description: string;
+}
+
+export interface ServiceInfoFull {
+    info: ServiceInfo;
+    capabilities: ServiceCapabilities
+}
+
+export interface Auth extends ServiceInfoFull {
     token: string;
     user: User;
     settings: Settings;
-}
+};

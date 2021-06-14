@@ -81,3 +81,8 @@ export const USERS_FAILED = "USERS_FAILED";
 export const USER = "USER";
 export const USER_SUCCEDED = "USER_SUCCEDED";
 export const USER_FAILED = "USER_FAILED";
+
+// Service info
+export const SERVICE_INFO = "SERVICE_INFO";
+export const SERVICE_INFO_SUCCEDED = "SERVICE_INFO_SUCCEDED";
+export const SERVICE_INFO_FAILED = "SERVICE_INFO_FAILED";

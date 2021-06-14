@@ -76,5 +76,10 @@ export default {
     "settings_page_zabbix_hostsmanager_target_dir": "Host manager target directory",
     "settings_page_zabbix_zabbix_target_group": "Zabbix target group",
     "settings_page_zabbix_merge_with_existing": "Merge with existing entries",
-    "settings_page_zabbix_begin_import": "Begin import"
+    "settings_page_zabbix_begin_import": "Begin import",
+    "settings_page_service_info": "This service",
+    "settings_page_service_info_admin_email": "Admin email",
+    "settings_page_service_info_location": "Location",
+    "settings_page_service_info_description": "Description"
+
 }

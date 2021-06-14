@@ -9,6 +9,7 @@ import * as fullSearch from './fullSearch';
 import * as stat from './stat';
 import * as auth from './auth';
 import * as users from './users';
+import * as serviceInfo from './serviceInfo'
 
 export {
     local,
@@ -21,5 +22,6 @@ export {
     stat,
     auth,
     users,
-    hostsBrowser
+    hostsBrowser,
+    serviceInfo
 }

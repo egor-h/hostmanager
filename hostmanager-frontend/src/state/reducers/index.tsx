@@ -9,6 +9,7 @@ import { fullSearch, FullSearchState } from './fullSearch';
 import { stat, StatState } from './stat';
 import { auth, AuthState } from './auth';
 import { users, UserState } from './users';
+import { serviceInfo, ServiceInfoType } from './serviceInfo';
 
 export type AppState = {
     local: LocalState;
@@ -22,6 +23,7 @@ export type AppState = {
     stat: StatState;
     auth: AuthState;
     users: UserState;
+    serviceInfo: ServiceInfoType
 }
 
 export {
@@ -35,5 +37,6 @@ export {
     stat,
     auth,
     hostsBrowser,
-    users
+    users,
+    serviceInfo
 }

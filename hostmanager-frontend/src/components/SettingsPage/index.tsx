@@ -1,36 +1,32 @@
-import React from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import { IconButton, ListSubheader, TextField, Tooltip, Typography } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import ImageIcon from '@material-ui/icons/Image';
-import WorkIcon from '@material-ui/icons/Work';
-import BeachAccessIcon from '@material-ui/icons/BeachAccess';
-import Switch from '@material-ui/core/Switch';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import { IconButton, ListSubheader, TextField, Tooltip, Typography } from '@material-ui/core';
+import ListItemText from '@material-ui/core/ListItemText';
+import Switch from '@material-ui/core/Switch';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { Link, Redirect, Route, RouteComponentProps, Switch as RouterSwitch, useHistory, withRouter } from 'react-router-dom';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { AppState } from '../../state/reducers';
-import { local } from '../../state/actions';
-import { Settings, ZabbixGroup } from '../../models/settings';
 import SaveIcon from '@material-ui/icons/Save';
-import PopupField from '../PopupField';
-import { getZabbixGroups, putUserSettings, syncDirToZabbix } from '../../api/settings';
 import { Autocomplete } from '@material-ui/lab';
+import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Redirect, Route, RouteComponentProps, Switch as RouterSwitch, withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { getZabbixGroups, putUserSettings, syncDirToZabbix } from '../../api/settings';
 import { EMPTY_HOST, Host } from '../../models/host';
+import { Settings, ZabbixGroup } from '../../models/settings';
+import { local } from '../../state/actions';
+import { AppState } from '../../state/reducers';
+import { ServiceInfoType } from '../../state/reducers/serviceInfo';
 import { findAllDirs } from '../../util/tree';
+import PopupField from '../PopupField';
 import UserPage from '../UserPage';
-import { useTranslation, WithTranslation, withTranslation } from 'react-i18next';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
     zabbixGroups: state.local.zabbixGroups,
-    hosts: state.hostsBrowser.tree.tree
+    hosts: state.hostsBrowser.tree.tree,
+    serviceInfo: state.serviceInfo
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -42,6 +38,7 @@ const mapDispatchToProps = (dispatch: any) => ({
 
 type SettingsProps = {
     settings: Settings,
+    serviceInfo: ServiceInfoType,
     hosts: Host,
     setSettings: (settings: Settings) => void,
     putSettings: (settings: Settings) => void,
@@ -230,6 +227,16 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     <ListItemText onClick={() => this.props.beginZabbixImport(this.state.hostsmanGroupId, this.state.zabbixGroupId, this.state.zabbixMergeEntries)} primary={t("settings_page_zabbix_begin_import")} />
                 </ListItem>
 
+                <ListSubheader>{t("settings_page_service_info")}</ListSubheader>
+                <ListItem>
+                    <ListItemText primary={`${t("settings_page_service_info_admin_email")}: ${this.props.serviceInfo.data.info.adminEmail}`} />
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary={`${t("settings_page_service_info_location")}: ${this.props.serviceInfo.data.info.location}`} />
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary={`${t("settings_page_service_info_description")}: ${this.props.serviceInfo.data.info.description}`} />
+                </ListItem>
 
             </List>
             {/* <ChangeRootNodePopup open={this.state.showChangeRootNode} title={'Change root node'} body={''} onNo={() => {}} onYes={(value: string) => {}} /> */}
