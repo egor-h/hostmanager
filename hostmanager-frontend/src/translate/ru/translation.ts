@@ -79,5 +79,12 @@ export default {
     "settings_page_service_info": "Этот сервис",
     "settings_page_service_info_admin_email": "Admin email",
     "settings_page_service_info_location": "Местоположение",
-    "settings_page_service_info_description": "Описание"
+    "settings_page_service_info_description": "Описание",
+    "settings_page_abilities": "Возможности",
+    "settings_page_abilities_zabbix": "Zabbix интеграция",
+    "settings_page_abilities_mapping": "Карта сети",
+    "settings_page_abilities_availability": "Проверка достопности с сервера",
+
+    "email_clipboard_write_success": "Скопировано!",
+    "email_clipboard_write_failed": "Текст не был скопирован :("
 }

@@ -16,6 +16,7 @@ import { getZabbixGroups, putUserSettings, syncDirToZabbix } from '../../api/set
 import { EMPTY_HOST, Host } from '../../models/host';
 import { Settings, ZabbixGroup } from '../../models/settings';
 import { local } from '../../state/actions';
+import { setSnackbar } from '../../state/actions/local';
 import { AppState } from '../../state/reducers';
 import { ServiceInfoType } from '../../state/reducers/serviceInfo';
 import { findAllDirs } from '../../util/tree';
@@ -33,7 +34,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     setSettings: bindActionCreators(local.settings, dispatch),
     putSettings: bindActionCreators(putUserSettings, dispatch),
     loadZabbixGroups: bindActionCreators(getZabbixGroups, dispatch),
-    beginZabbixImport: bindActionCreators(syncDirToZabbix, dispatch)
+    beginZabbixImport: bindActionCreators(syncDirToZabbix, dispatch),
+    setSnackbar: bindActionCreators(setSnackbar, dispatch)
 })
 
 type SettingsProps = {
@@ -44,7 +46,8 @@ type SettingsProps = {
     putSettings: (settings: Settings) => void,
     zabbixGroups: {loading: boolean, data: ZabbixGroup[], error: boolean},
     loadZabbixGroups: () => void,
-    beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void
+    beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void,
+    setSnackbar: typeof setSnackbar
 
 } & RouteComponentProps<{}> & WithTranslation;
 
@@ -79,6 +82,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
         this.handleRootHostChange = this.handleRootHostChange.bind(this);
         this.handleTargetHostsManDir = this.handleTargetHostsManDir.bind(this);
         this.handleTargetZabbixGroup = this.handleTargetZabbixGroup.bind(this);
+        this.setClipboardAndToast = this.setClipboardAndToast.bind(this);
     }
 
     componentDidMount() {
@@ -109,6 +113,13 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
         if (zabbixGroup) {
             this.setState({zabbixGroupId: zabbixGroup.groupId});
         }
+    }
+
+    setClipboardAndToast(text: string, t: (k: string) => string) {
+        navigator.clipboard.writeText(text).then(
+            () => this.props.setSnackbar({message: t("email_clipboard_write_success"), severity: "info"}),
+            () => this.props.setSnackbar({message: t("email_clipboard_write_failed"), severity: "error"})
+        )
     }
 
     render() {
@@ -228,14 +239,25 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 </ListItem>
 
                 <ListSubheader>{t("settings_page_service_info")}</ListSubheader>
-                <ListItem>
-                    <ListItemText primary={`${t("settings_page_service_info_admin_email")}: ${this.props.serviceInfo.data.info.adminEmail}`} />
+                <ListItem button onClick={() => this.setClipboardAndToast(this.props.serviceInfo.data.info.adminEmail, t)}>
+                    <ListItemText primary={`${t("settings_page_service_info_admin_email")}: ${this.props.serviceInfo.data.info.adminEmail}`}/>
                 </ListItem>
                 <ListItem>
                     <ListItemText primary={`${t("settings_page_service_info_location")}: ${this.props.serviceInfo.data.info.location}`} />
                 </ListItem>
                 <ListItem>
                     <ListItemText primary={`${t("settings_page_service_info_description")}: ${this.props.serviceInfo.data.info.description}`} />
+                </ListItem>
+
+                <ListSubheader>{t("settings_page_abilities")}</ListSubheader>
+                <ListItem>
+                    <ListItemText primary={`${t("settings_page_abilities_zabbix")}: ${this.props.serviceInfo.data.capabilities.zabbix}`} />
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary={`${t("settings_page_abilities_mapping")}: ${this.props.serviceInfo.data.capabilities.mapping}`} />
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary={`${t("settings_page_abilities_availability")}: ${this.props.serviceInfo.data.capabilities.serverSideAvailability}`} />
                 </ListItem>
 
             </List>

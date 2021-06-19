@@ -80,6 +80,12 @@ export default {
     "settings_page_service_info": "This service",
     "settings_page_service_info_admin_email": "Admin email",
     "settings_page_service_info_location": "Location",
-    "settings_page_service_info_description": "Description"
+    "settings_page_service_info_description": "Description",
+    "settings_page_abilities": "Abilities",
+    "settings_page_abilities_zabbix": "Zabbix integration",
+    "settings_page_abilities_mapping": "Network mapping",
+    "settings_page_abilities_availability": "Server side availability",
 
+    "email_clipboard_write_success": "Address copied!",
+    "email_clipboard_write_failed": "Address wasn't copied :("
 }
