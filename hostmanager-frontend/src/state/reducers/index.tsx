@@ -10,6 +10,8 @@ import { stat, StatState } from './stat';
 import { auth, AuthState } from './auth';
 import { users, UserState } from './users';
 import { serviceInfo, ServiceInfoType } from './serviceInfo';
+import { subnetStats, SubnetStats } from './subnetStats';
+import { subnets, Subnets } from './subnets';
 
 export type AppState = {
     local: LocalState;
@@ -23,7 +25,9 @@ export type AppState = {
     stat: StatState;
     auth: AuthState;
     users: UserState;
-    serviceInfo: ServiceInfoType
+    serviceInfo: ServiceInfoType;
+    subnetStats: SubnetStats;
+    subnets: Subnets;
 }
 
 export {
@@ -38,5 +42,7 @@ export {
     auth,
     hostsBrowser,
     users,
-    serviceInfo
+    serviceInfo,
+    subnetStats,
+    subnets
 }

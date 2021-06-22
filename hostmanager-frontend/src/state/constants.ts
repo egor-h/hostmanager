@@ -86,3 +86,13 @@ export const USER_FAILED = "USER_FAILED";
 export const SERVICE_INFO = "SERVICE_INFO";
 export const SERVICE_INFO_SUCCEDED = "SERVICE_INFO_SUCCEDED";
 export const SERVICE_INFO_FAILED = "SERVICE_INFO_FAILED";
+
+// Statistics by subnet
+export const SUBNET_STAT = "SUBNET_STAT";
+export const SUBNET_STAT_SUCCEDED = "SUBNET_STAT_SUCCEDED";
+export const SUBNET_STAT_FAILED = "SUBNET_STAT_FAILED";
+
+// Subnets
+export const SUBNETS = "SUBNETS";
+export const SUBNETS_SUCCEDED = "SUBNETS_SUCCEDED";
+export const SUBNETS_FAILED = "SUBNETS_FAILED";
