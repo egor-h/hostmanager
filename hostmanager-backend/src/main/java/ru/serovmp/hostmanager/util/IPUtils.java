@@ -1,6 +1,27 @@
 package ru.serovmp.hostmanager.util;
 
 public class IPUtils {
+    public static boolean isValid(String address) {
+        if (address.indexOf('.') == -1) {
+            return false;
+        }
+        String[] spt = address.split("\\.");
+        if (spt.length < 4) {
+            return false;
+        }
+        try {
+            for (String octet: spt) {
+                int o = Integer.parseInt(octet);
+                if (o < 0 || o > 255) {
+                    return false;
+                }
+            }
+        } catch (RuntimeException e) {
+            return false;
+        }
+        return true;
+    }
+
     public static long ipAddressToByteRepr(String ip) {
         String[] spt = ip.split("\\.");
         for (String octet: spt) {
