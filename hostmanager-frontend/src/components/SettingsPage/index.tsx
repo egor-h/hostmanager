@@ -6,6 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Switch from '@material-ui/core/Switch';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import SaveIcon from '@material-ui/icons/Save';
+import EditIcon from '@material-ui/icons/Edit';
 import { Autocomplete } from '@material-ui/lab';
 import React from 'react';
 import { WithTranslation, withTranslation } from 'react-i18next';
@@ -13,21 +14,32 @@ import { connect } from 'react-redux';
 import { Redirect, Route, RouteComponentProps, Switch as RouterSwitch, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { getZabbixGroups, putUserSettings, syncDirToZabbix } from '../../api/settings';
+import { createSubnet, deleteSubnet, fetchSubnets, saveSubnet, SubnetApi } from '../../api/subnets';
 import { EMPTY_HOST, Host } from '../../models/host';
 import { Settings, ZabbixGroup } from '../../models/settings';
 import { local } from '../../state/actions';
 import { setSnackbar } from '../../state/actions/local';
 import { AppState } from '../../state/reducers';
 import { ServiceInfoType } from '../../state/reducers/serviceInfo';
+import { Subnets } from '../../state/reducers/subnets';
 import { findAllDirs } from '../../util/tree';
 import PopupField from '../PopupField';
 import UserPage from '../UserPage';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import { Subnet } from '../../models/stat';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
     zabbixGroups: state.local.zabbixGroups,
     hosts: state.hostsBrowser.tree.tree,
-    serviceInfo: state.serviceInfo
+    serviceInfo: state.serviceInfo,
+    subnets: state.subnets
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -35,12 +47,18 @@ const mapDispatchToProps = (dispatch: any) => ({
     putSettings: bindActionCreators(putUserSettings, dispatch),
     loadZabbixGroups: bindActionCreators(getZabbixGroups, dispatch),
     beginZabbixImport: bindActionCreators(syncDirToZabbix, dispatch),
-    setSnackbar: bindActionCreators(setSnackbar, dispatch)
+    setSnackbar: bindActionCreators(setSnackbar, dispatch),
+
+    fetchSubnets: bindActionCreators(fetchSubnets, dispatch),
+    createSubnet: bindActionCreators(createSubnet, dispatch),
+    saveSubnet: bindActionCreators(saveSubnet, dispatch),
+    deleteSubnet: bindActionCreators(deleteSubnet, dispatch)
 })
 
 type SettingsProps = {
     settings: Settings,
     serviceInfo: ServiceInfoType,
+    subnets: Subnets,
     hosts: Host,
     setSettings: (settings: Settings) => void,
     putSettings: (settings: Settings) => void,
@@ -49,7 +67,7 @@ type SettingsProps = {
     beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void,
     setSnackbar: typeof setSnackbar
 
-} & RouteComponentProps<{}> & WithTranslation;
+} & RouteComponentProps<{}> & WithTranslation & SubnetApi;
 
 type SettingsState = {
     showChangeRootNode: boolean;
@@ -58,6 +76,10 @@ type SettingsState = {
     hostsmanGroupId: number;
     zabbixGroupId: string;
     zabbixMergeEntries: boolean;
+    subnetEditOpened: boolean;
+    currentlyEditedSubnet: Subnet;
+    isNewSubnet: boolean;
+    
 }
 
 class SettingsList extends React.Component<SettingsProps, SettingsState> {
@@ -76,17 +98,27 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
             zabbixGroupId: '',
             zabbixMergeEntries: false,
             showChangeRootNode: false,
-            showChangeNameTemplate: false
+            showChangeNameTemplate: false,
+            subnetEditOpened: false,
+            isNewSubnet: false,
+            currentlyEditedSubnet: {
+                id: 0,
+                name: '',
+                address: '',
+                mask: ''
+            }
         }
         this.saveSettings = this.saveSettings.bind(this);
         this.handleRootHostChange = this.handleRootHostChange.bind(this);
         this.handleTargetHostsManDir = this.handleTargetHostsManDir.bind(this);
         this.handleTargetZabbixGroup = this.handleTargetZabbixGroup.bind(this);
         this.setClipboardAndToast = this.setClipboardAndToast.bind(this);
+        this.handleSubnetForm = this.handleSubnetForm.bind(this);
     }
 
     componentDidMount() {
         this.props.loadZabbixGroups();
+        this.props.fetchSubnets();
     }
 
     saveSettings() {
@@ -120,6 +152,17 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
             () => this.props.setSnackbar({message: t("email_clipboard_write_success"), severity: "info"}),
             () => this.props.setSnackbar({message: t("email_clipboard_write_failed"), severity: "error"})
         )
+    }
+
+    handleSubnetForm(event: React.ChangeEvent<HTMLInputElement>) {
+        const name = event.currentTarget.name;
+        const value = event.currentTarget.value;
+        this.setState({
+            currentlyEditedSubnet: {
+                ...this.state.currentlyEditedSubnet,
+                [name]: value
+            }
+        });
     }
 
     render() {
@@ -238,6 +281,33 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     <ListItemText onClick={() => this.props.beginZabbixImport(this.state.hostsmanGroupId, this.state.zabbixGroupId, this.state.zabbixMergeEntries)} primary={t("settings_page_zabbix_begin_import")} />
                 </ListItem>
 
+                <ListSubheader>{t("settings_page_subnets_header")}</ListSubheader>
+                {
+                    this.props.subnets.data.map(subnet => (<ListItem>
+                        <ListItemText primary={`${subnet.name} - ${subnet.address} ${subnet.mask}`}/>
+                        <ListItemSecondaryAction>
+                            <EditIcon onClick={() => this.setState({
+                                subnetEditOpened: true,
+                                currentlyEditedSubnet: subnet,
+                                isNewSubnet: false
+                            })} 
+                            />
+                        </ListItemSecondaryAction>
+                    </ListItem>))
+                }
+                <ListItem button onClick={() => this.setState({
+                        subnetEditOpened: true,
+                        currentlyEditedSubnet: {
+                            id: 0,
+                            name: '',
+                            address: '',
+                            mask: ''
+                        },
+                        isNewSubnet: true
+                    })}>
+                    <ListItemText primary={t("settings_page_subnets_create_subnet")}/>
+                </ListItem>
+
                 <ListSubheader>{t("settings_page_service_info")}</ListSubheader>
                 <ListItem button onClick={() => this.setClipboardAndToast(this.props.serviceInfo.data.info.adminEmail, t)}>
                     <ListItemText primary={`${t("settings_page_service_info_admin_email")}: ${this.props.serviceInfo.data.info.adminEmail}`}/>
@@ -263,6 +333,58 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
             </List>
             {/* <ChangeRootNodePopup open={this.state.showChangeRootNode} title={'Change root node'} body={''} onNo={() => {}} onYes={(value: string) => {}} /> */}
             <PopupField open={this.state.showChangeNameTemplate} title={'Change name template'} body={'Available placeholders: ...'} onNo={() => {}} onYes={(value: string) => {}} />
+
+            <Dialog
+            open={this.state.subnetEditOpened}
+            onClose={() => this.setState({subnetEditOpened: false})}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{"Edit subnet"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    <form onSubmit={(e) => {e.preventDefault(); }} noValidate autoComplete="off">
+                        <TextField style={{margin: '12px'}} label="Name" value={this.state.currentlyEditedSubnet.name} name="name"
+                            onChange={this.handleSubnetForm}
+                        />
+                        <TextField style={{margin: '12px'}} label="Address" value={this.state.currentlyEditedSubnet.address} name="address"
+                            onChange={this.handleSubnetForm}
+                        />
+                        <TextField style={{margin: '12px'}} label="Mask" value={this.state.currentlyEditedSubnet.mask} name="mask"
+                            onChange={this.handleSubnetForm}
+                        />
+                    </form>
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    let formFields = {
+                        id: this.state.currentlyEditedSubnet.id,
+                        name: this.state.currentlyEditedSubnet.name,
+                        address: this.state.currentlyEditedSubnet.address,
+                        mask: this.state.currentlyEditedSubnet.mask
+                    };
+
+                    if (this.state.isNewSubnet) {
+                        this.props.createSubnet(formFields);
+                    } else {
+                        this.props.saveSubnet(formFields);
+                    }
+                }} color="primary">
+                    {this.state.isNewSubnet ? "Create subnet" : "Save subnet"}
+                </Button>
+                <Button onClick={() => this.setState({subnetEditOpened: false})} color="primary" autoFocus>
+                    Cancel
+                </Button>
+                {
+                    !this.state.isNewSubnet ? (
+                        <Button onClick={() => this.props.deleteSubnet(this.state.currentlyEditedSubnet.id)} variant="outlined" color="secondary" autoFocus>
+                            Delete
+                        </Button>
+                    ) : ''
+                }
+            </DialogActions>
+        </Dialog>
         </div>);
 
         return (<RouterSwitch>
