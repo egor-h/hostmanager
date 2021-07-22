@@ -6,7 +6,7 @@ spring:
 #    initialization-mode: ALWAYS
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
 
 logging:
   level:
