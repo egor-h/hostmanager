@@ -23,23 +23,23 @@ class MenuColumn extends React.Component<WithTranslation> {
     const { t } = this.props;
 
     return (<Container>
-      <Link to="/">
+      <Link to="/" tabIndex={-1}>
         <Tooltip title={t("menu_column_home_page")} placement="right">
-          <IconButton aria-label="home">
+          <IconButton aria-label="home" tabIndex={0}>
             <HomeIcon />
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/objects">
+      <Link to="/objects" tabIndex={-1}>
         <Tooltip title={t("menu_column_objects")} placement="right">
-          <IconButton aria-label="objects">
+          <IconButton aria-label="objects" tabIndex={0}>
             <ComputerIcon />
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/search">
+      <Link to="/search" tabIndex={-1}>
         <Tooltip title={t("menu_column_search")} placement="right">
-          <IconButton aria-label="search">
+          <IconButton aria-label="search" tabIndex={0}>
             <SearchIcon />
           </IconButton>
         </Tooltip>
@@ -51,37 +51,37 @@ class MenuColumn extends React.Component<WithTranslation> {
           </IconButton>
         </Tooltip>
       </Link> */}
-      <Link to="/notes">
+      <Link to="/notes" tabIndex={-1}>
         <Tooltip title={t("menu_column_notes")} placement="right">
-          <IconButton aria-label="notes">
+          <IconButton aria-label="notes" tabIndex={0}>
             <NoteIcon />
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/protocols">
+      <Link to="/protocols" tabIndex={-1}>
         <Tooltip title={t("menu_column_protocols")} placement="right">
-          <IconButton aria-label="protocol">
+          <IconButton aria-label="protocol" tabIndex={0}>
             <ReceiptIcon />
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/tags">
+      <Link to="/tags" tabIndex={-1}>
         <Tooltip title={t("menu_column_tags")} placement="right">
-          <IconButton aria-label="tags">
+          <IconButton aria-label="tags" tabIndex={0}>
             <LocalOfferIcon />
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/stats">
+      <Link to="/stats" tabIndex={-1}>
         <Tooltip title={t("menu_column_stats")} placement="right">
-          <IconButton aria-label="stats">
+          <IconButton aria-label="stats" tabIndex={0}>
             <BarChartIcon />
           </IconButton>
         </Tooltip>
       </Link>
-      <Link to="/settings">
+      <Link to="/settings" tabIndex={-1}>
         <Tooltip title={t("menu_column_settings")} placement="right">
-          <IconButton aria-label="settings">
+          <IconButton aria-label="settings" tabIndex={0}>
             <SettingsIcon />
           </IconButton>
         </Tooltip>
