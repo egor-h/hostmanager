@@ -18,6 +18,7 @@ import ru.serovmp.hostmanager.entity.Role;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.UserRepository;
 import ru.serovmp.hostmanager.security.JwtUtils;
+import ru.serovmp.hostmanager.service.AuthService;
 import ru.serovmp.hostmanager.service.InfoService;
 import ru.serovmp.hostmanager.service.SettingsService;
 import ru.serovmp.hostmanager.service.UserDetailsServiceImpl;
@@ -27,45 +28,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private UserDetailsServiceImpl users;
-    private JwtUtils jwtUtils;
-    private AuthenticationManager am;
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private SettingsService settingsService;
-    private InfoService infoService;
+    private AuthService authService;
 
     @Autowired
-    public AuthController(UserDetailsServiceImpl users, JwtUtils jwtUtils, AuthenticationManager am, UserRepository userRepository, PasswordEncoder passwordEncoder, SettingsService settingsService, InfoService infoService) {
-        this.users = users;
-        this.jwtUtils = jwtUtils;
-        this.am = am;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.settingsService = settingsService;
-        this.infoService = infoService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthForm signinForm) {
-        try {
-            Authentication auth = new UsernamePasswordAuthenticationToken(signinForm.getUsername(), signinForm.getPassword());
-            am.authenticate(auth);
-            String token = jwtUtils.createToken(users.loadUserByUsername(signinForm.getUsername()));
-            User user = userRepository.findByLogin(signinForm.getUsername()).orElseThrow(() -> new RuntimeException("user not found"));
-            return ResponseEntity.ok(new AuthResultDto(token, UserDto.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .login(user.getLogin())
-                    .name(user.getName())
-                    .roles(user.getRoles().stream().map(Role::getId).collect(Collectors.toSet()))
-                    .build(),
-                    settingsService.getSettingsForUser(user.getId()),
-                    infoService.info(),
-                    infoService.serviceCapabilities()));
-        } catch (AuthenticationException e) {
-            throw new BadCredentialsException(signinForm.getUsername());
-        }
+        return ResponseEntity.ok(authService.login(signinForm.getUsername(), signinForm.getPassword()));
     }
 
     @ExceptionHandler(RuntimeException.class)
