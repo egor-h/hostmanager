@@ -75,8 +75,8 @@ public class HostController {
     }
 
     @PutMapping("/{hostId}/to/{dirId}")
-    public HostDto moveHost() {
-        return null;
+    public ResponseEntity<HostDto> moveHost(@PathVariable long hostId, @PathVariable long dirId) {
+        return ResponseEntity.ok(hostService.move(hostId, dirId));
     }
 
     @DeleteMapping("/{id}")

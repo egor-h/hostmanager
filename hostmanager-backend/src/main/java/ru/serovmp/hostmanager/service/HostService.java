@@ -71,7 +71,7 @@ public class HostService {
     }
 
 
-    public void move(long hostOrDirId, long newParentId) {
+    public HostDto move(long hostOrDirId, long newParentId) {
         var srcHost = hostRepository.findById(hostOrDirId)
                 .orElseThrow(() -> new HostNotFoundException("host " + hostOrDirId + " not found"));
         var destinationDir = hostRepository.findById(newParentId)
@@ -79,6 +79,8 @@ public class HostService {
                 .orElseThrow(() -> new HostNotFoundException("host " + newParentId + " not found or is not dir"));
 
         srcHost.setParent(destinationDir);
+        hostRepository.save(srcHost);
+        return getTree(newParentId);
     }
 
     public HostDto update(long id, HostForm changedHost) {
