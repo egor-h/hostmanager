@@ -79,6 +79,15 @@ public class Host extends AbstractAuditableEntity implements Serializable {
             inverseJoinColumns = { @JoinColumn(name = "note_id") })
     private Set<Note> notes = new HashSet<>();
 
+    @Getter @Setter
+    @ManyToMany(targetEntity = Location.class, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "hosts_locations",
+            joinColumns = { @JoinColumn(name = "host_id")},
+            inverseJoinColumns = { @JoinColumn(name = "location_id")}
+    )
+    private Set<Location> locations;
+
     @JsonIgnore
     public Set<Host> getChildren() {
         return children;

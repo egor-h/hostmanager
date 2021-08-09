@@ -19,4 +19,5 @@ public class Location implements Serializable {
     @EqualsAndHashCode.Include
     private long id;
     private String name;
+    private String description;
 }
