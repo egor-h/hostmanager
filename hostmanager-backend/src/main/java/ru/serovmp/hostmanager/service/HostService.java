@@ -3,12 +3,10 @@ package ru.serovmp.hostmanager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.serovmp.hostmanager.controller.form.HostForm;
-import ru.serovmp.hostmanager.dto.HostDto;
-import ru.serovmp.hostmanager.dto.HomePageDto;
-import ru.serovmp.hostmanager.dto.RecentHostDto;
-import ru.serovmp.hostmanager.dto.TagDto;
+import ru.serovmp.hostmanager.dto.*;
 import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Protocol;
+import ru.serovmp.hostmanager.entity.Tag;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.repository.HostRepository;
@@ -31,6 +29,20 @@ public class HostService {
         this.hostRepository = hostRepository;
         this.tagRepository = tagRepository;
         this.protocolRepository = protocolRepository;
+    }
+
+    public List<TagDto> getTags(long id) {
+        var foundHost = hostRepository.findById(id).orElseThrow(() -> new HostNotFoundException("Host " + id + " not found"));
+        return foundHost.getTags().stream()
+                .map(tag -> new TagDto(tag.getId(), tag.getName()))
+                .collect(Collectors.toList());
+    }
+
+    public List<ProtocolDto> getProtocols(long id) {
+        var foundHost = hostRepository.findById(id).orElseThrow(() -> new HostNotFoundException("Host " + id + " not found"));
+        return foundHost.getProtocols().stream()
+                .map(protocol -> new ProtocolDto(protocol.getId(), protocol.getName(), protocol.getExecutionLine(), protocol.getLaunchType().name(), protocol.getValidationRegex(), protocol.getExpectedExitCode()))
+                .collect(Collectors.toList());
     }
 
     public HostDto getTreeFromRoot() {

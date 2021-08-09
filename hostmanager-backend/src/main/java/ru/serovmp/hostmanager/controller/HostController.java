@@ -11,13 +11,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.serovmp.hostmanager.controller.form.HostForm;
 import ru.serovmp.hostmanager.dto.HostDto;
+import ru.serovmp.hostmanager.dto.ProtocolDto;
+import ru.serovmp.hostmanager.dto.TagDto;
+import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.service.HostService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @SecurityRequirement(name = "bearer-key")
 @RestController
@@ -30,6 +37,21 @@ public class HostController {
     @Autowired
     public HostController(HostService hostService) {
         this.hostService = hostService;
+    }
+
+    @GetMapping("/{id}/tags")
+    public ResponseEntity<List<TagDto>> getTags(@PathVariable long id) {
+        return ResponseEntity.ok(hostService.getTags(id).stream().map(tag -> new TagDto()).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/{id}/protocols")
+    public ResponseEntity<List<ProtocolDto>> getProtocols(@PathVariable long id) {
+        return ResponseEntity.ok(hostService.getProtocols(id));
+    }
+
+    @GetMapping("/{id}/protocols/ids")
+    public ResponseEntity<List<Long>> getProtocolsIds(@PathVariable long id) {
+        return ResponseEntity.ok(hostService.getProtocols(id).stream().map(ProtocolDto::getId).collect(Collectors.toList()));
     }
 
     @GetMapping("/{parentId}")
