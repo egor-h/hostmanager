@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.serovmp.hostmanager.controller.form.HostForm;
@@ -15,10 +16,12 @@ import ru.serovmp.hostmanager.dto.ProtocolDto;
 import ru.serovmp.hostmanager.dto.TagDto;
 import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
+import ru.serovmp.hostmanager.exception.HostManagerBaseException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.service.HostService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +32,7 @@ import static java.util.stream.Collectors.toList;
 @SecurityRequirement(name = "bearer-key")
 @RestController
 @RequestMapping("/api/v1/hosts")
+@Validated
 public class HostController {
     private static final long TREE_ROOT_ID = 1;
 
@@ -60,7 +64,7 @@ public class HostController {
     }
 
     @PostMapping("/{parentId}")
-    public ResponseEntity<HostDto> save(@PathVariable long parentId, @RequestBody HostForm newHost,
+    public ResponseEntity<HostDto> save(@PathVariable long parentId, @Valid @RequestBody HostForm newHost,
                                         HttpServletRequest request) {
         var saved = hostService.save(parentId, newHost);
         var uri = ServletUriComponentsBuilder.fromContextPath(request)
@@ -70,7 +74,7 @@ public class HostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HostDto> update(@PathVariable long id, @RequestBody HostForm changedHost) {
+    public ResponseEntity<HostDto> update(@PathVariable long id, @Valid @RequestBody HostForm changedHost) {
         return ResponseEntity.ok(hostService.update(id, changedHost));
     }
 
@@ -95,7 +99,7 @@ public class HostController {
         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({HostManagerBaseException.class})
     public ResponseEntity any(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
