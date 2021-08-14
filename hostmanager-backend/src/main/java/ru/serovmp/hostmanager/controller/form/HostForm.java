@@ -18,7 +18,7 @@ public class HostForm {
     private String name;
     @HostAddressConstraint
     private String address;
-    @Min(0) @Max(65536)
+    @Min(value = 0, message = "Port number can't be negative") @Max(value = 65536, message = "Max port number is 2 ^ 16")
     private int port;
     private boolean enabled;
     private boolean dir;
