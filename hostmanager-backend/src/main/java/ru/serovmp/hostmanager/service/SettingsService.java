@@ -1,6 +1,5 @@
 package ru.serovmp.hostmanager.service;
 
-import org.hibernate.annotations.common.reflection.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -11,6 +10,7 @@ import ru.serovmp.hostmanager.repository.SettingsRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -70,6 +70,9 @@ public class SettingsService {
         Map<String, Setting> settingsMap = getSettingsForUserAsMap(id);
 
         for (Field field: mappedSettings.getClass().getFields()) {
+            if (Modifier.isFinal(field.getModifiers())) {
+                continue;
+            }
             var stringKey = field.getName();
 
             if (settingsMap.containsKey(stringKey)) {
