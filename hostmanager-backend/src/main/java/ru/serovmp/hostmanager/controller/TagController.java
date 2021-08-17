@@ -8,6 +8,7 @@ import ru.serovmp.hostmanager.controller.form.TagForm;
 import ru.serovmp.hostmanager.dto.TagDto;
 import ru.serovmp.hostmanager.entity.Tag;
 import ru.serovmp.hostmanager.repository.TagRepository;
+import ru.serovmp.hostmanager.util.EntityToDtoMapper;
 
 import java.util.HashSet;
 
@@ -17,15 +18,17 @@ import java.util.HashSet;
 public class TagController {
 
     private TagRepository tagRepository;
+    private EntityToDtoMapper entityToDtoMapper;
 
     @Autowired
-    public TagController(TagRepository tagRepository) {
+    public TagController(TagRepository tagRepository, EntityToDtoMapper entityToDtoMapper) {
         this.tagRepository = tagRepository;
+        this.entityToDtoMapper = entityToDtoMapper;
     }
 
     @GetMapping
     public ResponseEntity tags() {
-        return ResponseEntity.ok(tagRepository.findAll().stream().map(tag -> new TagDto(tag.getId(), tag.getName())));
+        return ResponseEntity.ok(tagRepository.findAll().stream().map(entityToDtoMapper::tagToTagDto));
     }
 
     @GetMapping("/{id}/hosts")
@@ -38,14 +41,14 @@ public class TagController {
     @PostMapping
     public ResponseEntity save(@RequestBody TagForm tag) {
         var saved = tagRepository.save(new Tag(0, tag.getName(), new HashSet<>()));
-        return ResponseEntity.ok(new TagDto(saved.getId(), saved.getName()));
+        return ResponseEntity.ok(entityToDtoMapper.tagToTagDto(saved));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") long id, @RequestBody TagForm tag) {
         var found = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("tag not found"));
         var updated = tagRepository.save(new Tag(id, tag.getName(), found.getHosts()));
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(entityToDtoMapper.tagToTagDto(updated));
     }
 
     @DeleteMapping("/{id}")

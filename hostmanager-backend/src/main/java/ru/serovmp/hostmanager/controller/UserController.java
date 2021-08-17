@@ -14,6 +14,7 @@ import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.RoleRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
 import ru.serovmp.hostmanager.service.SettingsService;
+import ru.serovmp.hostmanager.util.EntityToDtoMapper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,32 +32,26 @@ public class UserController {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private SettingsService settingsService;
+    private EntityToDtoMapper entityToDtoMapper;
 
     @Autowired
-    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, SettingsService settingsService) {
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, SettingsService settingsService, EntityToDtoMapper entityToDtoMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.settingsService = settingsService;
+        this.entityToDtoMapper = entityToDtoMapper;
     }
 
     @GetMapping
     public ResponseEntity users() {
         return ResponseEntity.ok(userRepository.findAll()
-                .stream()
-                .map(user -> new UserDto(user.getId(), user.getLogin(), user.getName(), user.getEmail(), user.getRoles()
-                        .stream()
-                        .map(r -> r.getId())
-                        .collect(toSet()))
-                ));
+                .stream().map(entityToDtoMapper::userToUserDto));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity userWithPw(@PathVariable("id") long id) {
-        return ResponseEntity.ok(userRepository.findById(id)
-                .map(user -> new UserWithPasswordDto(
-                        user.getId(), user.getLogin(), user.getName(),
-                        user.getEmail(), user.getPassword(), user.getRoles().stream().map(r -> r.getId()).collect(toSet()))));
+        return ResponseEntity.ok(userRepository.findById(id).map(entityToDtoMapper::userToUserWithPwdDto));
     }
 
     @PostMapping
@@ -64,7 +59,7 @@ public class UserController {
         var roles = roleRepository.findAllById(user.getRoles());
         var saved = userRepository.save(
                 new User(0, user.getLogin(), user.getName(), user.getEmail(), passwordEncoder.encode(user.getPassword()), true, new HashSet<>(), roles.stream().collect(toSet()), new HashSet<>()));
-        return ResponseEntity.ok(new TagDto(saved.getId(), saved.getName()));
+        return ResponseEntity.ok(entityToDtoMapper.userToUserWithPwdDto(saved));
     }
 
     @PutMapping("/{id}")
@@ -75,10 +70,9 @@ public class UserController {
         found.setEmail(userForm.getEmail());
         found.setName(userForm.getName());
         found.setPassword(passwordEncoder.encode(userForm.getPassword()));
-        found.setSettings(new HashSet<>());
         found.setSettings(settingsService.getSettingsForUserAsMap(id).values().stream().collect(toSet()));
         var updated = userRepository.save(found);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(entityToDtoMapper.userToUserWithPwdDto(updated));
     }
 
     @DeleteMapping("/{id}")
