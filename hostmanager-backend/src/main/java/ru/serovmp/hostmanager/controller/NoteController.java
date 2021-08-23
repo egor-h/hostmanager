@@ -113,7 +113,7 @@ public class NoteController {
         found.setText(noteForm.getText());
         found.setDone(noteForm.isDone());
         found.setDoneAt(noteForm.isDone() ? new Date() : null);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(noteRepository.save(found));
     }
 
     @DeleteMapping("/{id}")
