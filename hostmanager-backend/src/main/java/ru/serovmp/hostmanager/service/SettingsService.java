@@ -11,6 +11,7 @@ import ru.serovmp.hostmanager.repository.SettingsRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +72,10 @@ public class SettingsService {
 
         for (Field field: mappedSettings.getClass().getFields()) {
             var stringKey = field.getName();
+
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
 
             if (settingsMap.containsKey(stringKey)) {
                 Setting curSetting = settingsMap.get(stringKey);
