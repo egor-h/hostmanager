@@ -99,7 +99,7 @@ public class HostService {
 
         foundHost.setName(changedHost.getName());
         foundHost.setAddress(changedHost.getAddress());
-        foundHost.setEnabled(foundHost.isEnabled());
+        foundHost.setEnabled(changedHost.isEnabled());
         foundHost.setTags(tags);
         foundHost.setProtocols(protocols);
         var updated = hostRepository.save(foundHost);
