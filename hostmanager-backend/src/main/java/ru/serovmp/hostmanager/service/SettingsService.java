@@ -75,6 +75,10 @@ public class SettingsService {
             }
             var stringKey = field.getName();
 
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
             if (settingsMap.containsKey(stringKey)) {
                 Setting curSetting = settingsMap.get(stringKey);
                 var curSettingType = settingTypeToJavaType(curSetting.getType());
