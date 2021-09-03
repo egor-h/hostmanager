@@ -26,10 +26,11 @@ export default () => {
     if (params.hostId) {
         let foundPreAddedHost = findExactHostById(tree.tree, +params.hostId);
         console.log(foundPreAddedHost)
-        if (foundPreAddedHost) {
+        if (foundPreAddedHost != null) {
             const submitNewNoteBackToHost = (note: FullNote) => {
+                console.log(note);
                 dispatch(createNote({...note, hosts: note.hosts}, () => {dispatch(fetchNotesForHost(+params.hostId))}));
-                history.push(`/objects/info/${foundPreAddedHost?.id}`);
+                history.push(`/objects/info/${foundPreAddedHost.id}`);
             }
             return (<NoteForm title="New note" preAddedHosts={[foundPreAddedHost]} allHosts={hostsList} showDeleteButton={false} note={{id: -1, done: false, title: '', text: '', hosts: []}} onSubmit={submitNewNoteBackToHost}></NoteForm>)
         }

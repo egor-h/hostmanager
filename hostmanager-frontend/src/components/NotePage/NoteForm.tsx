@@ -1,4 +1,5 @@
 import { Box, Button, Checkbox, FormControlLabel, TextField, Typography, withStyles } from '@material-ui/core';
+import { ContactMailSharp } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
 import React from 'react';
 import { FullNote, Host, Note } from '../../models/host';
@@ -51,7 +52,8 @@ class NoteForm extends React.Component<FormProps, FormState> {
             title = this.props.note.title;
             text = this.props.note.text;
             done = this.props.note.done;
-            hosts = (this.props.note.hosts.length === 0 && this.props.preAddedHosts) ? this.props.preAddedHosts : this.props.note.hosts;
+            //hosts = (this.props.note.hosts.length === 0 && this.props.preAddedHosts) ? this.props.preAddedHosts : [];
+            hosts = this.props.preAddedHosts ? this.props.preAddedHosts : [];
         }
 
         this.state = {
@@ -68,7 +70,10 @@ class NoteForm extends React.Component<FormProps, FormState> {
         this.handleDoneChange = this.handleDoneChange.bind(this);
         this.handleDeleteButton = this.handleDeleteButton.bind(this);
         this.handleSubmitButton = this.handleSubmitButton.bind(this);
-        console.log(this.state);
+    }
+
+    componentDidMount() {
+
     }
 
     handleTitleChange(e: any) {
@@ -97,7 +102,10 @@ class NoteForm extends React.Component<FormProps, FormState> {
 
     handleSubmitButton(e: any) {
         e.preventDefault();
-        this.props.onSubmit(this.state as FullNote)
+        let note = {
+            ...this.state, hosts: this.state.hosts.map(h => h.id)
+        }
+        this.props.onSubmit(note as FullNote)
     }
 
     render() {

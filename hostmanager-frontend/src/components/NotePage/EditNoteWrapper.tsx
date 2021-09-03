@@ -6,7 +6,7 @@ import { AppState } from '../../state/reducers';
 import NoteForm from './NoteForm';
 import { FullNoteState } from '../../state/reducers/notes';
 import CircleLoading from '../CircleLoading';
-import { fetchFullNote } from '../../api/note';
+import { createNote, deleteNote, fetchFullNote, saveNote } from '../../api/note';
 import { findExactHostById, flattenTree } from '../../util/tree';
 import { TreeState } from '../../state/reducers/hostsBrowser';
 import { Host } from '../../models/host';
@@ -16,11 +16,14 @@ type EditWrapperProps = {
     tree: TreeState;
 
     fetchNote: (id: number, onSuccess?: () => void) => void;
+    saveNote: typeof saveNote;
+    deleteNote: typeof deleteNote
 } & RouteComponentProps<{notesId: string}>;
 
 type EditWrapperState = {
     hostList: {id: number, name: string}[];
     hostsWithNote: Host[];
+    ready: boolean;
 }
 
 const mapStateToProps = (state: AppState) => ({
@@ -29,7 +32,9 @@ const mapStateToProps = (state: AppState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    fetchNote: bindActionCreators(fetchFullNote, dispatch)
+    fetchNote: bindActionCreators(fetchFullNote, dispatch),
+    saveNote: bindActionCreators(saveNote, dispatch),
+    deleteNote: bindActionCreators(deleteNote, dispatch)
 })
 
 class EditNoteWrapper extends React.Component<EditWrapperProps, EditWrapperState> {
@@ -37,14 +42,15 @@ class EditNoteWrapper extends React.Component<EditWrapperProps, EditWrapperState
         super(props)
 
         this.state = {
+            ready: false,
             hostList: [],
             hostsWithNote: []
         }
     }
 
     componentDidMount() {
+        let foundHosts: Host[] = [];
         this.props.fetchNote(+this.props.match.params.notesId, () => {
-            let foundHosts: Host[] = [];
             for (let noteHost of this.props.fullNote.data.hosts) {
                 console.log(`Finding ${noteHost}`);
                 let found = findExactHostById(this.props.tree.tree, noteHost);
@@ -53,20 +59,31 @@ class EditNoteWrapper extends React.Component<EditWrapperProps, EditWrapperState
                     foundHosts.push(found);
                 }
             }
-            console.log(foundHosts);
             this.setState({hostsWithNote: foundHosts});
+            console.log("did mount")
+            console.log(this.state);
         });
-        this.setState({hostList: flattenTree(this.props.tree.tree, h => ({id: h.id, name: h.name}))});
+        this.setState({hostList: flattenTree(this.props.tree.tree, h => ({id: h.id, name: h.name})), hostsWithNote: foundHosts, ready: true});
     }
 
     render() {
-        if (this.props.fullNote.loading) {
+        if (this.props.fullNote.loading || !this.state.ready) {
             return (<CircleLoading />);
         }
         if (this.props.fullNote.error) {
             return (<p>Error</p>);
         }
-        return (<NoteForm title={'Edit note'} note={this.props.fullNote.data} preAddedHosts={this.state.hostsWithNote} allHosts={this.state.hostList} onSubmit={() => {}} showDeleteButton={true} onDelete={() => {}}  />);
+        return (<NoteForm title={'Edit note'} 
+            note={this.props.fullNote.data} 
+            preAddedHosts={this.state.hostsWithNote} 
+            allHosts={this.state.hostList} 
+            onSubmit={(note) => {
+                this.props.saveNote(note.id, {...note, hosts: note.hosts})
+            }} 
+            showDeleteButton={true} 
+            onDelete={(noteId) => {
+                this.props.deleteNote(noteId)
+            }}  />);
     }
 }
 

@@ -28,7 +28,7 @@ const getListItem = (note: Note) => {
         </ListItemAvatar>
         <ListItemText
             primary={note.title}
-            secondary={'associated objects'}
+            // secondary={'associated objects'}
         />
         <ListItemSecondaryAction>
             <Link to={`/notes/edit/${note.id}`}>
@@ -45,18 +45,24 @@ const NotePage = (props: any) => {
     let history = useHistory();
     let notes = useSelector((state: { notes: NoteState }) => state.notes)
 
+    useEffect(() => {
+        if (!notes.noteList.loading || notes.noteList.data.length == 0) {
+            dispatch(fetchNotes());
+        }
+    }, [])
+
     if (notes.noteList.loading) {
         return (<Box>Loading..</Box>)
     }
 
-    const addNewProtocol = () => {
+    const addNewNote = () => {
         history.push('/notes/new')
     }
 
     return (<div>
         <List dense={true}>
             {notes.noteList.data.map(note => getListItem(note))}
-            <ListItem button key={'addicon'} onClick={addNewProtocol}>
+            <ListItem button key={'addicon'} onClick={addNewNote}>
                 <ListItemAvatar>
                     <Avatar>
                         <AddIcon />
