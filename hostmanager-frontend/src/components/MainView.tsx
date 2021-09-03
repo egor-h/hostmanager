@@ -28,6 +28,7 @@ import { ipcRenderer } from 'electron';
 import UserPage from './UserPage';
 import Mousetrap from 'mousetrap';
 import CompleteSearchResults from './CompleteSearchResults';
+import { RmsReturnMessageType } from '../../electron/main';
 
 type PropsType = {
     local: LocalState;
@@ -70,6 +71,14 @@ class MainView extends React.Component<PropsType> {
         ipcRenderer.on('async-execute-all-reply', (event, newlyCreatedResults: ProtocolResult[]) => {
             console.log(newlyCreatedResults);
             this.props.allProtocolResults(newlyCreatedResults);
+        })
+
+        ipcRenderer.on('generate-rms-reply', (event, result: RmsReturnMessageType) => {
+            if (result.status == 'success') {
+                this.props.setSnackBar({severity: 'success', message: 'RMS phonebook generated'})
+            } else {
+                this.props.setSnackBar({severity: 'error', message: `Error during phonebook generation: ${result.message}`})
+            }
         })
 
         let intervalId = setInterval(() => {

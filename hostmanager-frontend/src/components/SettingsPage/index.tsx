@@ -22,7 +22,7 @@ import { setSnackbar } from '../../state/actions/local';
 import { AppState } from '../../state/reducers';
 import { ServiceInfoType } from '../../state/reducers/serviceInfo';
 import { Subnets } from '../../state/reducers/subnets';
-import { findAllDirs } from '../../util/tree';
+import { findAllDirs, flattenTree } from '../../util/tree';
 import PopupField from '../PopupField';
 import UserPage from '../UserPage';
 
@@ -33,6 +33,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import { Subnet } from '../../models/stat';
+import { generatePhonebookThunk } from '../../util/rms_export';
 
 const mapStateToProps = (state: AppState) => ({
     settings: state.local.settings,
@@ -52,7 +53,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     fetchSubnets: bindActionCreators(fetchSubnets, dispatch),
     createSubnet: bindActionCreators(createSubnet, dispatch),
     saveSubnet: bindActionCreators(saveSubnet, dispatch),
-    deleteSubnet: bindActionCreators(deleteSubnet, dispatch)
+    deleteSubnet: bindActionCreators(deleteSubnet, dispatch),
+    generateRmsPhonebook: bindActionCreators(generatePhonebookThunk, dispatch)
 })
 
 type SettingsProps = {
@@ -65,7 +67,8 @@ type SettingsProps = {
     zabbixGroups: {loading: boolean, data: ZabbixGroup[], error: boolean},
     loadZabbixGroups: () => void,
     beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void,
-    setSnackbar: typeof setSnackbar
+    setSnackbar: typeof setSnackbar,
+    generateRmsPhonebook: typeof generatePhonebookThunk
 
 } & RouteComponentProps<{}> & WithTranslation & SubnetApi;
 
@@ -328,6 +331,10 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 </ListItem>
                 <ListItem>
                     <ListItemText primary={`${t("settings_page_abilities_availability")}: ${this.props.serviceInfo.data.capabilities.serverSideAvailability}`} />
+                </ListItem>
+
+                <ListItem button onClick={() => this.props.generateRmsPhonebook(flattenTree(this.props.hosts, h => h))}>
+                    <ListItemText primary={t("settings_page_other_generate_rms_phonebook")} />
                 </ListItem>
 
             </List>
