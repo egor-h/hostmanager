@@ -100,6 +100,7 @@ public class HostService {
         foundHost.setName(changedHost.getName());
         foundHost.setAddress(changedHost.getAddress());
         foundHost.setEnabled(changedHost.isEnabled());
+        foundHost.setPort(changedHost.getPort());
         foundHost.setTags(tags);
         foundHost.setProtocols(protocols);
         var updated = hostRepository.save(foundHost);
