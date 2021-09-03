@@ -84,6 +84,8 @@ export default {
     "settings_page_abilities_zabbix": "Zabbix интеграция",
     "settings_page_abilities_mapping": "Карта сети",
     "settings_page_abilities_availability": "Проверка достопности с сервера",
+    
+    "settings_page_other_generate_rms_phonebook": "Сгенерировать адресную книгу RMS",
 
     "email_clipboard_write_success": "Скопировано!",
     "email_clipboard_write_failed": "Текст не был скопирован :("

@@ -86,6 +86,8 @@ export default {
     "settings_page_abilities_mapping": "Network mapping",
     "settings_page_abilities_availability": "Server side availability",
 
+    "settings_page_other_generate_rms_phonebook": "Generate RMS phonebook",
+
     "email_clipboard_write_success": "Address copied!",
     "email_clipboard_write_failed": "Address wasn't copied :("
 }
