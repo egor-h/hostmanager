@@ -16,6 +16,7 @@ export const EMPTY_HOST = {
     parentId: -2,
     name: '',
     address: '',
+    port: 0,
     enabled: true,
     dir: false,
     tags: [],
