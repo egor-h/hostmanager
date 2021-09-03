@@ -4,9 +4,11 @@ import * as url from 'url'
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer'
 import { _execute, unixTimestamp } from '../src/util/launcher';
 import format from 'string-format';
-import { Host, Protocol } from '../src/models/host';
+import { Host as FullHost, Protocol } from '../src/models/host';
 import { ProtocolResult, ProtocolResultMapByHostId } from '../src/state/reducers/localState';
 import net from 'net';
+import { env } from 'process';
+import { generatePhonebook } from '../src/util/rms_export';
 
 let mainWindow: Electron.BrowserWindow | null
 
@@ -118,6 +120,27 @@ const portCheckProtocol = {
     launchType: "VALIDATE_EXITCODE"
 
 }
+
+const RMS_PHONEBOOK_PATH = env["APPDATA"] + '\\Remote Manipulator Files\\connections_4.xml';
+
+export type RmsReturnMessageType = {status: 'success'} | {status: 'error', message: string};
+
+ipcMain.on('generate-rms', (event, arg: FullHost[]) => {
+  let errorMessage = null;
+  let hasError = false;
+  try {
+    console.log(`Generating phonebook of ${arg.length} hosts`)
+    generatePhonebook(RMS_PHONEBOOK_PATH, arg);
+  } catch (err) {
+    console.error(err);
+    hasError = true;
+    errorMessage = err.message;
+  }
+
+  let ret: RmsReturnMessageType = hasError ? {status: 'error', message: errorMessage} : {status: 'success'};
+
+  event.reply('generate-rms-reply', ret);
+})
 
 ipcMain.on('port-check', (event, arg) => {
   let {hosts}: { hosts: Host[] } = arg;
