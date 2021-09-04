@@ -32,10 +32,10 @@ public class SearchService {
     }
 
     public BriefSearchResultDto briefSearch(String query) {
-        List<BriefSearchResultDto.BriefHost> hosts = hostRepository.topRecents(query, SEARCH_LIMIT).stream()
+        List<BriefSearchResultDto.BriefHost> hosts = hostRepository.textSearchTopRecents(query, SEARCH_LIMIT).stream()
                 .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
                 .collect(Collectors.toList());
-        List<BriefNoteDto> notes = noteRepository.topRecents(query, SEARCH_LIMIT).stream()
+        List<BriefNoteDto> notes = noteRepository.textSearchTopRecents(query, SEARCH_LIMIT).stream()
                 .map(note -> new BriefNoteDto(note.getId(), note.getTitle(), note.getCreatedAt(), note.isDone()))
                 .collect(Collectors.toList());
         List<ProtocolDto> protocols = protocolRepository.topRecents(query, SEARCH_LIMIT).stream()
@@ -54,7 +54,7 @@ public class SearchService {
     }
 
     public List<BriefSearchResultDto.BriefHost> searchHosts(String query, int page) {
-        return hostRepository.findByHostNameOrAddressPagable(query, PageRequest.of(page, SEARCH_PAGE_SIZE)).stream()
+        return hostRepository.textSearchByHostNameOrAddressPagable(query, PageRequest.of(page, SEARCH_PAGE_SIZE)).stream()
                 .map(host -> new BriefSearchResultDto.BriefHost(host.getId(), host.getName(), host.getAddress()))
                 .collect(Collectors.toList());
     }
