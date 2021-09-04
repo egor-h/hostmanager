@@ -8,10 +8,19 @@ services:
       - ./application.yml:/root/application.yml
     depends_on:
       - mysql
+      - flyway
     environment:
       ADMIN_EMAIL: "someone@somewhere.com"
       SERVICE_LOCATION: "Somewhere"
       SERVICE_DESCRIPTION: ""
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:mysql://mysql -schemas=hostsmanager -user=root -password=12345 migrate
+    volumes:
+      - ../src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - mysql
 
   mysql:
     image: mysql/mysql-server:8.0

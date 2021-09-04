@@ -5,6 +5,7 @@ Used technologies on backend:
 - Springdoc OpenAPI
 - MySQL
 - Docker
+- Flyway
 
 Used technologies on frontend:
 - Typescript
