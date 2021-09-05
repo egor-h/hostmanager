@@ -9,6 +9,9 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
     && rm -rf /tmp/apache-maven.tar.gz \
     && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
 COPY . /app/
 WORKDIR /app
 RUN mvn clean
