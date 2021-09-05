@@ -1,0 +1,1 @@
+docker-compose -f hostsmanager.yml -f hostsmanager.dev.yml up -d

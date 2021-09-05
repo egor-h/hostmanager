@@ -1,7 +1,9 @@
 version: "3.9"
 services:
   hostsmanager:
-    build: ..
+    build:
+      context: ..
+      dockerfile: docker-compose/Dockerfile
     ports:
       - 8080:8080
     volumes:
@@ -9,6 +11,7 @@ services:
     depends_on:
       - mysql
       - flyway
+    restart: always
     environment:
       ADMIN_EMAIL: "someone@somewhere.com"
       SERVICE_LOCATION: "Somewhere"
@@ -26,6 +29,7 @@ services:
     image: mysql/mysql-server:8.0
     expose:
       - "3306"
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 12345
       MYSQL_ROOT_HOST: "%"

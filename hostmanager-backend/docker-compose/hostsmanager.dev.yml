@@ -1,0 +1,12 @@
+#include remote debug at port 8000 & forward database port 3306
+version: "3.9"
+services:
+  hostsmanager:
+    environment:
+      JAVA_OPTS: ""
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+    ports:
+      - 8000:8000
+  mysql:
+    ports:
+      - 3306:3306
