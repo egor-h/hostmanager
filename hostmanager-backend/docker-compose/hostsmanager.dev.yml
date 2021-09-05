@@ -4,7 +4,7 @@ services:
   hostsmanager:
     environment:
       JAVA_OPTS: ""
-      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
     ports:
       - 8000:8000
   mysql:
