@@ -5,7 +5,7 @@ services:
       context: ..
       dockerfile: docker-compose/Dockerfile
     ports:
-      - 8080:8080
+      - ${BACKEND_HTTP_PORT}:8080
     volumes:
       - ./application.yml:/root/application.yml
     depends_on:
@@ -13,13 +13,14 @@ services:
       - flyway
     restart: always
     environment:
-      ADMIN_EMAIL: "someone@somewhere.com"
-      SERVICE_LOCATION: "Somewhere"
-      SERVICE_DESCRIPTION: ""
+      MYSQL_SCHEMA: ${MYSQL_SCHEMA}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      SERVICE_LOCATION: ${SERVICE_LOCATION}
+      SERVICE_DESCRIPTION: ${SERVICE_DESCRIPTION}
 
   flyway:
     image: flyway/flyway
-    command: -url=jdbc:mysql://mysql -schemas=hostsmanager -user=root -password=12345 migrate
+    command: -url=jdbc:mysql://mysql -schemas=${MYSQL_SCHEMA} -user=root -password=12345 migrate
     volumes:
       - ../src/main/resources/db/migration:/flyway/sql
     depends_on:
@@ -33,6 +34,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 12345
       MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE: hostsmanager
+      MYSQL_DATABASE: ${MYSQL_SCHEMA}
     volumes:
-      - /location/to/datadir:/var/lib/mysql
+      - ${MYSQL_DATADIR}:/var/lib/mysql
