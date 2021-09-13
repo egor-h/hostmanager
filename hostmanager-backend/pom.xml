@@ -19,7 +19,25 @@
         <lombok.version>1.18.20</lombok.version>
 	</properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
 	<dependencies>
+        <dependency>
+            <groupId>com.github.egor-h</groupId>
+            <artifactId>sonic-connector</artifactId>
+            <version>v1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
