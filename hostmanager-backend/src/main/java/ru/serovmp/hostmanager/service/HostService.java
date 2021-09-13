@@ -1,34 +1,75 @@
 package ru.serovmp.hostmanager.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.serovmp.hostmanager.controller.form.HostForm;
 import ru.serovmp.hostmanager.dto.*;
 import ru.serovmp.hostmanager.entity.Host;
 import ru.serovmp.hostmanager.entity.Protocol;
-import ru.serovmp.hostmanager.entity.Tag;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
 import ru.serovmp.hostmanager.repository.HostRepository;
 import ru.serovmp.hostmanager.repository.ProtocolRepository;
 import ru.serovmp.hostmanager.repository.TagRepository;
+import ru.serovmp.hostmanager.service.search.Indexable;
+import ru.serovmp.hostmanager.service.search.Searchable;
+import ru.serovmp.hostmanager.service.search.Searcher;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class HostService {
+public class HostService implements Searchable<BriefSearchResultDto.BriefHost>, Indexable<Host> {
     private static final long TREE_ROOT_ID = 1;
+    public static final String SEARCH_COLLECTION = "hosts";
+    public static final String SEARCH_BUCKET = "default";
 
     private HostRepository hostRepository;
     private TagRepository tagRepository;
     private ProtocolRepository protocolRepository;
+    private Optional<Searcher> searcher;
 
     @Autowired
-    public HostService(HostRepository hostRepository, TagRepository tagRepository, ProtocolRepository protocolRepository) {
+    public HostService(HostRepository hostRepository, TagRepository tagRepository, ProtocolRepository protocolRepository, Optional<Searcher> searcher) {
         this.hostRepository = hostRepository;
         this.tagRepository = tagRepository;
         this.protocolRepository = protocolRepository;
+        this.searcher = searcher;
+    }
+
+    @Override
+    public void startIndex() {
+        if (searcher.isPresent()) {
+            Searcher s = searcher.get();
+            s.removeCollection(SEARCH_COLLECTION);
+            hostRepository.findAll().forEach(host -> {
+                s.save(SEARCH_COLLECTION, SEARCH_BUCKET, host.getId().toString(), host.getName());
+            });
+        }
+    }
+
+    @Override
+    public String entityToIndexableText(Host e) {
+        return e.getName();
+    }
+
+    public List<BriefSearchResultDto.BriefHost> find(String query, Pageable pageable) {
+        if (!searcher.isPresent()) {
+            return hostRepository.findByHostNameOrAddressPagable(query, pageable)
+                    .stream()
+                    .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
+                    .collect(Collectors.toList());
+        }
+        return searcher
+                .map(search -> hostRepository.findAllById(search.find(SEARCH_COLLECTION, SEARCH_BUCKET, query, pageable.getPageSize(), (int) pageable.getOffset())))
+                        .stream()
+                        .flatMap(e -> e.stream())
+                .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
+                .collect(Collectors.toList());
     }
 
     public List<TagDto> getTags(long id) {
@@ -40,7 +81,7 @@ public class HostService {
 
     public List<ProtocolDto> getProtocols(long id) {
         var foundHost = hostRepository.findById(id).orElseThrow(() -> new HostNotFoundException("Host " + id + " not found"));
-        return foundHost.getProtocols().stream()
+                    return foundHost.getProtocols().stream()
                 .map(protocol -> new ProtocolDto(protocol.getId(), protocol.getName(), protocol.getExecutionLine(), protocol.getLaunchType().name(), protocol.getValidationRegex(), protocol.getExpectedExitCode()))
                 .collect(Collectors.toList());
     }
@@ -65,8 +106,11 @@ public class HostService {
         var createdHost = formToHost(newHost);
         createdHost.setParent(parentHost);
         createdHost.setCreatedAt(new Date());
-        hostRepository.save(createdHost);
+        var saved = hostRepository.save(createdHost);
 
+        searcher.ifPresent(search -> {
+            search.save(SEARCH_COLLECTION, SEARCH_BUCKET, saved.getId().toString(), entityToIndexableText(saved));
+        });
         return hostRepository.findById(parentId).map(this::hostToDto).get();
     }
 
@@ -104,6 +148,9 @@ public class HostService {
         foundHost.setTags(tags);
         foundHost.setProtocols(protocols);
         var updated = hostRepository.save(foundHost);
+        searcher.ifPresent(search -> {
+            search.save(SEARCH_COLLECTION, SEARCH_BUCKET, updated.getId().toString(), entityToIndexableText(updated));
+        });
         return hostToDto(updated);
     }
 
@@ -112,8 +159,11 @@ public class HostService {
         found.getProtocols().remove(found);
         found.getTags().remove(found);
         found.getNotes().remove(found);
-        hostRepository.save(found);
+        var saved = hostRepository.save(found);
         hostRepository.deleteById(id);
+        searcher.ifPresent(search -> {
+            search.delete(SEARCH_COLLECTION, SEARCH_BUCKET, String.valueOf(id), entityToIndexableText(saved));
+        });
     }
 
     Host formToHost(HostForm hostForm) {
