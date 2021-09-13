@@ -21,5 +21,4 @@ FROM azul/zulu-openjdk-alpine:15
 EXPOSE 8080/tcp
 WORKDIR /root/
 COPY --from=0 /app/target/hostmanager*.jar .
-COPY --from=0 /app/src/main/resources/application.yml .
 CMD java -jar *.jar
