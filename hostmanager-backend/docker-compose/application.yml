@@ -3,7 +3,7 @@ spring:
     url: jdbc:mysql://mysql:3306/${MYSQL_SCHEMA}
     username: root
     password: 12345
-#    initialization-mode: ALWAYS
+  #    initialization-mode: ALWAYS
   jpa:
     hibernate:
       ddl-auto: validate
@@ -26,6 +26,13 @@ security:
 #  password: 123
 
 hostsmanager:
+  search:
+    mode: "sonic" # none | sonic
+    sonic:
+      address: ${SONIC_ADDRESS}
+      port: ${SONIC_PORT}
+      timeout: ${SONIC_TIMEOUT}
+      password: ${SONIC_PASSWORD}
   service-info:
     admin-email: ${ADMIN_EMAIL}
     location: ${SERVICE_LOCATION}

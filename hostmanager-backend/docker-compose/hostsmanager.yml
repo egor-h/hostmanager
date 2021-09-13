@@ -17,6 +17,10 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       SERVICE_LOCATION: ${SERVICE_LOCATION}
       SERVICE_DESCRIPTION: ${SERVICE_DESCRIPTION}
+      SONIC_ADDRESS: "sonic"
+      SONIC_PORT: 1491
+      SONIC_TIMEOUT: 20000
+      SONIC_PASSWORD: "SecretPassword"
 
   flyway:
     image: flyway/flyway
@@ -37,3 +41,12 @@ services:
       MYSQL_DATABASE: ${MYSQL_SCHEMA}
     volumes:
       - ${MYSQL_DATADIR}:/var/lib/mysql
+
+  sonic:
+    image: valeriansaliou/sonic:v1.3.0
+    expose:
+      - "1491"
+    restart: always
+    volumes:
+      - ./sonic.cfg:/etc/sonic.cfg
+      - ${SONIC_DATADIR}:/var/lib/sonic/store/
