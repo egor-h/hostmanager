@@ -1,5 +1,6 @@
 package ru.serovmp.hostmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,12 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Note implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private long id;
-
+public class Note extends AbstractSerializableEntity<Long> implements Serializable {
     private String title;
     private String text;
     private boolean done;
@@ -28,6 +24,7 @@ public class Note implements Serializable {
 //    private User createdBy;
     private Date doneAt;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "notes", fetch = FetchType.LAZY)
     private Set<Host> hosts;
 
