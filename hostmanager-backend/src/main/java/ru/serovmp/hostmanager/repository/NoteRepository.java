@@ -13,6 +13,9 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     @Query(value = "SELECT * FROM notes WHERE text LIKE %:query% OR title LIKE %:query% LIMIT :limit", nativeQuery = true)
     List<Note> topRecents(@Param("query") String query, @Param("limit") long limit);
 
+    @Query(value = "SELECT * FROM notes WHERE text LIKE %:query% OR title LIKE %:query%", nativeQuery = true)
+    List<Note> findByTextOrTitle(@Param("query") String query, Pageable pageable);
+
     @Query(value = "SELECT * FROM notes WHERE MATCH (title, text) AGAINST (:query) LIMIT :limit", nativeQuery = true)
     List<Note> textSearchTopRecents(@Param("query") String query, @Param("limit") long limit);
 
