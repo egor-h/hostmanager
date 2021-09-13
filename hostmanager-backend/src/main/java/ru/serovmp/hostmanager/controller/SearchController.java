@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.dto.BriefSearchResultDto;
-import ru.serovmp.hostmanager.dto.HostDto;
-import ru.serovmp.hostmanager.service.SearchService;
+import ru.serovmp.hostmanager.service.search.SearchService;
 
-import java.util.List;
 import java.util.Map;
 
 @SecurityRequirement(name = "bearer-key")
@@ -37,5 +35,11 @@ public class SearchController {
         return ResponseEntity.ok(Map.of(
                 "page", page,
                 "hosts", searchService.searchHosts(query, page)));
+    }
+
+    @GetMapping("/indexAllData")
+    public ResponseEntity indexAllData() {
+        searchService.indexAlldata();
+        return ResponseEntity.ok().build();
     }
 }
