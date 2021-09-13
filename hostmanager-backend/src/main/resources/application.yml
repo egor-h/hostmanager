@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/hostsmanager_work
+    url: jdbc:mysql://localhost:3306/hostsmanager
     username: root
     password: 12345
 #    initialization-mode: ALWAYS
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
 logging:
   level:
@@ -14,7 +14,8 @@ logging:
       hibernate:
 #        SQL: DEBUG
 #        type: TRACE
-
+server:
+  port: 8081
 security:
   jwt:
     secret: ioyur239874
@@ -26,6 +27,13 @@ security:
 #  password: 123
 
 hostsmanager:
+  search:
+    mode: "sonic" # none | sonic
+    sonic:
+      address: "localhost"
+      port: 14910
+      timeout: 20000
+      password: "SecretPassword"
   service-info:
     admin-email: someone@somewhere.com
     location: Test instance
