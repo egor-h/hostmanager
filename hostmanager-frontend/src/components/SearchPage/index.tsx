@@ -1,4 +1,4 @@
-import { ListSubheader, TextField, Typography } from '@material-ui/core';
+import { IconButton, ListItemSecondaryAction, ListSubheader, SvgIcon, TextField, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -10,100 +10,139 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import NoteIcon from '@material-ui/icons/Note';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import React from 'react';
+import React, { Component, ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { briefSearch, fullHostSearch } from '../../api/search';
 import { AppState } from '../../state/reducers';
 import { fullSearchClear } from '../../state/actions/fullSearch';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { BriefHost } from '../../models/search';
+import { Note, Protocol, Tag } from '../../models/host';
+import { filterSettingsKeys, findSetting } from './settingsUtils';
+import { HashLink } from 'react-router-hash-link';
 
 
-type IconType = "goto" | "host" | "tag" | "protocol" | "note";
-
-const getIcon = (iconType: IconType) => {
-    switch (iconType) {
-        case "goto":
-            return (<ArrowForwardIosIcon />);
-        case "host":
-            return (<ComputerIcon />);
-        case "tag":
-            return (<LocalOfferIcon />);
-        case "protocol":
-            return (<ReceiptIcon />);
-        case "note":
-            return (<NoteIcon />);
-        default:
-            return (<HelpIcon />);
-    }
-}
-
-const resultItem = (primaryText: string, secondaryText: string, iconType: IconType, onClick: () => void) => {
-    return (<ListItem key={primaryText+iconType} button onClick={() => onClick()}>
+const baseItem = (HeaderIcon: typeof SvgIcon, ButtonIcon: typeof SvgIcon, primaryText: string, secondaryText: string, onClick: () => void, onClickSecond: undefined | (() => void)) => {
+    return (<ListItem key={primaryText} button onClick={onClick}>
         <ListItemAvatar>
             <Avatar>
-                {getIcon(iconType)}
+                <HeaderIcon />
             </Avatar>
         </ListItemAvatar>
         <ListItemText
             primary={primaryText}
             secondary={secondaryText}
         />
-        {/* <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="searchitem">
-            <DeleteIcon />
-          </IconButton>
-        </ListItemSecondaryAction> */}
+        {
+            (onClickSecond) ? 
+            (<ListItemSecondaryAction onClick={onClickSecond}>
+                <IconButton edge="end" aria-label="searchitem">
+                  <ButtonIcon />
+                </IconButton>
+              </ListItemSecondaryAction>)
+              :
+              ('')
+        }
     </ListItem>)
 }
 
+
+baseItem(NoteIcon, NoteIcon, "", "", () => {}, undefined)
+
+const hostItem = (host: BriefHost, onClick: () => void, onClickSecond: undefined | (() => void) = undefined) => {
+    return baseItem(ComputerIcon, ArrowForwardIosIcon, host.name, host.address, onClick, onClickSecond);
+}
+
+const tagItem = (tag: Tag, onClick: () => void, onClickSecond: undefined | (() => void) = undefined) => {
+    return baseItem(LocalOfferIcon, ArrowForwardIosIcon, tag.name, '', onClick, onClickSecond);
+}
+
+const protocolItem = (proto: Protocol, onClick: () => void, onClickSecond: undefined | (() => void) = undefined) => {
+    return baseItem(ReceiptIcon, ArrowForwardIosIcon, proto.name, '', onClick, onClickSecond);
+}
+
+const noteItem = (note: Note, onClick: () => void, onClickSecond: undefined | (() => void) = undefined) => {
+    return baseItem(NoteIcon, ArrowForwardIosIcon, note.title, '', onClick, onClickSecond);
+}
+
+const settingItem0 = (setting: string, onClick: () => void, onClickSecond: undefined | (() => void) = undefined) => {
+    return baseItem(NoteIcon, ArrowForwardIosIcon, setting, '', onClick, onClickSecond);
+}
+
+
+const settingItem = (setting: string, key: string) => {
+    const to = `/settings/all#${key}`
+    const MyHashLink = (props: any) => <HashLink to={to} {...props}></HashLink>
+    
+    return (<ListItem key={setting} button component={MyHashLink}>
+        <ListItemAvatar>
+            <Avatar>
+                <NoteIcon />
+            </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+            primary={setting}
+            secondary={''}
+        />
+    </ListItem>)
+}
+
+
+
 export default withTranslation()((props: WithTranslation) => {
     const [query, setQuery] = React.useState<string>('');
+    const [settingsResults, setSettingsResults] = React.useState<string[]>([])
+    const [filteredSettingsKeys, setFilteredSettingsKeys] = React.useState<{[key: string]: string}>({});
     const dispatch = useDispatch();
     const searchResults = useSelector((state: AppState) => state.search);
     const history = useHistory();
     const { t } = props;
+    let filteredKeys = filterSettingsKeys('ru')
+
 
     const onSubmit = (query: string) => {
         if (query.trim() !== '') {
-            dispatch(briefSearch(query))
+            dispatch(briefSearch(query));
+            setSettingsResults(findSetting(filteredKeys, query));
         }
     }
 
+    const handleFullHostSearch = () => {
+        dispatch(fullHostSearch(query, 0));
+        dispatch(fullSearchClear()); // clear previous results
+        history.push(`/search_hosts/${query}`);
+    }
 
-    let renderList: any[] = [];
-    if (searchResults.data.hosts.length !== 0) {
-        renderList.push(<ListSubheader key="hosts" onClick={() => history.push(`/search_hosts/${query}`)}>{t("brief_search_all_results")}</ListSubheader>);
-        renderList.push(searchResults.data.hosts.map(h => resultItem(h.name, h.address, "host", () => history.push(`/objects/info/${h.id}`))));
-        if (searchResults.data.hosts.length >= 5) {
-            renderList.push(resultItem(t("brief_search_complete_results", {query: query}), "", "goto", () => {
-                dispatch(fullHostSearch(query, 0));
-                dispatch(fullSearchClear()); // clear previous results
-                history.push(`/search_hosts/${query}`);
-            }));
-        }
-    }
-    if (searchResults.data.tags.length !== 0) {
-        renderList.push(<ListSubheader key="tags">{t("brief_search_tags_subheader")}</ListSubheader>);
-        renderList.push(searchResults.data.tags.map(t => resultItem(t.name, '', "tag", () => history.push(`/tags/edit/${t.id}`))));
-    }
-    if (searchResults.data.protocols.length !== 0) {
-        renderList.push(<ListSubheader key="protocols">{t("brief_search_protocols_subheader")}</ListSubheader>);
-        renderList.push(searchResults.data.protocols.map(p => resultItem(p.name, p.launchType, "protocol", () => history.push(`/protocols/edit/${p.id}`))));
-    }
-    if (searchResults.data.notes.length !== 0) {
-        renderList.push(<ListSubheader key="notes">{t("brief_search_notes_subheader")}</ListSubheader>);
-        renderList.push(searchResults.data.notes.map(n => resultItem(n.title, '', "note", () => history.push(`/notes/edit/${n.id}`))));
-    }
-    if (false) {
-        renderList.push(<ListSubheader key="settings">{t("brief_search_settings_subheader")}</ListSubheader>);
-    }
+
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <form noValidate autoComplete="off" onSubmit={(e) => { onSubmit(query); e.preventDefault(); }}>
                 <TextField style={{ width: "50vw" }} autoFocus onChange={(e: any) => { setQuery(e.target.value) }} value={query} />
                 <List dense={true}>
-                    {renderList}
+                    {
+                        (searchResults.data.hosts.length) >= 5 ? (
+                            <ListSubheader key="hosts" onClick={handleFullHostSearch}>
+                                {`${t("brief_search_hosts_subheader")} - ${t("brief_search_click_all_results")}`}
+                            </ListSubheader>
+                        ) : (
+                            <ListSubheader key="hosts" >
+                                {t("brief_search_hosts_subheader")}
+                            </ListSubheader>
+                        )
+                    }
+                    {
+                        searchResults.data.hosts.length !== 0 ? searchResults.data.hosts.map(h => hostItem(h, () => history.push(`/objects/info/${h.id}`), () => history.push(`/objects/table/${h.id}`))) : [] 
+                    }
+                    <ListSubheader key="protocols">{t("brief_search_protocols_subheader")}</ListSubheader>
+                    { searchResults.data.protocols.map(p => protocolItem(p, () => history.push(`/protocols/edit/${p.id}`))) }
+                    <ListSubheader key="tags">{t("brief_search_tags_subheader")}</ListSubheader>
+                    { searchResults.data.tags.map(t => tagItem(t, () => history.push(`/objects/tableTag/${t.id}`), () => history.push(`/tags/edit/${t.id}`))) }
+                    <ListSubheader key="notes">{t("brief_search_notes_subheader")}</ListSubheader>
+                    { searchResults.data.notes.map(n => noteItem(n, () => history.push(`/notes/edit/${n.id}`))) }
+                    <ListSubheader key="settings">{t("brief_search_settings_subheader")}</ListSubheader>
+                    {/* { settingsResults.map(s => settingItem(s, () => history.push(`/settings/all?highlight=${filteredKeys[s]}`))) } */}
+                    { settingsResults.map(s => settingItem(s, filteredKeys[s])) }
                 </List>
             </form>
         </div>)

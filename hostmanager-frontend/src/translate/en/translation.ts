@@ -12,6 +12,8 @@ export default {
 
     "brief_search_complete_results": 'Complete results for "{{query}}"',
     "brief_search_all_results": "All results",
+    "brief_search_click_all_results": "Click to show complete results",
+    "brief_search_hosts_subheader": "Hosts",
     "brief_search_tags_subheader": "Tags",
     "brief_search_protocols_subheader": "Protocols",
     "brief_search_notes_subheader": "Notes",

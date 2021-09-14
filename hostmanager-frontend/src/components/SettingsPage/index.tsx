@@ -82,7 +82,7 @@ type SettingsState = {
     subnetEditOpened: boolean;
     currentlyEditedSubnet: Subnet;
     isNewSubnet: boolean;
-    
+    queryParameters: {[k: string]: string};
 }
 
 class SettingsList extends React.Component<SettingsProps, SettingsState> {
@@ -109,8 +109,11 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 name: '',
                 address: '',
                 mask: ''
-            }
+            },
+            queryParameters: {}
         }
+
+        this.parseQueryParameters = this.parseQueryParameters.bind(this);
         this.saveSettings = this.saveSettings.bind(this);
         this.handleRootHostChange = this.handleRootHostChange.bind(this);
         this.handleTargetHostsManDir = this.handleTargetHostsManDir.bind(this);
@@ -122,6 +125,21 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
     componentDidMount() {
         this.props.loadZabbixGroups();
         this.props.fetchSubnets();
+        this.setState({queryParameters: this.parseQueryParameters()})
+    }
+
+    parseQueryParameters() {
+        if (this.props.location.search.length == 0) {
+            return {}
+        }
+        let params: {[key: string]: string} = {}
+
+        this.props.location.search.substring(1).split('&').forEach(keyAndValue => {
+            let spt = keyAndValue.split('=')
+            Object.assign(params, {[spt[0]]: spt[1]})
+        })
+
+        return params;
     }
 
     saveSettings() {
@@ -174,6 +192,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
         const curRootNode = allDirs.find(host => host.id === this.state.settings.rootNode);
         const curRootNodeName: Host = curRootNode === undefined ? {...EMPTY_HOST, name: `Host id=${this.state.settings.rootNode}not found`} : curRootNode;
         const settingsChanged = JSON.stringify(this.state.settings) !== JSON.stringify(this.props.settings);
+        console.log(this.state.queryParameters)
         // console.log(`state: ${JSON.stringify(this.state)}`)
         // console.log(`redux: ${JSON.stringify(this.props.settings)}`)
         const settingsPage = (<div style={{ display: 'flex', flexDirection: 'column', width: '70vw', justifyContent: 'center' }}>
@@ -187,8 +206,8 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                 {t("settings_page_title")}
             </Typography>
             <List>
-                <ListSubheader>{t("settings_page_application_subheader")}</ListSubheader>
-                <ListItem button onClick={() => {this.setState({settings: {...this.state.settings, expandTreeOnStartup: ! this.state.settings.expandTreeOnStartup}})}}>
+                <ListSubheader id="settings_page_application_subheader">{t("settings_page_application_subheader")}</ListSubheader>
+                <ListItem id="settings_page_application_expand_tree_on_start" button onClick={() => {this.setState({settings: {...this.state.settings, expandTreeOnStartup: ! this.state.settings.expandTreeOnStartup}})}}>
                        <ListItemText id="switch-enable-autoexpand-on-start" primary={t("settings_page_application_expand_tree_on_start")} />
                     <ListItemSecondaryAction>
                         <Switch
@@ -199,7 +218,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
 
-                <ListItem button onClick={() => this.props.history.push("/users")}>
+                <ListItem id="settings_page_application_edit_users" button onClick={() => this.props.history.push("/users")}>
                     <ListItemText primary={t("settings_page_application_edit_users")} />
                     <ListItemSecondaryAction>
                         <IconButton edge="end" aria-label="delete">
@@ -208,7 +227,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
 
-                <ListItem>
+                <ListItem id="settings_page_application_tree_root_node">
                     <ListItemText primary={t("settings_page_application_tree_root_node")} />
                     <ListItemSecondaryAction>
                         <Autocomplete
@@ -224,7 +243,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
 
-                <ListItem>
+                <ListItem id="settings_page_application_host_table_name_template">
                     <ListItemText primary={t("settings_page_application_host_table_name_template")} />
                     <ListItemSecondaryAction>
                         <Tooltip title={t("settings_page_application_host_table_name_template_tooltip")} placement="bottom">
@@ -233,13 +252,13 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     </ListItemSecondaryAction>
                 </ListItem>
 
-                <ListSubheader>{t("settings_page_profile_subheader")}</ListSubheader>
-                <ListItem button>
+                <ListSubheader id="settings_page_profile_subheader">{t("settings_page_profile_subheader")}</ListSubheader>
+                <ListItem id="settings_page_profile_change_profile" button>
                     <ListItemText primary={t("settings_page_profile_change_profile")} />
                 </ListItem>
 
                 <ListSubheader>Zabbix</ListSubheader>
-                <ListItem>
+                <ListItem id="settings_page_zabbix_hostsmanager_target_dir">
                     <ListItemText primary={t("settings_page_zabbix_hostsmanager_target_dir")} />
                     <ListItemSecondaryAction>
                         <Autocomplete
@@ -254,7 +273,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
-                <ListItem>
+                <ListItem id="settings_page_zabbix_zabbix_target_group">
                     <ListItemText primary={t("settings_page_zabbix_zabbix_target_group")} />
                     <ListItemSecondaryAction>
                         <Autocomplete
@@ -270,7 +289,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
-                <ListItem button onClick={() => {}}>
+                <ListItem id="settings_page_zabbix_merge_with_existing" button onClick={() => {}}>
                        <ListItemText id="switch-merge-with-existing" primary={t("settings_page_zabbix_merge_with_existing")} />
                     <ListItemSecondaryAction>
                         <Switch
@@ -280,11 +299,11 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
-                <ListItem button>
+                <ListItem id="settings_page_zabbix_begin_import" button>
                     <ListItemText onClick={() => this.props.beginZabbixImport(this.state.hostsmanGroupId, this.state.zabbixGroupId, this.state.zabbixMergeEntries)} primary={t("settings_page_zabbix_begin_import")} />
                 </ListItem>
 
-                <ListSubheader>{t("settings_page_subnets_header")}</ListSubheader>
+                <ListSubheader id="settings_page_subnets_header">{t("settings_page_subnets_header")}</ListSubheader>
                 {
                     this.props.subnets.data.map(subnet => (<ListItem>
                         <ListItemText primary={`${subnet.name} - ${subnet.address} ${subnet.mask}`}/>
@@ -311,29 +330,29 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     <ListItemText primary={t("settings_page_subnets_create_subnet")}/>
                 </ListItem>
 
-                <ListSubheader>{t("settings_page_service_info")}</ListSubheader>
-                <ListItem button onClick={() => this.setClipboardAndToast(this.props.serviceInfo.data.info.adminEmail, t)}>
+                <ListSubheader id="settings_page_service_info">{t("settings_page_service_info")}</ListSubheader>
+                <ListItem id="settings_page_service_info_admin_email" button onClick={() => this.setClipboardAndToast(this.props.serviceInfo.data.info.adminEmail, t)}>
                     <ListItemText primary={`${t("settings_page_service_info_admin_email")}: ${this.props.serviceInfo.data.info.adminEmail}`}/>
                 </ListItem>
-                <ListItem>
+                <ListItem id="settings_page_service_info_location">
                     <ListItemText primary={`${t("settings_page_service_info_location")}: ${this.props.serviceInfo.data.info.location}`} />
                 </ListItem>
-                <ListItem>
+                <ListItem id="settings_page_service_info_description">
                     <ListItemText primary={`${t("settings_page_service_info_description")}: ${this.props.serviceInfo.data.info.description}`} />
                 </ListItem>
 
-                <ListSubheader>{t("settings_page_abilities")}</ListSubheader>
-                <ListItem>
+                <ListSubheader id="settings_page_abilities">{t("settings_page_abilities")}</ListSubheader>
+                <ListItem id="settings_page_abilities_zabbix">
                     <ListItemText primary={`${t("settings_page_abilities_zabbix")}: ${this.props.serviceInfo.data.capabilities.zabbix}`} />
                 </ListItem>
-                <ListItem>
+                <ListItem id="settings_page_abilities_mapping">
                     <ListItemText primary={`${t("settings_page_abilities_mapping")}: ${this.props.serviceInfo.data.capabilities.mapping}`} />
                 </ListItem>
-                <ListItem>
+                <ListItem id="settings_page_abilities_availability">
                     <ListItemText primary={`${t("settings_page_abilities_availability")}: ${this.props.serviceInfo.data.capabilities.serverSideAvailability}`} />
                 </ListItem>
 
-                <ListItem button onClick={() => this.props.generateRmsPhonebook(flattenTree(this.props.hosts, h => h))}>
+                <ListItem id="settings_page_other_generate_rms_phonebook" button onClick={() => this.props.generateRmsPhonebook(flattenTree(this.props.hosts, h => h))}>
                     <ListItemText primary={t("settings_page_other_generate_rms_phonebook")} />
                 </ListItem>
 

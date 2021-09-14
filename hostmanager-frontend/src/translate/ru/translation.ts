@@ -12,6 +12,8 @@ export default {
 
     "brief_search_complete_results": 'Все результаты для запроса "{{query}}"',
     "brief_search_all_results": "Все результаты",
+    "brief_search_click_all_results": "Нажмите для полных результатов",
+    "brief_search_hosts_subheader": "Объекты",
     "brief_search_tags_subheader": "Метки",
     "brief_search_protocols_subheader": "Протоколы",
     "brief_search_notes_subheader": "Записи",
