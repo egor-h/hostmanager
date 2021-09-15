@@ -1,5 +1,6 @@
 package ru.serovmp.hostmanager.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,12 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandlerController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity handleAll(RuntimeException e) {
+        log.error("Runtime exception: {}", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
