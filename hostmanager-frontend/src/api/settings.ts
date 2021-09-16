@@ -45,3 +45,16 @@ export const syncDirToZabbix = (hostsManDir: number, zabbixGroup: string, merge:
         });
     }
 }
+
+
+export const searchEngineIndex = () => {
+    return (dispatch: any) => {
+        
+        api.get("/api/v1/search/indexAllData")
+        .then(res => dispatch(setSnackbar({severity: 'success', message: 'Data indexing started..'})))
+        .catch(error => {   
+            console.log(error);
+            dispatch(setSnackbar({severity: 'error', message: 'Error while syncing data'}));
+        });
+    }
+}

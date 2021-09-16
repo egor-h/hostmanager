@@ -13,7 +13,7 @@ import { WithTranslation, withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Redirect, Route, RouteComponentProps, Switch as RouterSwitch, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { getZabbixGroups, putUserSettings, syncDirToZabbix } from '../../api/settings';
+import { getZabbixGroups, putUserSettings, syncDirToZabbix, searchEngineIndex } from '../../api/settings';
 import { createSubnet, deleteSubnet, fetchSubnets, saveSubnet, SubnetApi } from '../../api/subnets';
 import { EMPTY_HOST, Host } from '../../models/host';
 import { Settings, ZabbixGroup } from '../../models/settings';
@@ -48,6 +48,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     putSettings: bindActionCreators(putUserSettings, dispatch),
     loadZabbixGroups: bindActionCreators(getZabbixGroups, dispatch),
     beginZabbixImport: bindActionCreators(syncDirToZabbix, dispatch),
+    searchIndexData: bindActionCreators(searchEngineIndex, dispatch),
     setSnackbar: bindActionCreators(setSnackbar, dispatch),
 
     fetchSubnets: bindActionCreators(fetchSubnets, dispatch),
@@ -67,6 +68,7 @@ type SettingsProps = {
     zabbixGroups: {loading: boolean, data: ZabbixGroup[], error: boolean},
     loadZabbixGroups: () => void,
     beginZabbixImport: (hostsManDir: number, zabbixGroup: string, merge: boolean) => void,
+    searchIndexData: typeof searchEngineIndex,
     setSnackbar: typeof setSnackbar,
     generateRmsPhonebook: typeof generatePhonebookThunk
 
@@ -356,6 +358,10 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
                     <ListItemText primary={t("settings_page_other_generate_rms_phonebook")} />
                 </ListItem>
 
+                <ListSubheader id="settings_page_search_engine">{t("settings_page_search_engine")}</ListSubheader>
+                <ListItem id="settings_page_search_engine_begin_index" button>
+                    <ListItemText onClick={() => this.props.searchIndexData} primary={t("settings_page_search_engine_begin_index")} />
+                </ListItem>
             </List>
             {/* <ChangeRootNodePopup open={this.state.showChangeRootNode} title={'Change root node'} body={''} onNo={() => {}} onYes={(value: string) => {}} /> */}
             <PopupField open={this.state.showChangeNameTemplate} title={'Change name template'} body={'Available placeholders: ...'} onNo={() => {}} onYes={(value: string) => {}} />

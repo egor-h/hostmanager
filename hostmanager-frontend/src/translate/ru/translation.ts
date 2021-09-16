@@ -86,6 +86,8 @@ export default {
     "settings_page_abilities_zabbix": "Zabbix интеграция",
     "settings_page_abilities_mapping": "Карта сети",
     "settings_page_abilities_availability": "Проверка достопности с сервера",
+    "settings_page_search_engine": "Поиск",
+    "settings_page_search_engine_begin_index": "Проиндексировать все данные",
     
     "settings_page_other_generate_rms_phonebook": "Сгенерировать адресную книгу RMS",
 
