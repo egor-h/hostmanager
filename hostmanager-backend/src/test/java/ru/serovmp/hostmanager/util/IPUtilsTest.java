@@ -1,6 +1,8 @@
 package ru.serovmp.hostmanager.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,5 +87,18 @@ class IPUtilsTest {
         long netId = 3232236032L; // 192.168.2.0
 
         assertTrue(IPUtils.isSubnetOf(ip, mask, netId));
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {"192.1", "192", "..", "192.168.0.1    ", "192.168", "123123"})
+    void looksLikeIp_onlyDigitsAndDots_returnTrue(String input) {
+        assertTrue(IPUtils.looksLikeIp(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"192 1", "10-20", "!", "192.168.0,1", "asd", "123+123"})
+    void looksLikeIp_notPartOfIp_returnFalse(String input) {
+        assertFalse(IPUtils.looksLikeIp(input));
     }
 }

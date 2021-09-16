@@ -58,4 +58,8 @@ public class IPUtils {
     public static boolean isSubnetOf(long ip, long mask, long netId) {
         return getNetId(ip, mask) == netId;
     }
+
+    public static boolean looksLikeIp(String ip) {
+        return ip.chars().filter(c -> c != '.').filter(c -> !Character.isDigit(c)).count() == 0;
+    }
 }
