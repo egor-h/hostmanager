@@ -49,6 +49,7 @@ export default {
     "stats_subnet_refresh_tooltip": "Refresh statistics",
     "stats_subnet_table_subnet": "Subnet",
     "stats_subnet_table_hosts": "Hosts",
+    "settings_page_subnets_create_subnet": "Create subnet",
 
 
     "user_page_add_new_user": "Add new user",

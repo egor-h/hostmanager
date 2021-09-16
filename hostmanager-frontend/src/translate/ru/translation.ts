@@ -49,6 +49,7 @@ export default {
     "stats_subnet_refresh_tooltip": "Обновить статистику",
     "stats_subnet_table_subnet": "Подсеть",
     "stats_subnet_table_hosts": "Узлы",
+    "settings_page_subnets_create_subnet": "Добавить подсеть",
 
     "user_page_add_new_user": "Добавить нового пользователя",
     "user_page_add_new_user_header": "Создать пользователя",
