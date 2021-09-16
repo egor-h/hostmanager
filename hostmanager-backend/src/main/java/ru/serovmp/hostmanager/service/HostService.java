@@ -54,7 +54,7 @@ public class HostService implements Searchable<BriefSearchResultDto.BriefHost>, 
 
     @Override
     public String entityToIndexableText(Host e) {
-        return e.getName();
+        return e.getName()+" "+e.getAddress();
     }
 
     public List<BriefSearchResultDto.BriefHost> find(String query, Pageable pageable) {
