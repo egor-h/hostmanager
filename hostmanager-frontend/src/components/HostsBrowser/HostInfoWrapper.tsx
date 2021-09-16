@@ -80,7 +80,7 @@ class HostInfoWrapper extends React.Component<HostInfoProps> {
             <div style={{ display: 'flex', flexBasis: '100%', flexWrap: "wrap" }}>
                 <Typography variant="h4" component="h4">{editHostLink} {foundHost.name}</Typography>
             </div>
-            <Typography variant="h5" component="h5" style={{ flexBasis: '100%' }}>{foundHost.address}</Typography>
+            <Typography variant="h5" component="h5" style={{ flexBasis: '100%' }}>{`${foundHost.address}:${foundHost.port}`}</Typography>
             <TagChips tagList={foundHost.tags} />
             <div style={{ display: 'flex', flexBasis: '100%', flexWrap: "wrap" }}>
                 <ProtocolList host={foundHost} protocols={this.props.protocols.data} />

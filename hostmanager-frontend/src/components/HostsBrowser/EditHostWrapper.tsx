@@ -43,6 +43,7 @@ export default (): any => {;
             dispatch(saveObject(host.id, {
                 name: host.name, 
                 address: host.address, 
+                port: host.port,
                 enabled: host.enabled, 
                 dir: host.dir, 
                 tags: host.tags.map(t => t.name),
@@ -58,6 +59,7 @@ export default (): any => {;
             dispatch(saveObject(host.id, {
                 name: host.name, 
                 address: host.address, 
+                port: host.port,
                 enabled: host.enabled, 
                 dir: host.dir, 
                 tags: host.tags.map(t => t.name),
