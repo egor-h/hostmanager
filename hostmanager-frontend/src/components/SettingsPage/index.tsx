@@ -360,7 +360,7 @@ class SettingsList extends React.Component<SettingsProps, SettingsState> {
 
                 <ListSubheader id="settings_page_search_engine">{t("settings_page_search_engine")}</ListSubheader>
                 <ListItem id="settings_page_search_engine_begin_index" button>
-                    <ListItemText onClick={() => this.props.searchIndexData} primary={t("settings_page_search_engine_begin_index")} />
+                    <ListItemText onClick={() => this.props.searchIndexData()} primary={t("settings_page_search_engine_begin_index")} />
                 </ListItem>
             </List>
             {/* <ChangeRootNodePopup open={this.state.showChangeRootNode} title={'Change root node'} body={''} onNo={() => {}} onYes={(value: string) => {}} /> */}
