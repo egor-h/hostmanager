@@ -15,6 +15,7 @@ import ru.serovmp.hostmanager.repository.TagRepository;
 import ru.serovmp.hostmanager.service.search.Indexable;
 import ru.serovmp.hostmanager.service.search.Searchable;
 import ru.serovmp.hostmanager.service.search.Searcher;
+import ru.serovmp.hostmanager.util.IPUtils;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -47,7 +48,7 @@ public class HostService implements Searchable<BriefSearchResultDto.BriefHost>, 
             Searcher s = searcher.get();
             s.removeCollection(SEARCH_COLLECTION);
             hostRepository.findAll().forEach(host -> {
-                s.save(SEARCH_COLLECTION, SEARCH_BUCKET, host.getId().toString(), host.getName());
+                s.save(SEARCH_COLLECTION, SEARCH_BUCKET, host.getId().toString(), entityToIndexableText(host));
             });
         }
     }
@@ -57,12 +58,16 @@ public class HostService implements Searchable<BriefSearchResultDto.BriefHost>, 
         return e.getName()+" "+e.getAddress();
     }
 
+    public List<BriefSearchResultDto.BriefHost> searchInDb(String query, Pageable pageable) {
+        return hostRepository.findByHostNameOrAddressPagable(query, pageable)
+                .stream()
+                .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
+                .collect(Collectors.toList());
+    }
+
     public List<BriefSearchResultDto.BriefHost> find(String query, Pageable pageable) {
-        if (!searcher.isPresent()) {
-            return hostRepository.findByHostNameOrAddressPagable(query, pageable)
-                    .stream()
-                    .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
-                    .collect(Collectors.toList());
+        if (!searcher.isPresent() || IPUtils.looksLikeIp(query.trim())) {
+            return searchInDb(query, pageable);
         }
         return searcher
                 .map(search -> hostRepository.findAllById(search.find(SEARCH_COLLECTION, SEARCH_BUCKET, query, pageable.getPageSize(), (int) pageable.getOffset())))
