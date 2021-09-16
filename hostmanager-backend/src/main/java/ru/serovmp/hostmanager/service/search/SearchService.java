@@ -1,17 +1,15 @@
 package ru.serovmp.hostmanager.service.search;
 
-import com.github.egorh.sonic.SonicPool;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.serovmp.hostmanager.config.search.SearchMode;
-import ru.serovmp.hostmanager.dto.*;
-import ru.serovmp.hostmanager.entity.Host;
-import ru.serovmp.hostmanager.entity.Note;
+import ru.serovmp.hostmanager.dto.BriefNoteDto;
+import ru.serovmp.hostmanager.dto.BriefSearchResultDto;
+import ru.serovmp.hostmanager.dto.ProtocolDto;
+import ru.serovmp.hostmanager.dto.TagDto;
 import ru.serovmp.hostmanager.repository.HostRepository;
-import ru.serovmp.hostmanager.repository.NoteRepository;
 import ru.serovmp.hostmanager.repository.ProtocolRepository;
 import ru.serovmp.hostmanager.repository.TagRepository;
 import ru.serovmp.hostmanager.service.HostService;
@@ -19,11 +17,9 @@ import ru.serovmp.hostmanager.service.NoteService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class SearchService {
     private static final long SEARCH_LIMIT = 5;
@@ -75,6 +71,7 @@ public class SearchService {
     }
 
     public void indexAlldata() {
+        log.info("Begin indexing all data. Indexables: {}", indexables);
         indexables.forEach(Indexable::startIndex);
     }
 
