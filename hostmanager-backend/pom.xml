@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.egor-h</groupId>
             <artifactId>sonic-connector</artifactId>
-            <version>v1</version>
+            <version>1.2</version>
         </dependency>
 
         <dependency>
