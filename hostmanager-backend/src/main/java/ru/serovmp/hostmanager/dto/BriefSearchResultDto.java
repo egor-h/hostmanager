@@ -23,6 +23,7 @@ public class BriefSearchResultDto {
     public static class BriefHost {
         private long id;
         private String name;
+        private boolean dir;
         private String address;
     }
 }

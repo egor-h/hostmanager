@@ -61,7 +61,7 @@ public class HostService implements Searchable<BriefSearchResultDto.BriefHost>, 
     public List<BriefSearchResultDto.BriefHost> searchInDb(String query, Pageable pageable) {
         return hostRepository.findByHostNameOrAddressPagable(query, pageable)
                 .stream()
-                .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
+                .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.isDir(), h.getAddress()))
                 .collect(Collectors.toList());
     }
 
@@ -73,7 +73,7 @@ public class HostService implements Searchable<BriefSearchResultDto.BriefHost>, 
                 .map(search -> hostRepository.findAllById(search.find(SEARCH_COLLECTION, SEARCH_BUCKET, query, pageable.getPageSize(), (int) pageable.getOffset())))
                         .stream()
                         .flatMap(e -> e.stream())
-                .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.getAddress()))
+                .map(h -> new BriefSearchResultDto.BriefHost(h.getId(), h.getName(), h.isDir(), h.getAddress()))
                 .collect(Collectors.toList());
     }
 
