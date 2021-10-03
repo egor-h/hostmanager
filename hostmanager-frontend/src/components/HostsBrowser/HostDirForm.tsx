@@ -1,10 +1,8 @@
-import { Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from '@material-ui/core';
-import React, { ChangeEvent, FormEvent, SyntheticEvent } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Autocomplete } from '@material-ui/lab';
+import { Box, Button, TextField, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { runAtThisOrScheduleAtNextAnimationFrame } from 'custom-electron-titlebar/lib/common/dom';
-import { Host, Protocol, Tag } from '../../models/host';
+import { Autocomplete } from '@material-ui/lab';
+import React from 'react';
+import { Host, Tag } from '../../models/host';
 
 const styles = (theme: any) => ({
     // root: {
@@ -38,6 +36,7 @@ type FormState = {
     parentId: number;
     name: string;
     address: string;
+    port: number;
     enabled: boolean;
     tags: Tag[];
     protocols: number[];
@@ -52,6 +51,7 @@ class HostForm extends React.Component<FormProps, FormState> {
         let parentId = -2;
         let name = '';
         let address = '';
+        let port = 0;
         let enabled = true;
         let tags: Tag[] = [];
         let protocols: number[] = [];
@@ -62,6 +62,7 @@ class HostForm extends React.Component<FormProps, FormState> {
             parentId = this.props.host.parentId;
             name = this.props.host.name;
             address = this.props.host.address;
+            port = this.props.host.port;
             enabled = this.props.host.enabled;
             tags = this.props.host.tags;
             protocols = this.props.host.protocols;
@@ -73,6 +74,7 @@ class HostForm extends React.Component<FormProps, FormState> {
             parentId: parentId,
             name: name,
             address: address,
+            port: port,
             enabled: enabled,
             tags: tags,
             protocols: protocols,
@@ -106,6 +108,7 @@ class HostForm extends React.Component<FormProps, FormState> {
             parentId: this.state.parentId,
             name: this.state.name,
             address: this.state.address,
+            port: this.state.port,
             enabled: this.state.enabled,
             tags: this.state.tags,
             protocols: this.state.protocols,
