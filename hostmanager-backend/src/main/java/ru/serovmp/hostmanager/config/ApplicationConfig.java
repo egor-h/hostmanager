@@ -15,8 +15,6 @@ import ru.serovmp.hostmanager.service.zabbix.ZabbixServiceImpl;
 import ru.serovmp.hostmanager.service.zabbix.ZabbixServiceNoOp;
 import ru.serovmp.hostmanager.util.EntityToDtoMapper;
 
-import java.util.Optional;
-
 @Slf4j
 @Configuration
 public class ApplicationConfig {

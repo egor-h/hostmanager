@@ -1,9 +1,6 @@
 package ru.serovmp.hostmanager.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +11,6 @@ import ru.serovmp.hostmanager.controller.form.HostForm;
 import ru.serovmp.hostmanager.dto.HostDto;
 import ru.serovmp.hostmanager.dto.ProtocolDto;
 import ru.serovmp.hostmanager.dto.TagDto;
-import ru.serovmp.hostmanager.entity.Protocol;
 import ru.serovmp.hostmanager.exception.HostIsNotDirException;
 import ru.serovmp.hostmanager.exception.HostManagerBaseException;
 import ru.serovmp.hostmanager.exception.HostNotFoundException;
@@ -26,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @SecurityRequirement(name = "bearer-key")
 @RestController

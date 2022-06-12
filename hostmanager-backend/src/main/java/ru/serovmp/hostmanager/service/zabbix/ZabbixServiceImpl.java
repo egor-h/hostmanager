@@ -14,10 +14,9 @@ import ru.serovmp.hostmanager.restentities.response.ZabbixCreateHostResponse;
 import ru.serovmp.hostmanager.restentities.response.ZabbixGroupResponse;
 import ru.serovmp.hostmanager.restentities.response.ZabbixHostsResponse;
 import ru.serovmp.hostmanager.service.HostService;
+import ru.serovmp.hostmanager.service.HostServiceImpl;
 
 import javax.annotation.PostConstruct;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;

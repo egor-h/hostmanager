@@ -8,6 +8,7 @@ import ru.serovmp.hostmanager.controller.form.TagForm;
 import ru.serovmp.hostmanager.dto.TagDto;
 import ru.serovmp.hostmanager.entity.Tag;
 import ru.serovmp.hostmanager.repository.TagRepository;
+import ru.serovmp.hostmanager.service.TagService;
 import ru.serovmp.hostmanager.util.EntityToDtoMapper;
 
 import java.util.HashSet;
@@ -16,53 +17,36 @@ import java.util.HashSet;
 @RequestMapping("/api/v1/tags")
 @RestController
 public class TagController {
-
-    private TagRepository tagRepository;
-    private EntityToDtoMapper entityToDtoMapper;
+    private TagService tagService;
 
     @Autowired
-    public TagController(TagRepository tagRepository, EntityToDtoMapper entityToDtoMapper) {
-        this.tagRepository = tagRepository;
-        this.entityToDtoMapper = entityToDtoMapper;
+    public TagController(TagService tagService) {
+        this.tagService = tagService;
     }
 
     @GetMapping
     public ResponseEntity tags() {
-        return ResponseEntity.ok(tagRepository.findAll().stream().map(entityToDtoMapper::tagToTagDto));
+        return ResponseEntity.ok(tagService.tags());
     }
 
     @GetMapping("/{id}/hosts")
     public ResponseEntity hostsWithTag(@PathVariable("id") long id) {
-        return ResponseEntity.ok(tagRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("tag " + id + "not found"))
-                .getHosts());
+        return ResponseEntity.ok(tagService.hostsWithTag(id));
     }
 
     @PostMapping
     public ResponseEntity save(@RequestBody TagForm tag) {
-        var saved = tagRepository.save(new Tag(0, tag.getName(), new HashSet<>()));
-        return ResponseEntity.ok(entityToDtoMapper.tagToTagDto(saved));
+        return ResponseEntity.ok(tagService.create(tag));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") long id, @RequestBody TagForm tag) {
-        var found = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("tag not found"));
-        var updated = tagRepository.save(new Tag(id, tag.getName(), found.getHosts()));
-        return ResponseEntity.ok(entityToDtoMapper.tagToTagDto(updated));
+        return ResponseEntity.ok(tagService.update(id, tag));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
-        var found = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("tag not found"));
-        // remove just associations
-        found.getHosts().stream().forEach((host) -> {
-            if (host.getTags().contains(found)) {
-                host.getTags().remove(found);
-            }
-        });
-        tagRepository.save(found);
-        // then remove only tag entity
-        tagRepository.deleteById(id);
+        tagService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -7,19 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.controller.form.UserForm;
-import ru.serovmp.hostmanager.dto.TagDto;
-import ru.serovmp.hostmanager.dto.UserDto;
-import ru.serovmp.hostmanager.dto.UserWithPasswordDto;
 import ru.serovmp.hostmanager.entity.User;
 import ru.serovmp.hostmanager.repository.RoleRepository;
 import ru.serovmp.hostmanager.repository.UserRepository;
 import ru.serovmp.hostmanager.service.SettingsService;
+import ru.serovmp.hostmanager.service.SettingsServiceImpl;
 import ru.serovmp.hostmanager.util.EntityToDtoMapper;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 

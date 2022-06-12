@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.serovmp.hostmanager.controller.form.NoteForm;
 import ru.serovmp.hostmanager.service.NoteService;
+import ru.serovmp.hostmanager.service.NoteServiceImpl;
 
 @SecurityRequirement(name = "bearer-key")
 @RestController
