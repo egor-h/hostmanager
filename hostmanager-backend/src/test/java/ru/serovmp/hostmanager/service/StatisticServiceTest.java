@@ -31,7 +31,7 @@ class StatisticServiceTest {
 
     @Test
     void intervalForSubnet_5addressGroupsSupplied_5groupsFound() {
-        StatisticService statisticService = new StatisticService(mock(HostRepository.class), mock(HostService.class), mock(SubnetsRepository.class));
+        StatisticServiceImpl statisticService = new StatisticServiceImpl(mock(HostRepository.class), mock(HostServiceImpl.class), mock(SubnetsRepository.class));
         var intervals = statisticService.intervalForSubnet(TEST_DATA);
 
         assertEquals(5, intervals.size());
@@ -41,7 +41,7 @@ class StatisticServiceTest {
 
     @Test
     void hostsBySubnetsWithEmptyIntervals_123() {
-        StatisticService statisticService = new StatisticService(mock(HostRepository.class), mock(HostService.class), mock(SubnetsRepository.class));
+        StatisticServiceImpl statisticService = new StatisticServiceImpl(mock(HostRepository.class), mock(HostServiceImpl.class), mock(SubnetsRepository.class));
         var intervals = statisticService.hostsBySubnetsWithEmptyIntervals(TEST_DATA);
 
     }
@@ -55,7 +55,7 @@ class StatisticServiceTest {
         );
         long address = IPUtils.ipAddressToByteRepr("192.168.1.20");
 
-        StatisticService statisticService = new StatisticService(mock(HostRepository.class), mock(HostService.class), mock(SubnetsRepository.class));
+        StatisticServiceImpl statisticService = new StatisticServiceImpl(mock(HostRepository.class), mock(HostServiceImpl.class), mock(SubnetsRepository.class));
         long netowrk = statisticService.whatNetwork(address, networkToMask);
 
         assertEquals(IPUtils.ipAddressToByteRepr("192.168.1.0"), netowrk);
@@ -70,7 +70,7 @@ class StatisticServiceTest {
         );
         long address = IPUtils.ipAddressToByteRepr("192.168.10.122");
 
-        StatisticService statisticService = new StatisticService(mock(HostRepository.class), mock(HostService.class), mock(SubnetsRepository.class));
+        StatisticServiceImpl statisticService = new StatisticServiceImpl(mock(HostRepository.class), mock(HostServiceImpl.class), mock(SubnetsRepository.class));
         long netowrk = statisticService.whatNetwork(address, networkToMask);
 
         assertEquals(0, netowrk);
