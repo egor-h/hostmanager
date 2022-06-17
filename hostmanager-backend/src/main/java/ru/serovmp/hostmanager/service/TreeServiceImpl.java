@@ -23,7 +23,7 @@ public class TreeServiceImpl implements TreeService {
 
     @Override
     public TreeItemDto tree(long id) {
-        return mapper.treeItemToDto(treeRepository.dirTree(id).orElseThrow(() -> new RuntimeException("Tree item not found (id = " + id)));
+        return mapper.treeItemToDto(treeRepository.findById(id).orElseThrow(() -> new RuntimeException("Tree item not found (id = " + id)));
     }
 
     @Override
