@@ -29,11 +29,6 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public EntityToDtoMapper entityToDtoMapper() {
-        return Mappers.getMapper(EntityToDtoMapper.class);
-    }
-
-    @Bean
     @ConditionalOnProperty(prefix = "hostsmanager.search", name = "mode", havingValue = "sonic")
     public Searcher sonicSearcher(SonicConnectionProperties sonicCfg) {
         log.info("Try to connect to sonic with settings {}", sonicCfg);
