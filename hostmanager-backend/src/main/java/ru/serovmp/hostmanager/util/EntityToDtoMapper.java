@@ -2,25 +2,48 @@ package ru.serovmp.hostmanager.util;
 
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.serovmp.hostmanager.controller.form.HostForm;
 import ru.serovmp.hostmanager.controller.form.TreeForm;
 import ru.serovmp.hostmanager.dto.*;
 import ru.serovmp.hostmanager.entity.*;
+import ru.serovmp.hostmanager.repository.ProtocolRepository;
+import ru.serovmp.hostmanager.repository.TagRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper
-public interface EntityToDtoMapper {
-    EntityToDtoMapper INSTANCE = Mappers.getMapper(EntityToDtoMapper.class);
+@Mapper(componentModel = "spring")
+public abstract class EntityToDtoMapper {
+    static final EntityToDtoMapper INSTANCE = Mappers.getMapper(EntityToDtoMapper.class);
+    @Autowired
+    protected TagRepository tagRepository;
+    @Autowired
+    protected ProtocolRepository protocolRepository;
 
-    void updateHost(HostForm form, @MappingTarget Host host);
-    Host objectFormToHost(HostForm hostForm);
+    @Mapping(target = "tags", ignore = true)
+    @Mapping(target = "protocols", ignore = true)
+    public abstract void updateHost(HostForm form, @MappingTarget Host host);
+
+    @Mapping(source = "tags", target = "tags", qualifiedByName = "findTagsByName")
+    @Mapping(source = "protocols", target = "protocols", qualifiedByName = "findProtocolsById")
+    public abstract Host objectFormToHost(HostForm hostForm);
+
+    @Named("findTagsByName")
+    public Set<Tag> findTagsByName(List<String> tagNames) {
+        return tagNames.stream().map(tagRepository::findByName).map(Optional::get).collect(Collectors.toSet());
+    }
+
+    @Named("findProtocolsById")
+    public Set<Protocol> findProtocolsById(List<Long> protocolIds) {
+        return protocolIds.stream().map(protocolRepository::findById).map(Optional::get).collect(Collectors.toSet());
+    }
 
     @Mapping(source = "protocols", target = "protocols", qualifiedByName = "protocolsToProtocolDtoList")
     @Mapping(source = "tags", target = "tags", qualifiedByName = "tagsToTagDtoList")
-    ObjectDto hostToObjectDto(Host host);
+    public abstract ObjectDto hostToObjectDto(Host host);
 
     @Named("tagsToTagDtoList")
     static List<TagDto> tagsToTagDtoList(Set<Tag> tags) {
@@ -35,7 +58,7 @@ public interface EntityToDtoMapper {
 
     @Mapping(source = "children", target = "children", qualifiedByName = "getTreeItems")
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getParentId")
-    TreeItemDto treeItemToDto(TreeItem treeItem);
+    public abstract TreeItemDto treeItemToDto(TreeItem treeItem);
 
     @Named("getTreeItems")
     static List<TreeItemDto> getTreeItems(List<TreeItem> treeItems) {
@@ -47,25 +70,25 @@ public interface EntityToDtoMapper {
         return treeItem == null ? -1 : treeItem.getId();
     }
 
-    void updateTreeItem(TreeForm treeForm, @MappingTarget TreeItem treeItem);
-    TreeItem treeFromToEntity(TreeForm treeForm);
+    public abstract void updateTreeItem(TreeForm treeForm, @MappingTarget TreeItem treeItem);
+    public abstract TreeItem treeFromToEntity(TreeForm treeForm);
 
-    LocationDto locationToLocationDto(Location location);
+    public abstract LocationDto locationToLocationDto(Location location);
 
     @Mapping(source = "hosts", target = "hosts", qualifiedByName = "hostsEntityToIds")
-    WholeNoteDto noteToWholeNoteDto(Note note);
+    public abstract WholeNoteDto noteToWholeNoteDto(Note note);
 
-    BriefNoteDto noteToBriefNoteDto(Note note);
+    public abstract BriefNoteDto noteToBriefNoteDto(Note note);
 
-    ProtocolDto protocolToProtocolDto(Protocol protocol);
+    public abstract ProtocolDto protocolToProtocolDto(Protocol protocol);
 
-    TagDto tagToTagDto(Tag tag);
-
-    @Mapping(source = "roles", target = "roles", qualifiedByName = "userRolesToIds")
-    UserDto userToUserDto(User user);
+    public abstract TagDto tagToTagDto(Tag tag);
 
     @Mapping(source = "roles", target = "roles", qualifiedByName = "userRolesToIds")
-    UserWithPasswordDto userToUserWithPwdDto(User user);
+    public abstract UserDto userToUserDto(User user);
+
+    @Mapping(source = "roles", target = "roles", qualifiedByName = "userRolesToIds")
+    public abstract UserWithPasswordDto userToUserWithPwdDto(User user);
 
     @Named("hostsEntityToIds")
     static Set<Long> hostsEntityToIds(Set<Host> hosts) {
