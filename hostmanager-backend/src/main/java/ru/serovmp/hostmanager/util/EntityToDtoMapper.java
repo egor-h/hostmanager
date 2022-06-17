@@ -25,11 +25,11 @@ public abstract class EntityToDtoMapper {
 
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "protocols", ignore = true)
-    public abstract void updateHost(HostForm form, @MappingTarget Host host);
+    public abstract void updateHost(HostForm form, @MappingTarget HostObject host);
 
     @Mapping(source = "tags", target = "tags", qualifiedByName = "findTagsByName")
     @Mapping(source = "protocols", target = "protocols", qualifiedByName = "findProtocolsById")
-    public abstract Host objectFormToHost(HostForm hostForm);
+    public abstract HostObject objectFormToHost(HostForm hostForm);
 
     @Named("findTagsByName")
     public Set<Tag> findTagsByName(List<String> tagNames) {
@@ -43,7 +43,7 @@ public abstract class EntityToDtoMapper {
 
     @Mapping(source = "protocols", target = "protocols", qualifiedByName = "protocolsToProtocolDtoList")
     @Mapping(source = "tags", target = "tags", qualifiedByName = "tagsToTagDtoList")
-    public abstract ObjectDto hostToObjectDto(Host host);
+    public abstract ObjectDto hostToObjectDto(HostObject host);
 
     @Named("tagsToTagDtoList")
     static List<TagDto> tagsToTagDtoList(Set<Tag> tags) {
