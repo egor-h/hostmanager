@@ -25,7 +25,7 @@ services:
 
   flyway:
     image: flyway/flyway
-    command: -url=jdbc:mysql://mysql -schemas=${MYSQL_SCHEMA} -user=root -password=12345 migrate
+    command: -url=jdbc:mysql://mysql?allowPublicKeyRetrieval=true&useSSL=false -schemas=${MYSQL_SCHEMA} -user=root -password=12345 migrate
     volumes:
       - ../src/main/resources/db/migration:/flyway/sql
     depends_on:
