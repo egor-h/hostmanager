@@ -6,7 +6,7 @@ CREATE TABLE `tree` (
     `parent_id` bigint(20) DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_parent_id` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;gi
 
 
 INSERT INTO `tree` (`id`, `name`, created_at, created_by, parent_id)
@@ -14,6 +14,6 @@ INSERT INTO `tree` (`id`, `name`, created_at, created_by, parent_id)
     FROM `hosts`
     WHERE dir = true;
 
-ALTER TABLE `hosts` DROP CONSTRAINT `fk_host_host`
+ALTER TABLE `hosts` DROP CONSTRAINT `fk_host_host`;
 DELETE FROM `hosts` WHERE dir = true;
-ALTER TABLE `hosts` DROP COLUMN `dir`
+ALTER TABLE `hosts` DROP COLUMN `dir`;
