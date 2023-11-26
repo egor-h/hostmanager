@@ -1,6 +1,6 @@
 FROM azul/zulu-openjdk-alpine:15
 RUN apk add --no-cache curl tar bash procps
-ARG BASE_URL=https://apache-mirror.rbc.ru/pub/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+ARG BASE_URL=https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
 RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
     && echo "Downloading maven.." \
     && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL} \
