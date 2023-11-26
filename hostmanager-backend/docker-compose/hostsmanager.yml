@@ -9,12 +9,16 @@ services:
     volumes:
       - ./application.yml:/root/application.yml
     depends_on:
-      - mysql
-      - flyway
-      - sonic
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+      sonic:
+        condition: service_started
+
     restart: always
     environment:
-      MYSQL_SCHEMA: ${MYSQL_SCHEMA}
+      DB_SCHEMA: ${DB_SCHEMA}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       SERVICE_LOCATION: ${SERVICE_LOCATION}
       SERVICE_DESCRIPTION: ${SERVICE_DESCRIPTION}
@@ -25,23 +29,30 @@ services:
 
   flyway:
     image: flyway/flyway
-    command: -url=jdbc:mysql://mysql?allowPublicKeyRetrieval=true&useSSL=false -schemas=${MYSQL_SCHEMA} -user=root -password=12345 migrate
+    command: -url=jdbc:postgresql://postgres:5432/${DB_SCHEMA} -schemas=${DB_SCHEMA} -user=root -password=12345 migrate
     volumes:
       - ../src/main/resources/db/migration:/flyway/sql
     depends_on:
-      - mysql
+      postgres:
+        condition: service_healthy
 
-  mysql:
-    image: mysql/mysql-server:8.0
-    expose:
-      - "3306"
-    restart: always
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE: ${MYSQL_SCHEMA}
+      POSTGRES_DB: ${DB_SCHEMA}
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 12345
+    expose:
+      - "5432"
     volumes:
-      - ${MYSQL_DATADIR}:/var/lib/mysql
+      - ${DB_DATADIR}:/var/lib/postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U root", "-d ${DB_SCHEMA}"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
   sonic:
     image: valeriansaliou/sonic:v1.3.0
